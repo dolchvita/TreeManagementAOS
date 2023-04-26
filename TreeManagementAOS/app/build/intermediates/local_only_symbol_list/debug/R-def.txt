@@ -1,0 +1,20 @@
+R_DEF: Internal format may change without notice
+local
+color black
+color white
+drawable ic_launcher_background
+drawable ic_launcher_foreground
+id bottom
+id content
+id header
+id title
+layout main_act
+mipmap ic_launcher
+mipmap ic_launcher_round
+string app_name
+style Base.Theme.TreeManagementAOS
+style Theme.TreeManagementAOS
+style headerStyle
+style headerTextStyle
+xml backup_rules
+xml data_extraction_rules
