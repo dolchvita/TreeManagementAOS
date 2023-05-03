@@ -1,0 +1,41 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.TreeManagementAOS" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your light theme here. -->
+        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+    </style>
+
+    <style name="Theme.TreeManagementAOS" parent="Base.Theme.TreeManagementAOS" />
+
+    <!--메인 상단에 위치하는 헤더바-->
+    <style name="headerStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">56dp</item>
+        <item name="elevation">10dp</item>
+    </style>
+
+    <!--헤더에 오는 '수목관리시스템' 글씨
+    /* 글씨 생깍과 폰트 적용 안됨 => 외부에서 가져올 예정 */
+    -->
+    <style name="headerTextStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">20dp</item>
+        <item name="elevation">10dp</item>
+    </style>
+
+
+    <!-- Progress Style -->
+    <style name="ProgressStyle" parent="android:Theme.Dialog">
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowAnimationStyle">@null</item>
+    </style>
+
+
+
+</resources>

@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    class="com.snd.app.MainActBinding">
+
+    <data>
+        <variable
+            name="mainVM"
+            type="com.snd.app.MainViewModel" />
+    </data>
+    
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".MainActivity">
+
+        <!--Topbar-->
+        <View
+            android:id="@+id/header"
+            android:background="@color/white"
+            android:elevation="0dp"
+            style="@style/headerStyle"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            />
+        <androidx.appcompat.widget.AppCompatAutoCompleteTextView
+            android:id="@+id/title"
+            style="@style/headerTextStyle"
+            android:elevation="0dp"
+            android:text="수목관리시스템"
+            app:layout_constraintStart_toStartOf="@id/header"
+            app:layout_constraintTop_toTopOf="@id/header"
+            app:layout_constraintBottom_toBottomOf="@id/header"
+            app:layout_constraintEnd_toEndOf="@id/header"
+            />
+        <!--./Topbar-->
+
+        <!--Bottombar-->
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/content"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@id/bottom"
+            app:layout_constraintTop_toBottomOf="@id/header"
+            app:layout_constraintVertical_bias="0.0"
+            tools:layout_editor_absoluteX="1dp" />
+
+        <View
+            android:id="@+id/bottom"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:background="#08321800"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+
+        <!--메뉴 아이템들-->
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/home"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:drawableTop="@drawable/ic_home"
+            android:gravity="center"
+            android:padding="5dp"
+            android:text="메인"
+            android:textColor="@color/black"
+            android:textSize="13dp"
+
+            android:onClick="@{()->mainVM.setTabClick(mainVM.FRAGMENT_HOME)}"
+
+            app:layout_constraintBottom_toBottomOf="@+id/bottom"
+            app:layout_constraintEnd_toStartOf="@id/map"
+            app:layout_constraintStart_toStartOf="@id/bottom"
+            app:layout_constraintTop_toTopOf="@id/bottom"
+            app:layout_constraintVertical_bias="0.0"
+            tools:text="메인"/>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/map"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:drawableTop="@drawable/ic_map"
+            android:gravity="center"
+            android:padding="5dp"
+            android:text="지도"
+            android:textSize="13dp"
+
+            app:layout_constraintBottom_toBottomOf="@+id/bottom"
+            app:layout_constraintEnd_toStartOf="@+id/complaint"
+            app:layout_constraintStart_toEndOf="@id/home"
+            app:layout_constraintTop_toTopOf="@id/bottom"/>
+
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/complaint"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:drawableTop="@drawable/ic_list"
+            android:gravity="center"
+            android:padding="5dp"
+            android:textSize="13dp"
+            android:text="민원관리"
+            app:layout_constraintBottom_toBottomOf="@+id/bottom"
+            app:layout_constraintEnd_toStartOf="@id/list"
+            app:layout_constraintStart_toEndOf="@id/map"
+            app:layout_constraintTop_toTopOf="@id/bottom"
+            tools:text="민원관리" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/list"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:drawableTop="@drawable/ic_list"
+            android:gravity="center"
+            android:padding="5dp"
+            android:textSize="13dp"
+            android:text="최근작업"
+            android:textColor="@color/black"
+            app:layout_constraintBottom_toBottomOf="@+id/bottom"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/complaint"
+            app:layout_constraintTop_toTopOf="@id/bottom"
+            tools:text="최근작업" />
+
+        <!--./Bottombar-->
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>
