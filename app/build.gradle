@@ -35,8 +35,16 @@ android {
 
 dependencies {
     // 안드로이드 Dagger2 추가
+
     implementation 'com.google.dagger:dagger:2.38.1'
     annotationProcessor 'com.google.dagger:dagger-compiler:2.38.1'
+
+
+    /*
+    implementation 'com.google.dagger:dagger-android:2.38.1'
+    implementation 'com.google.dagger:dagger-android-support:2.38.1'
+    annotationProcessor 'com.google.dagger:dagger-android-processor:2.38.1'
+    */
 
     // 데이터 바인딩을 위한 뷰모델 생명주기 추가
     implementation "androidx.lifecycle:lifecycle-viewmodel:2.5.1"

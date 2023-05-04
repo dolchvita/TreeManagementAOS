@@ -2,6 +2,9 @@ package com.snd.app;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Context;
@@ -9,6 +12,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.snd.app.databinding.MainActBinding;
+import com.snd.app.ui.home.HomeFragment;
 
 import javax.inject.Inject;
 
@@ -24,23 +28,39 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-            setContentView(R.layout.main_act);
             Log.d(TAG, " 호출?");
+
 
             mainActBinding=DataBindingUtil.setContentView(this, R.layout.main_act);
             mainActBinding.setLifecycleOwner(this);
 
-            mainVM=new ViewModelProvider(this).get(MainViewModel.class);
+            mainVM=new ViewModelProvider(this).get(MainViewModel.class);    // ViewModel 가져오기
             mainActBinding.setMainVM(mainVM);
 
-            mainVM=mainActBinding.getMainVM();
+            mainVM=mainActBinding.getMainVM();  // 뷰모델 연동
 
 
             Log.d(TAG, mainActBinding+" 바인딩 객체 뭔데");
             Log.d(TAG, mainVM+"!!!!!!!asaswqdwqedd!!!!!");
 
-           mainVM.getTabClcick();
-            Log.d(TAG, mainVM.getTabClcick()+"뭐가 나올까!!!!!!!asaswqdwqedd!!!!!");
+            mainVM.getTabClcick().observe(this, new Observer() {
+                @Override
+                public void onChanged(Object o) {
+                    // 여기서 UI 업데이트 처리
+                    Log.d(TAG,"클릭 감지");
+
+                    // 매개변수로 넘어오는 객체는 뷰모델이 설정한 상수의 값! - 세팅된 것이 넘어옴
+                    Log.d(TAG,o+"이 객체는 뭘까~~~??");
+
+                    FragmentTransaction transaction=getSupportFragmentManager().beginTransaction();
+                    HomeFragment homeFragment=new HomeFragment();
+
+                    if(o.equals(1)){
+                        Log.d(TAG,"홈이 올 예정");
+                    }
+
+                }
+            });
 
         }
 

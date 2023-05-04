@@ -30,13 +30,13 @@ public class MainViewModel extends ViewModel {
     }
 
     public LiveData getTabClcick(){
-        Log.d(TAG,_tabClick+"클릭 감지");
+        Log.d(TAG,_tabClick+"클릭 감지????  ");
 
         if (_tabClick==null){
             _tabClick=new MutableLiveData();
         }
         // 결과값 반환해주는 메서드
-        return this.tabClick;
+        return this._tabClick;
     }
 
 }
