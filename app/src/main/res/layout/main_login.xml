@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        tools:ignore="HardcodedText, SpUsage">
+
+        <!--헤더바-->
+        <View
+            android:id="@+id/header"
+            style="@style/headerStyle"
+            android:background="@color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            style="@style/headerTextStyle"
+            android:text="수목관리시스템"
+            app:layout_constraintBottom_toBottomOf="@id/header"
+            app:layout_constraintEnd_toEndOf="@id/header"
+            app:layout_constraintStart_toStartOf="@id/header"
+            app:layout_constraintTop_toTopOf="@id/header" />
+        <!--./헤더바-->
+
+
+        <!--로그인 박스-->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/login_layout"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="24dp"
+            android:background="@drawable/rectangle_white_5"
+            android:elevation="5dp"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            app:layout_constraintTop_toBottomOf="@id/header"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/id_tv"
+                style="@style/text_label"
+                android:text="아이디"
+                android:paddingTop="20dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"/>
+
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/id_input"
+                style="@style/tree_info_edt"
+                app:layout_constraintEnd_toEndOf="@id/id_tv"
+
+                app:layout_constraintStart_toStartOf="@id/id_tv"
+                app:layout_constraintTop_toBottomOf="@id/id_tv"/>
+
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/pass_tv"
+                style="@style/text_label"
+                android:text="비밀번호"
+                app:layout_constraintEnd_toEndOf="parent"
+
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/id_input"/>
+
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/pass_input"
+                style="@style/tree_info_edt"
+                app:layout_constraintEnd_toEndOf="@id/pass_tv"
+                app:layout_constraintStart_toStartOf="@id/pass_tv"
+                app:layout_constraintTop_toBottomOf="@id/pass_tv"/>
+
+            <!--./로그인바-->
+
+
+            <Button
+                android:id="@+id/bt_login"
+                style="@style/primary_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="로그인"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/pass_input"
+
+                />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>

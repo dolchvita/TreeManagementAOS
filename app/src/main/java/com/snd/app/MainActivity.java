@@ -3,11 +3,9 @@ package com.snd.app;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -55,9 +53,17 @@ public class MainActivity extends AppCompatActivity {
                     FragmentTransaction transaction=getSupportFragmentManager().beginTransaction();
                     HomeFragment homeFragment=new HomeFragment();
 
+
+                    // 메인 화면을 4가지의 프레그먼트로 분할
                     if(o.equals(1)){
                         Log.d(TAG,"홈이 올 예정");
+                        transaction.replace(R.id.content, homeFragment);
+
+                    } else if (o.equals(2)) {
+                        Log.d(TAG,"홈이 올 예정");
+
                     }
+                    transaction.commit();
 
                 }
             });

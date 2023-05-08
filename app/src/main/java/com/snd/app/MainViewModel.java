@@ -17,12 +17,8 @@ public class MainViewModel extends ViewModel {
     public static final int FRAGMENT_COMPLAINT=3;
     public static final int FRAGMENT_RECENT=4;
 
-    private MutableLiveData _tabClick;  // setter
+    private MutableLiveData<Integer> _tabClick;  // setter
     LiveData tabClick=getTabClcick();    // getter(결과)
-
-    public MainViewModel() {
-
-    }
 
     public void setTabClick(Integer value){
         // 클릭된 수로 속성 변경하기
@@ -33,10 +29,11 @@ public class MainViewModel extends ViewModel {
         Log.d(TAG,_tabClick+"클릭 감지????  ");
 
         if (_tabClick==null){
-            _tabClick=new MutableLiveData();
+            _tabClick=new MutableLiveData<Integer>();
         }
         // 결과값 반환해주는 메서드
         return this._tabClick;
     }
+
 
 }
