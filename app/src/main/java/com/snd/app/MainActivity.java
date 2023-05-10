@@ -2,6 +2,7 @@ package com.snd.app;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -26,20 +27,25 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-            Log.d(TAG, " 호출?");
-
 
             mainActBinding=DataBindingUtil.setContentView(this, R.layout.main_act);
             mainActBinding.setLifecycleOwner(this);
 
             mainVM=new ViewModelProvider(this).get(MainViewModel.class);    // ViewModel 가져오기
             mainActBinding.setMainVM(mainVM);
-
             mainVM=mainActBinding.getMainVM();  // 뷰모델 연동
 
 
             Log.d(TAG, mainActBinding+" 바인딩 객체 뭔데");
             Log.d(TAG, mainVM+"!!!!!!!asaswqdwqedd!!!!!");
+
+
+            // 화면에 보일 프레그먼트
+            HomeFragment homeFragment=new HomeFragment();
+
+            // 아마 처음 화면을 메인으로 갖추는 것
+            getSupportFragmentManager().beginTransaction().replace(R.id.content, homeFragment).commit();
+
 
             mainVM.getTabClcick().observe(this, new Observer() {
                 @Override
@@ -51,7 +57,6 @@ public class MainActivity extends AppCompatActivity {
                     Log.d(TAG,o+"이 객체는 뭘까~~~??");
 
                     FragmentTransaction transaction=getSupportFragmentManager().beginTransaction();
-                    HomeFragment homeFragment=new HomeFragment();
 
 
                     // 메인 화면을 4가지의 프레그먼트로 분할
@@ -60,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
                         transaction.replace(R.id.content, homeFragment);
 
                     } else if (o.equals(2)) {
-                        Log.d(TAG,"홈이 올 예정");
+                        Log.d(TAG,"맵이 올 예정");
 
                     }
                     transaction.commit();

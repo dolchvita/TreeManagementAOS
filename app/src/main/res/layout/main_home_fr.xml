@@ -21,20 +21,16 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="24dp"
 
-
                 android:textSize="20dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="황규민님의 정보 입니다." />
-
-
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/user_info_layout"
@@ -112,8 +108,32 @@
                     tools:text="나의 정보 수정하기" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <!---->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/state_info_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="24dp"
+            android:background="@drawable/rectangle_white_5"
+            android:elevation="5dp"
+            android:padding="10dp"
+            app:layout_constraintBottom_toBottomOf="@id/btn_layout"
+            app:layout_constraintTop_toBottomOf="@+id/user_info_layout">
 
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <!---->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/btn_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/state_info_layout">
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>

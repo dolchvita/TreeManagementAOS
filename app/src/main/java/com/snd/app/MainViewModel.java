@@ -1,7 +1,9 @@
 package com.snd.app;
 
+import android.icu.number.IntegerWidth;
 import android.util.Log;
 
+import androidx.databinding.ObservableField;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -20,13 +22,19 @@ public class MainViewModel extends ViewModel {
     private MutableLiveData<Integer> _tabClick;  // setter
     LiveData tabClick=getTabClcick();    // getter(결과)
 
+
+   ObservableField<Integer> currentFragment=new ObservableField<Integer>(FRAGMENT_HOME);
+
+
     public void setTabClick(Integer value){
         // 클릭된 수로 속성 변경하기
         _tabClick.setValue(value);
+        currentFragment.set(value);
     }
 
     public LiveData getTabClcick(){
-        Log.d(TAG,_tabClick+"클릭 감지????  ");
+        // 여기서 아래 변수가 null로 뜬다..
+        Log.d(TAG,_tabClick+"클릭 감지????");
 
         if (_tabClick==null){
             _tabClick=new MutableLiveData<Integer>();
