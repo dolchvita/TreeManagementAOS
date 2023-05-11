@@ -26,18 +26,23 @@ public class HomeFragment extends Fragment {
 
     @Inject
     MainViewModel mainVM;
+    @Inject
+    HomeViewModel homeVM;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
         //프레그먼트가 사용할 xml 파일
         homeFrBinding= DataBindingUtil.inflate(inflater, R.layout.main_home_fr, container, false);
-        homeFrBinding.setLifecycleOwner(this);
 
-        mainVM=new ViewModelProvider(this).get(MainViewModel.class);
-        homeFrBinding.setMainVM(mainVM);
+        homeVM=new ViewModelProvider(this).get(HomeViewModel.class);
+        homeFrBinding.setHomeVM(homeVM);
+        homeVM=homeFrBinding.getHomeVM();   // 홈뷰모델 연동
+
+        homeFrBinding.setLifecycleOwner(this);
 
         return homeFrBinding.getRoot();
     }
+
+
 }

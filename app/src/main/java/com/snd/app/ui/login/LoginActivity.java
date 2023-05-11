@@ -19,7 +19,8 @@ import com.google.gson.Gson;
 import com.snd.app.MainActivity;
 import com.snd.app.R;
 import com.snd.app.data.AppModule;
-import com.snd.app.data.user.UserSession;
+import com.snd.app.data.user.PP;
+import com.snd.app.data.user.UserRepositoryImpl;
 import com.snd.app.domain.UserDTO;
 
 import org.json.JSONException;
@@ -145,7 +146,7 @@ public class LoginActivity extends AppCompatActivity {
                    @Override
                    public void onResponse(JSONObject response) {
                        Log.d(TAG, "** 회원 정보 응답 ** "+response.toString());
-
+                       
                        // 매핑
                        Gson gson=new Gson();
                        UserDTO user = null;
@@ -182,13 +183,8 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 
-    @Override
-    protected void onStop() {
-        super.onStop();
 
-        // 여기서 만들고 사용해도 될까?
-        
-    }
+    
 
 
 

@@ -1,7 +1,6 @@
 package com.snd.app.domain;
 
-import java.time.LocalDateTime;
-import java.util.Arrays;
+
 import java.util.List;
 
 public class UserDTO {
@@ -76,6 +75,5 @@ public class UserDTO {
     public void setCertification(boolean certification) {
         this.certification = certification;
     }
-
 
 }

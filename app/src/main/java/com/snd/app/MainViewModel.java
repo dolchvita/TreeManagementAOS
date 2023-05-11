@@ -1,6 +1,5 @@
 package com.snd.app;
 
-import android.icu.number.IntegerWidth;
 import android.util.Log;
 
 import androidx.databinding.ObservableField;
@@ -8,7 +7,6 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import dagger.Component;
 
 public class MainViewModel extends ViewModel {
     private String TAG=this.getClass().getName();
@@ -21,7 +19,6 @@ public class MainViewModel extends ViewModel {
 
     private MutableLiveData<Integer> _tabClick;  // setter
     LiveData tabClick=getTabClcick();    // getter(결과)
-
 
    ObservableField<Integer> currentFragment=new ObservableField<Integer>(FRAGMENT_HOME);
 
