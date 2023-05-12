@@ -15,7 +15,11 @@ import androidx.lifecycle.ViewModelProvider;
 import com.snd.app.MainActivity;
 import com.snd.app.MainViewModel;
 import com.snd.app.R;
+import com.snd.app.data.AppComponent;
+import com.snd.app.data.AppModule;
+import com.snd.app.data.DaggerAppComponent;
 import com.snd.app.databinding.MainHomeFrBinding;
+import com.snd.app.domain.UserDTO;
 
 import javax.inject.Inject;
 
@@ -26,20 +30,25 @@ public class HomeFragment extends Fragment {
 
     @Inject
     MainViewModel mainVM;
+    //@Inject
+    //HomeViewModel homeVM;
     @Inject
-    HomeViewModel homeVM;
+    UserDTO userDTO;
+
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         //프레그먼트가 사용할 xml 파일
         homeFrBinding= DataBindingUtil.inflate(inflater, R.layout.main_home_fr, container, false);
-
-        homeVM=new ViewModelProvider(this).get(HomeViewModel.class);
-        homeFrBinding.setHomeVM(homeVM);
-        homeVM=homeFrBinding.getHomeVM();   // 홈뷰모델 연동
-
         homeFrBinding.setLifecycleOwner(this);
+
+        AppComponent appComponent = DaggerAppComponent.builder().appModule(new AppModule()).build();
+
+        HomeViewModel homeVM=appComponent.homeViewModel();
+
+        homeFrBinding.setHomeVM(homeVM);    //홈뷰모델 연동
+
 
         return homeFrBinding.getRoot();
     }

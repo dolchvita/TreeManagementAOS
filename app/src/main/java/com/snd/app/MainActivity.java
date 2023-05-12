@@ -41,10 +41,10 @@ public class MainActivity extends AppCompatActivity {
 
 
             // 화면에 보일 프레그먼트
-            HomeFragment homeFragment=new HomeFragment();
+            // HomeFragment homeFragment=new HomeFragment();
 
-            // 아마 처음 화면을 메인으로 갖추는 것
-            getSupportFragmentManager().beginTransaction().replace(R.id.content, homeFragment).commit();
+            // 처음 화면을 메인으로 갖추는 것
+            getSupportFragmentManager().beginTransaction().replace(R.id.content, new HomeFragment()).commit();
 
 
             mainVM.getTabClcick().observe(this, new Observer() {
@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
                     // 메인 화면을 4가지의 프레그먼트로 분할
                     if(o.equals(1)){
                         Log.d(TAG,"홈이 올 예정");
-                        transaction.replace(R.id.content, homeFragment);
+                        //transaction.replace(R.id.content, homeFragment);
 
                     } else if (o.equals(2)) {
                         Log.d(TAG,"맵이 올 예정");

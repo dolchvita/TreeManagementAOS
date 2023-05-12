@@ -18,7 +18,9 @@ import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 import com.snd.app.MainActivity;
 import com.snd.app.R;
+import com.snd.app.data.AppComponent;
 import com.snd.app.data.AppModule;
+import com.snd.app.data.DaggerAppComponent;
 import com.snd.app.data.user.PP;
 import com.snd.app.data.user.UserRepositoryImpl;
 import com.snd.app.domain.UserDTO;
@@ -38,6 +40,7 @@ public class LoginActivity extends AppCompatActivity {
 
     // 1 로그인 정보
     JSONObject loginData=new JSONObject();
+    //MainActivity mainActivity=new MainActivity();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -153,6 +156,12 @@ public class LoginActivity extends AppCompatActivity {
                        try {
                            user = gson.fromJson(response.get("data").toString(), UserDTO.class);
 
+                           //AppComponent appComponent= DaggerAppComponent.builder().userRepositoryModule(user).appModule(new AppModule()).build();
+                          // appComponent.inject(new MainActivity());
+
+                           Log.d(TAG, "**로그인 화면에서 유저 확인 ** "+user);
+
+
                        } catch (JSONException e) {
                            throw new RuntimeException(e);
                        }
@@ -180,11 +189,8 @@ public class LoginActivity extends AppCompatActivity {
     public void startActivity(){
         Intent intent=new Intent(this, MainActivity.class);
         startActivity(intent);
+        finish();
     }
-
-
-
-    
 
 
 
