@@ -1,5 +1,6 @@
 package com.snd.app.ui.home;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +21,7 @@ import com.snd.app.data.AppModule;
 import com.snd.app.data.DaggerAppComponent;
 import com.snd.app.databinding.MainHomeFrBinding;
 import com.snd.app.domain.UserDTO;
+import com.snd.app.sharedPreferences.SharedModule;
 
 import javax.inject.Inject;
 
@@ -43,11 +45,15 @@ public class HomeFragment extends Fragment {
         homeFrBinding= DataBindingUtil.inflate(inflater, R.layout.main_home_fr, container, false);
         homeFrBinding.setLifecycleOwner(this);
 
-        AppComponent appComponent = DaggerAppComponent.builder().appModule(new AppModule()).build();
+        // 앱 컴포넌트 - 의존성 주입으로 뷰 모델과 연동
+        AppComponent appComponent = DaggerAppComponent.builder().appModule(new AppModule())
+                .shareModule(new SharedModule(getActivity().getApplication())).build();
+        // 모듈 2개 이상 추가
+
 
         HomeViewModel homeVM=appComponent.homeViewModel();
-
         homeFrBinding.setHomeVM(homeVM);    //홈뷰모델 연동
+
 
 
         return homeFrBinding.getRoot();

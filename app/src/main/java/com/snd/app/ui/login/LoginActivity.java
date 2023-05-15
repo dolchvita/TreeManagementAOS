@@ -1,7 +1,10 @@
 package com.snd.app.ui.login;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
@@ -18,11 +21,8 @@ import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 import com.snd.app.MainActivity;
 import com.snd.app.R;
-import com.snd.app.data.AppComponent;
 import com.snd.app.data.AppModule;
-import com.snd.app.data.DaggerAppComponent;
-import com.snd.app.data.user.PP;
-import com.snd.app.data.user.UserRepositoryImpl;
+import com.snd.app.data.user.SharedPreferencesManager;
 import com.snd.app.domain.UserDTO;
 
 import org.json.JSONException;
@@ -40,7 +40,6 @@ public class LoginActivity extends AppCompatActivity {
 
     // 1 로그인 정보
     JSONObject loginData=new JSONObject();
-    //MainActivity mainActivity=new MainActivity();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -156,10 +155,13 @@ public class LoginActivity extends AppCompatActivity {
                        try {
                            user = gson.fromJson(response.get("data").toString(), UserDTO.class);
 
-                           //AppComponent appComponent= DaggerAppComponent.builder().userRepositoryModule(user).appModule(new AppModule()).build();
-                          // appComponent.inject(new MainActivity());
 
                            Log.d(TAG, "**로그인 화면에서 유저 확인 ** "+user);
+
+                           // new가 아니라 context 로부터 가져와햐 하는 것 같다.
+
+                           saveUserInfo(user);
+
 
 
                        } catch (JSONException e) {
@@ -183,6 +185,25 @@ public class LoginActivity extends AppCompatActivity {
        };
        AppModule.requestQueue.add(request3);
        startActivity();
+   }
+
+
+   // 4 회원 정보 저장하기
+   public void saveUserInfo(UserDTO user){
+        //객체 생성
+
+       SharedPreferences sharedUser=getSharedPreferences("sharedUser", Activity.MODE_PRIVATE);
+
+       // 로그인시 생성한 PS 객체를 매개변수로 넘겨줌
+       SharedPreferencesManager sharedPreferencesManager=new SharedPreferencesManager(this);
+       sharedPreferencesManager.saveUserInfo("company",user.getCompany().toString());
+
+
+         String company=sharedPreferencesManager.getUserInfo("company",null);
+        Log.d(TAG, "** 저장된 SP 객체의 회사명 ** "+company);
+
+        // 위의 코드를 모듈화 해보기
+
    }
 
 
