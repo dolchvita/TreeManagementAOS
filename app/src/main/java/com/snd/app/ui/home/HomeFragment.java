@@ -19,8 +19,10 @@ import com.snd.app.R;
 import com.snd.app.data.AppComponent;
 import com.snd.app.data.AppModule;
 import com.snd.app.data.DaggerAppComponent;
+import com.snd.app.data.user.SharedPreferencesManager;
 import com.snd.app.databinding.MainHomeFrBinding;
 import com.snd.app.domain.UserDTO;
+import com.snd.app.sharedPreferences.SharedApplication;
 import com.snd.app.sharedPreferences.SharedModule;
 
 import javax.inject.Inject;
@@ -46,14 +48,11 @@ public class HomeFragment extends Fragment {
         homeFrBinding.setLifecycleOwner(this);
 
         // 앱 컴포넌트 - 의존성 주입으로 뷰 모델과 연동
-        AppComponent appComponent = DaggerAppComponent.builder().appModule(new AppModule())
-                .shareModule(new SharedModule(getActivity().getApplication())).build();
+        AppComponent appComponent = DaggerAppComponent.builder().appModule(new AppModule(new SharedApplication())).build();
         // 모듈 2개 이상 추가
-
 
         HomeViewModel homeVM=appComponent.homeViewModel();
         homeFrBinding.setHomeVM(homeVM);    //홈뷰모델 연동
-
 
 
         return homeFrBinding.getRoot();

@@ -23,9 +23,4 @@ public class SharedModule {
         return application;
     }
 
-    @Provides
-    @Singleton
-    public Context provideSharedPreferences() {
-        return application;
-    }
 }

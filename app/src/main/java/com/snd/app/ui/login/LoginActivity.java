@@ -1,8 +1,11 @@
 package com.snd.app.ui.login;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelStoreOwner;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -21,14 +24,20 @@ import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 import com.snd.app.MainActivity;
 import com.snd.app.R;
+import com.snd.app.data.AppComponent;
 import com.snd.app.data.AppModule;
+import com.snd.app.data.DaggerAppComponent;
 import com.snd.app.data.user.SharedPreferencesManager;
 import com.snd.app.domain.UserDTO;
+import com.snd.app.sharedPreferences.SharedApplication;
+import com.snd.app.ui.home.HomeViewModel;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.inject.Inject;
 
 
 public class LoginActivity extends AppCompatActivity {
@@ -163,7 +172,6 @@ public class LoginActivity extends AppCompatActivity {
                            saveUserInfo(user);
 
 
-
                        } catch (JSONException e) {
                            throw new RuntimeException(e);
                        }
@@ -190,20 +198,30 @@ public class LoginActivity extends AppCompatActivity {
 
    // 4 회원 정보 저장하기
    public void saveUserInfo(UserDTO user){
-        //객체 생성
-
-       SharedPreferences sharedUser=getSharedPreferences("sharedUser", Activity.MODE_PRIVATE);
 
        // 로그인시 생성한 PS 객체를 매개변수로 넘겨줌
-       SharedPreferencesManager sharedPreferencesManager=new SharedPreferencesManager(this);
-       sharedPreferencesManager.saveUserInfo("company",user.getCompany().toString());
+       SharedPreferences sharedPreferences=this.getSharedPreferences("sharedUser", Context.MODE_PRIVATE);
+       Log.d(TAG, "**로그인 액티비티 쉐어드 객체 확인 ** "+sharedPreferences);
 
 
-         String company=sharedPreferencesManager.getUserInfo("company",null);
+       AppComponent appComponent = DaggerAppComponent.builder().appModule(new AppModule(new SharedApplication())).build();
+       // 모듈 2개 이상 추가
+       SharedPreferencesManager sharedPreferencesManager=appComponent.sharedPreferencesManager();
+
+
+       sharedPreferencesManager.setSharedPreferences(sharedPreferences);
+       sharedPreferencesManager.saveUserInfo("company",user.getCompany());
+
+
+        String company=sharedPreferencesManager.getUserInfo("company",null);
         Log.d(TAG, "** 저장된 SP 객체의 회사명 ** "+company);
 
-        // 위의 코드를 모듈화 해보기
 
+        // 의존성 주입됨
+        appComponent.inject(this);
+
+
+        // 위의 코드를 모듈화 해보기
    }
 
 

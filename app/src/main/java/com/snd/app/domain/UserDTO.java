@@ -3,6 +3,9 @@ package com.snd.app.domain;
 
 import java.util.List;
 
+import javax.inject.Singleton;
+
+@Singleton
 public class UserDTO {
     private String id;
     private String password;
