@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- input tree info Style -->
+    <style name="tree_info_label">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:fontFamily">@font/notosans_kr_regular</item>
+        <item name="android:textColor">#B2321800</item>
+        <item name="android:layout_margin">15dp</item>
+        <item name="android:textSize">15dp</item>
+    </style>
+
+    <style name="tree_info_edt">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:fontFamily">@font/notosans_kr_medium</item>
+        <item name="android:textColor">@color/cocoa_brown</item>
+        <item name="android:textSize">18dp</item>
+        <item name="android:singleLine">true</item>
+    </style>
+
+
+    <style name="sr_no_label">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">5dp</item>
+        <item name="android:fontFamily">@font/notosans_kr_regular</item>
+        <item name="android:textColor">#B2321800</item>
+        <item name="android:textSize">15dp</item>
+    </style>
+
+    <style name="sr_no_edt">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="android:fontFamily">@font/notosans_kr_medium</item>
+        <item name="android:textColor">@color/cocoa_brown</item>
+        <item name="android:textSize">18dp</item>
+        <item name="android:singleLine">true</item>
+    </style>
+
+</resources>

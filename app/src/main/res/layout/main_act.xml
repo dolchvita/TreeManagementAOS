@@ -25,6 +25,20 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/notice"
+            style="@style/image_btn"
+            android:layout_marginEnd="10dp"
+            app:layout_constraintBottom_toBottomOf="@id/header"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/header"
+            android:tint="@color/cocoa_brown"
+            android:onClick=""
+
+            app:srcCompat="@drawable/ic_notice" />
+
+
         <androidx.appcompat.widget.AppCompatAutoCompleteTextView
             android:id="@+id/title"
             style="@style/headerTextStyle"

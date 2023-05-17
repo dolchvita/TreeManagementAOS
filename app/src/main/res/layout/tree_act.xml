@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="HardcodedText, SpUsage">
+
+    <data>
+        <variable
+            name="treeVM"
+            type="com.snd.app.ui.tree.TreeViewModel"
+            />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <View
+            android:id="@+id/header"
+            style="@style/headerStyle"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/back"
+            style="@style/image_btn"
+            android:layout_marginStart="10dp"
+            app:layout_constraintBottom_toBottomOf="@id/header"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/header"
+
+            app:srcCompat="@drawable/ic_back_24" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            style="@style/headerTextStyle"
+            android:text="NFC 태그"
+            app:layout_constraintBottom_toBottomOf="@id/header"
+            app:layout_constraintEnd_toEndOf="@id/header"
+            app:layout_constraintStart_toStartOf="@id/header"
+            app:layout_constraintTop_toTopOf="@id/header" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/content"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:fontFamily="@font/notosans_kr_regular"
+            android:textColor="@color/cocoa_brown"
+            android:textSize="25dp"
+            android:text="수목 진단 정보 입력을 위해\n NFC 칩을 태그하세요."
+            app:layout_constraintTop_toBottomOf="@+id/header"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:text="수목 진단 정보 입력을 위해\n NFC 칩을 태그하세요."/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -1,6 +1,5 @@
 package com.snd.app.ui.home;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,20 +9,15 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
 
-import com.snd.app.MainActivity;
 import com.snd.app.MainViewModel;
 import com.snd.app.R;
 import com.snd.app.data.AppComponent;
 import com.snd.app.data.AppModule;
 import com.snd.app.data.DaggerAppComponent;
-import com.snd.app.data.user.SharedPreferencesManager;
 import com.snd.app.databinding.MainHomeFrBinding;
 import com.snd.app.domain.UserDTO;
 import com.snd.app.sharedPreferences.SharedApplication;
-import com.snd.app.sharedPreferences.SharedModule;
 
 import javax.inject.Inject;
 
@@ -34,8 +28,7 @@ public class HomeFragment extends Fragment {
 
     @Inject
     MainViewModel mainVM;
-    //@Inject
-    //HomeViewModel homeVM;
+    HomeViewModel homeVM;
     @Inject
     UserDTO userDTO;
 
@@ -51,12 +44,13 @@ public class HomeFragment extends Fragment {
         AppComponent appComponent = DaggerAppComponent.builder().appModule(new AppModule(new SharedApplication())).build();
         // 모듈 2개 이상 추가
 
-        HomeViewModel homeVM=appComponent.homeViewModel();
+        homeVM=appComponent.homeViewModel();
         homeFrBinding.setHomeVM(homeVM);    //홈뷰모델 연동
-
 
         return homeFrBinding.getRoot();
     }
+
+
 
 
 }

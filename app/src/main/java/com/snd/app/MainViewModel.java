@@ -17,16 +17,23 @@ public class MainViewModel extends ViewModel {
     public static final int FRAGMENT_COMPLAINT=3;
     public static final int FRAGMENT_RECENT=4;
 
+    ObservableField<Integer> currentFragment=new ObservableField<Integer>(FRAGMENT_HOME);
+
     private MutableLiveData<Integer> _tabClick;  // setter
     LiveData tabClick=getTabClcick();    // getter(결과)
 
-   ObservableField<Integer> currentFragment=new ObservableField<Integer>(FRAGMENT_HOME);
+
+    // NFC
+    ObservableField<Boolean> isNFC=new ObservableField<>();
+
+
 
     public void setTabClick(Integer value){
         // 클릭된 수로 속성 변경하기
         _tabClick.setValue(value);
         currentFragment.set(value);
     }
+
 
     public LiveData getTabClcick(){
         // 여기서 아래 변수가 null로 뜬다..

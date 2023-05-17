@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
             getSupportFragmentManager().beginTransaction().replace(R.id.content, new HomeFragment()).commit();
 
 
-            mainVM.getTabClcick().observe(this, new Observer() {
+            mainVM.tabClick.observe(this, new Observer() {
                 @Override
                 public void onChanged(Object o) {
                     // 여기서 UI 업데이트 처리

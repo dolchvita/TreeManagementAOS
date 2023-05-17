@@ -210,7 +210,7 @@ public class LoginActivity extends AppCompatActivity {
 
 
        sharedPreferencesManager.setSharedPreferences(sharedPreferences);
-       sharedPreferencesManager.saveUserInfo("company",user.getCompany());
+       sharedPreferencesManager.saveUserInfo("company",user.getCompany());  // key, value
 
 
         String company=sharedPreferencesManager.getUserInfo("company",null);
@@ -220,17 +220,14 @@ public class LoginActivity extends AppCompatActivity {
         // 의존성 주입됨
         appComponent.inject(this);
 
-
         // 위의 코드를 모듈화 해보기
    }
-
 
     public void startActivity(){
         Intent intent=new Intent(this, MainActivity.class);
         startActivity(intent);
         finish();
     }
-
 
 
 }

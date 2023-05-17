@@ -27,14 +27,14 @@ public class SharedPreferencesManager {
     @Inject
     HomeViewModel homeViewModel;
 
-    // 쉐어드 객체 매개변수로  받기
+
     public SharedPreferencesManager(Context context) {
         Log.d(TAG, "** 쉐어드 객체 확인 - 생성자** "+sharedPreferences);
 
         AppComponent appComponent = DaggerAppComponent.builder().appModule(new AppModule(new SharedApplication())).build();
+
         // 주입할 유저 객체 사용
         userDTO=appComponent.userDTO();
-
     }
 
 
@@ -53,6 +53,7 @@ public class SharedPreferencesManager {
         return sharedPreferences;
     }
 
+    // 쉐어드 객체 매개변수로  받기
     public void setSharedPreferences(SharedPreferences sharedPreferences){
         Log.d(TAG, "** Manager - set ** "+sharedPreferences);
 
@@ -70,13 +71,11 @@ public class SharedPreferencesManager {
         editor.apply();
 
         // 테스트 잘 통과됨
-
         Log.d(TAG, "**나왔나요!! ** "+ userDTO);
 
+        userDTO.setCompany(sharedPreferences.getString(key,null));
 
-        userDTO.setCompany(sharedPreferences.getString(key,""));
-
-        getUserInfo(key, value);
+        //getUserInfo(key, value);
     }
 
 
@@ -87,11 +86,11 @@ public class SharedPreferencesManager {
 
     // 정보 꺼내 읽기
     public String getUserInfo(String key, String defaultValue){
+
    //       Log.d(TAG, "**getInfo 에서 테스트 중 ** "+sharedPreferences.getString(key,""));
             Log.d(TAG, "** getInfo - UserDTO ** "+ userDTO.getCompany());
 
             // 널!!!!
         return sharedPreferences.getString(key, defaultValue);
     }
-
 }

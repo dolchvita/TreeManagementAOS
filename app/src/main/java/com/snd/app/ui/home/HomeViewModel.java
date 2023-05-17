@@ -1,9 +1,9 @@
 package com.snd.app.ui.home;
 
-import android.app.Application;
-import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
+import android.view.View;
 
 import androidx.databinding.ObservableField;
 import androidx.lifecycle.ViewModel;
@@ -16,7 +16,7 @@ import com.snd.app.databinding.MainHomeFrBinding;
 import com.snd.app.domain.UserDTO;
 import com.snd.app.sharedPreferences.SharedApplication;
 import com.snd.app.data.user.SharedPreferencesManager;
-import com.snd.app.sharedPreferences.SharedModule;
+import com.snd.app.ui.tree.TreeActivity;
 
 import javax.inject.Inject;
 
@@ -29,71 +29,48 @@ public class HomeViewModel extends ViewModel {
     public ObservableField<String> name = new ObservableField<>();
 
     private SharedPreferences sharedPreferences;
-
-    UserDTO userDTO;
-   private MainHomeFrBinding homeFrBinding;
-
+    private MainHomeFrBinding homeFrBinding;
     private SharedPreferencesManager sharedPreferencesManager;
+
+    @Inject
+    UserDTO userDTO;
+
+    // NFC 태그 관련
+
 
     @Inject
     public HomeViewModel(SharedApplication application, SharedPreferencesManager manager) {
         AppComponent appComponent=DaggerAppComponent.builder().appModule(new AppModule(new SharedApplication())).build();
-
-        userDTO=appComponent.userDTO();
-
         this.sharedPreferencesManager = manager;
 
         // 결국....
-
         sharedPreferences = manager.getSharedPreferences();
-        Log.d(TAG,"**뷰모델 확인에서디티오 확인 **"+userDTO);
 
+        // 매니저에서 디티오 꺼내기
+        UserDTO userDTO=manager.getUserDTO();
+        Log.d(TAG,"**뷰모델 확인에서디티오 확인 **"+userDTO);
         Log.d(TAG,"**뷰모델 확인에서디티오 회사 확인 **"+userDTO.getCompany());
 
-        //
-
-        setUserInfo();
+        setUserInfo(userDTO);
     }
 
 
-    public void setSharedPreferencesManager(SharedPreferencesManager manager) {
-        // 여기서 객체를 매개변수로 주입하는 건 지양하기...
-
-        sharedPreferences = manager.getSharedPreferences();
-        Log.d(TAG,"**뷰모델 확인!! **"+sharedPreferences);
-
-        String company1=manager.getUserInfo("company",null);
-        String company2=sharedPreferences.getString("company",null);
-
-        Log.d(TAG,"*회사이름 - 뷰모대ㅔㄹ*"+company1);
-        Log.d(TAG,"*회사이름 - 뷰모대ㅔㄹ*"+company2);
-
-
-        userDTO.setCompany(company1);
-        Log.d(TAG,"** 디티오 확인 **"+userDTO);
-        Log.d(TAG,"** 디티오 확인 **"+userDTO.getCompany());
-
-
-        company.set(company1);
-        company.set("dddd");
-        setUserInfo();
-    }
-
-
-    // 바인딩 클래스와 연결하는 메서드
-    public void setBinding(MainHomeFrBinding binding) {
-        this.homeFrBinding = binding;
-    }
-
-
-    public void setUserInfo(){
+    public void setUserInfo(UserDTO userDTO){
         //Log.d(TAG,"** 유저 인포 ** ");
 
         Log.d(TAG,"** 유저 인포 ** "+userDTO.getCompany());
+        //company.set("뭐죵");
         company.set(userDTO.getCompany());
     }
 
+    // 화면 변경
+    public void onTextViewClicked(View view) {
+        // 액티비티 변경을 위한 Intent 생성
+        Intent intent = new Intent(view.getContext(), TreeActivity.class);
 
+        // 액티비티 변경 로직
+        view.getContext().startActivity(intent);
+    }
 
 
 }

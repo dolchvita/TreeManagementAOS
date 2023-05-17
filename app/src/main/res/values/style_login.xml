@@ -16,13 +16,7 @@
 
 
     <!-- 로그인 EditText 스타일 -->
-    <style name="tree_info_edt">
-        <item name="android:layout_width">0dp</item>
-        <item name="android:layout_height">wrap_content</item>
 
-        <item name="android:textSize">18dp</item>
-        <item name="android:singleLine">true</item>
-    </style>
 
 
 </resources>

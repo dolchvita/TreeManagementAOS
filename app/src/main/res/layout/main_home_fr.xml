@@ -34,21 +34,22 @@
                 android:textSize="20dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:text="의 정보 입니다." />
+                tools:text="황규민의 정보 입니다." />
 
             <!---->
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/user_info_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="24dp"
                 android:background="@drawable/rectangle_white_5"
                 android:elevation="5dp"
                 android:paddingStart="20dp"
                 android:paddingEnd="20dp"
-
-                app:layout_constraintTop_toBottomOf="@id/name"
-                tools:layout_editor_absoluteX="16dp">
+                app:layout_constraintBottom_toTopOf="@id/state_info_layout"
+                app:layout_constraintTop_toBottomOf="@id/name">
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/company_label"
@@ -127,18 +128,156 @@
             app:layout_constraintBottom_toBottomOf="@id/btn_layout"
             app:layout_constraintTop_toBottomOf="@+id/user_info_layout">
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <!---->
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/btn_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/state_info_layout">
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/nfc"
+                    style="@style/contentTextStyle"
+                    android:drawableTop="@drawable/ic_nfc_off"
+                    android:drawablePadding="5dp"
+                    android:gravity="center"
+                    android:text="NFC상태"
+                    android:textSize="15dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/divider2"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="NFC상태" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                <View
+                    android:id="@+id/divider2"
+                    android:layout_width="0.1dp"
+                    android:layout_height="0dp"
+                    android:elevation="1dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/network"
+                    app:layout_constraintStart_toEndOf="@id/nfc"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/network"
+                    style="@style/contentTextStyle"
+                    android:drawableTop="@drawable/ic_network_on"
+                    android:drawablePadding="5dp"
+                    android:gravity="center"
+                    android:text="네트워크상태"
+                    android:textSize="15dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/divider3"
+                    app:layout_constraintStart_toEndOf="@+id/divider2"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="네트워크상태" />
+
+                <View
+                    android:id="@+id/divider3"
+                    android:layout_width="0.1dp"
+                    android:layout_height="0dp"
+                    android:elevation="2dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/gps"
+                    app:layout_constraintStart_toEndOf="@id/network"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/gps"
+                    style="@style/contentTextStyle"
+                    android:drawableTop="@drawable/ic_gps_on"
+                    android:drawablePadding="5dp"
+                    android:gravity="center"
+                    android:text="GPS상태"
+                    android:textSize="15dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/divider3"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="GPS상태" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+            <!--./-->
+
+            <!---->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/btn_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/state_info_layout">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/diagnose"
+                    android:layout_width="0dp"
+                    android:layout_height="100dp"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:background="@drawable/rectangle_white_5"
+                    android:drawableTop="@drawable/ic_write"
+                    android:elevation="3dp"
+                    android:fontFamily="@font/notosans_kr_bold"
+                    android:gravity="center"
+                    android:onClick="@{homeVM::onTextViewClicked}"
+                    android:padding="10dp"
+                    android:text="수목 진단"
+                    android:textColor="@color/cocoa_brown"
+                    android:textSize="15dp"
+                    app:drawableTint="@color/cocoa_brown"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/check"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="수목 진단" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/check"
+                    android:layout_width="0dp"
+                    android:layout_height="100dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/rectangle_white_5"
+                    android:drawableTop="@drawable/ic_read"
+                    android:elevation="3dp"
+                    android:fontFamily="@font/notosans_kr_bold"
+                    android:gravity="center"
+
+                    android:padding="15dp"
+                    android:text="수목 확인"
+                    android:textColor="@color/cocoa_brown"
+                    android:textSize="15dp"
+                    app:drawableTint="@color/cocoa_brown"
+                    app:layout_constraintEnd_toStartOf="@id/complaint"
+                    app:layout_constraintStart_toEndOf="@id/diagnose"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="수목 확인" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/complaint"
+                    android:layout_width="0dp"
+                    android:layout_height="100dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="24dp"
+                    android:layout_marginBottom="10dp"
+                    android:background="@drawable/rectangle_white_5"
+                    android:drawableTop="@drawable/ic_complaint"
+                    android:elevation="3dp"
+                    android:fontFamily="@font/notosans_kr_bold"
+                    android:gravity="center"
+                    android:padding="15dp"
+                    android:text="민원 관리"
+                    android:textColor="@color/cocoa_brown"
+                    android:textSize="15dp"
+                    app:drawableTint="@color/cocoa_brown"
+                    app:layout_constraintBottom_toBottomOf="@id/diagnose"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/check"
+                    app:layout_constraintTop_toTopOf="@id/diagnose"
+                    tools:text="민원 관리" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+            <!--./-->
+
+
+
+
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
