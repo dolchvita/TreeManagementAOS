@@ -41,6 +41,7 @@ public class HomeViewModel extends ViewModel {
     @Inject
     public HomeViewModel(SharedApplication application, SharedPreferencesManager manager) {
         AppComponent appComponent=DaggerAppComponent.builder().appModule(new AppModule(new SharedApplication())).build();
+        appComponent.inject(this);
         this.sharedPreferencesManager = manager;
 
         // 결국....

@@ -13,28 +13,63 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.snd.app.R;
 import com.snd.app.common.TMActivity;
-import com.snd.app.databinding.WriteTreeBasicInfoActBinding;
+import com.snd.app.data.AppComponent;
+import com.snd.app.data.AppModule;
+import com.snd.app.data.DaggerAppComponent;
+import com.snd.app.data.user.SharedPreferencesManager;
+import com.snd.app.databinding.RegistTreeBasicInfoActBinding;
+import com.snd.app.domain.tree.TreeBasicInfoDTO;
+import com.snd.app.sharedPreferences.SharedApplication;
+import com.snd.app.ui.tree.TreeActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class RegistTreeBasicInfoActivity extends TMActivity {
-    private String TAG=this.getClass().getName();
+import javax.inject.Inject;
 
-    WriteTreeBasicInfoActBinding treeBasicInfoActBinding;
+public class RegistTreeBasicInfoActivity extends TMActivity {
+    RegistTreeBasicInfoActBinding registTreeBasicInfoActBinding;
+
+    @Inject
+    SharedPreferencesManager sharedPreferencesManager;
+    String idHex;
+
+    RegistTreeBasicInfoViewModel registTreeBasicInfoViewModel;
+    TreeBasicInfoDTO treeBasicInfoDTO;
 
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        treeBasicInfoActBinding= DataBindingUtil.setContentView(this, R.layout.write_tree_basic_info_act);
-        treeBasicInfoActBinding.setLifecycleOwner(this);
+        registTreeBasicInfoActBinding= DataBindingUtil.setContentView(this, R.layout.regist_tree_basic_info_act);
+        registTreeBasicInfoActBinding.setLifecycleOwner(this);
 
+        // 의존성 주입하기
+        AppComponent appComponent= DaggerAppComponent.builder().appModule(new AppModule(new SharedApplication())).build();
+        appComponent.inject(this);
+
+        sharedPreferencesManager=appComponent.sharedPreferencesManager();
+        registTreeBasicInfoViewModel=new RegistTreeBasicInfoViewModel();
+
+        registTreeBasicInfoActBinding.setTreeBasicInfoVM(registTreeBasicInfoViewModel);
+        setTreeBasicInfoDTO();
+
+        Log.d(TAG,"** 나니? **");
     }
 
 
+    public void setTreeBasicInfoDTO(){
+        // 디티오 현재 null
+        Log.d(TAG, "디티오 확인"+treeBasicInfoDTO);
+        //treeBasicInfoDTO.setNFC("1234");
+        //treeBasicInfoDTO.setSpecies("나무");
+        //treeBasicInfoDTO.setSubmitter(sharedPreferencesManager.getUserInfo("name",null));
+        //treeBasicInfoDTO.setVendor(sharedPreferencesManager.getUserInfo("company",null));
 
+        registTreeBasicInfoViewModel.setTextViewModel(treeBasicInfoDTO);
+
+    }
 
 
     // 수목 기본정보 등록
@@ -54,7 +89,6 @@ public class RegistTreeBasicInfoActivity extends TMActivity {
                         } catch (JSONException e) {
                             throw new RuntimeException(e);
                         }
-
                     }
                 },
                 new Response.ErrorListener() {

@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="TreeBasicInfoVM"
+            type="com.snd.app.ui.write.RegistTreeBasicInfoViewModel"/>
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <View
+            android:id="@+id/header"
+            style="@style/headerStyle"
+            android:background="@color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/back"
+            style="@style/image_btn"
+            android:layout_marginStart="10dp"
+
+            app:layout_constraintBottom_toBottomOf="@id/header"
+            app:layout_constraintStart_toStartOf="parent"
+
+            app:layout_constraintTop_toTopOf="@id/header"
+            app:srcCompat="@drawable/ic_back_24" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            style="@style/headerTextStyle"
+            android:text="기본 정보 입력"
+            app:layout_constraintBottom_toBottomOf="@id/header"
+            app:layout_constraintEnd_toEndOf="@id/header"
+            app:layout_constraintStart_toStartOf="@id/header"
+            app:layout_constraintTop_toTopOf="@id/header"/>
+
+
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/scroll_view"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:fillViewport="true"
+            android:overScrollMode="never"
+            app:layout_constraintBottom_toTopOf="@id/map_layout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/header"
+            app:layout_constraintVertical_weight="3">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/info_layout"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:elevation="10dp"
+
+                app:layout_constraintTop_toBottomOf="@id/header">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/sr_no_tv"
+                    style="@style/sr_no_label"
+                    android:gravity="center"
+                    android:text="일련번호"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tree_nfc_tv"
+                    style="@style/tree_info_label"
+                    android:layout_marginTop="10dp"
+                    android:text="NFC 번호"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.551"
+                    app:layout_constraintStart_toStartOf="parent"
+
+                    app:layout_constraintTop_toBottomOf="@id/sr_no_tv" />
+
+
+                <androidx.appcompat.widget.AppCompatAutoCompleteTextView
+                    android:id="@+id/tree_name"
+                    style="@style/tree_info_edt"
+                    android:completionThreshold="0"
+                    android:nextFocusDown="@id/tree_nfc_tv"
+                    android:text="@{TreeBasicInfoVM.NFC}"
+                    app:layout_constraintEnd_toEndOf="@id/tree_nfc_tv"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="@id/tree_nfc_tv"
+
+                    app:layout_constraintTop_toBottomOf="@id/tree_nfc_tv"
+                    />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tr_name_tv"
+                    style="@style/tree_info_label"
+                    android:layout_marginTop="10dp"
+                    android:text="수목명"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tree_name" />
+
+                <androidx.appcompat.widget.AppCompatAutoCompleteTextView
+                    android:id="@+id/tr_name"
+                    style="@style/tree_info_edt"
+                    android:completionThreshold="0"
+                    android:longClickable="false"
+                    android:text="@{TreeBasicInfoVM.species}"
+                    app:layout_constraintEnd_toEndOf="@id/tr_name_tv"
+                    app:layout_constraintStart_toStartOf="@id/tr_name_tv"
+                    app:layout_constraintTop_toBottomOf="@id/tr_name_tv"
+
+                    tools:hint="소유주를 입력해주세요."
+                    tools:text="느티나무" />
+
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tr_submitter_tv"
+                    style="@style/tree_info_label"
+                    android:layout_marginTop="10dp"
+                    android:text="조사자"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+
+                    app:layout_constraintTop_toBottomOf="@id/tr_name"
+                    />
+
+                <androidx.appcompat.widget.AppCompatAutoCompleteTextView
+                    android:id="@+id/tr_submitter"
+                    style="@style/tree_info_edt"
+                    android:completionThreshold="0"
+                    android:longClickable="false"
+                    android:text="@{TreeBasicInfoVM.submitter}"
+
+                    app:layout_constraintEnd_toEndOf="@id/tr_submitter_tv"
+                    app:layout_constraintStart_toStartOf="@id/tr_submitter_tv"
+                    app:layout_constraintTop_toBottomOf="@id/tr_submitter_tv"
+                    tools:text="황규민" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tr_vendor_tv"
+                    style="@style/tree_info_label"
+                    android:layout_marginTop="10dp"
+                    android:text="조사업체"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+
+                    app:layout_constraintTop_toBottomOf="@id/tr_submitter"
+                    />
+
+                <androidx.appcompat.widget.AppCompatAutoCompleteTextView
+                    android:id="@+id/tr_vendor"
+                    style="@style/tree_info_edt"
+                    android:completionThreshold="0"
+                    android:longClickable="false"
+                    android:text="@{TreeBasicInfoVM.vendor}"
+                    app:layout_constraintEnd_toEndOf="@id/tr_vendor_tv"
+                    app:layout_constraintStart_toStartOf="@id/tr_vendor_tv"
+                    app:layout_constraintTop_toBottomOf="@id/tr_vendor_tv"
+
+                    tools:text="시내엔들" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.core.widget.NestedScrollView>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/map_layout"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@id/save"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/scroll_view"
+            app:layout_constraintVertical_weight="2">
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/save"
+            style="@style/primary_button_1"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+
+            android:text="저 장"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

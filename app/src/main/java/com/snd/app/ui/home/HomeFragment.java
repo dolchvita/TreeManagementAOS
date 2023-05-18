@@ -42,7 +42,6 @@ public class HomeFragment extends Fragment {
 
         // 앱 컴포넌트 - 의존성 주입으로 뷰 모델과 연동
         AppComponent appComponent = DaggerAppComponent.builder().appModule(new AppModule(new SharedApplication())).build();
-        // 모듈 2개 이상 추가
 
         homeVM=appComponent.homeViewModel();
         homeFrBinding.setHomeVM(homeVM);    //홈뷰모델 연동

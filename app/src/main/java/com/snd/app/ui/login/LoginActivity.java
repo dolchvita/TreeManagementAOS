@@ -211,6 +211,7 @@ public class LoginActivity extends AppCompatActivity {
 
        sharedPreferencesManager.setSharedPreferences(sharedPreferences);
        sharedPreferencesManager.saveUserInfo("company",user.getCompany());  // key, value
+       sharedPreferencesManager.saveUserInfo("name",user.getName());  // key, value
 
 
         String company=sharedPreferencesManager.getUserInfo("company",null);

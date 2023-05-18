@@ -17,11 +17,21 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.snd.app.R;
 import com.snd.app.common.TMActivity;
+import com.snd.app.data.AppComponent;
+import com.snd.app.data.AppModule;
+import com.snd.app.data.DaggerAppComponent;
+import com.snd.app.data.user.SharedPreferencesManager;
 import com.snd.app.databinding.TreeActBinding;
+import com.snd.app.domain.UserDTO;
+import com.snd.app.domain.tree.TreeBasicInfoDTO;
+import com.snd.app.sharedPreferences.SharedApplication;
 import com.snd.app.ui.write.RegistTreeBasicInfoActivity;
+import com.snd.app.ui.write.RegistTreeBasicInfoViewModel;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import javax.inject.Inject;
 
 public class TreeActivity extends TMActivity implements NfcAdapter.ReaderCallback {
     private String TAG=this.getClass().getName();
@@ -29,6 +39,9 @@ public class TreeActivity extends TMActivity implements NfcAdapter.ReaderCallbac
     TreeActBinding treeActBinding;
     public NfcAdapter nfcAdapter = null;
     public PendingIntent nfcPendingIntent;
+
+
+    private static final String IDHEX="idHex";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -40,7 +53,10 @@ public class TreeActivity extends TMActivity implements NfcAdapter.ReaderCallbac
         treeActBinding.setLifecycleOwner(this);
 
         initNfc();
+
     }
+
+
 
     // NFC 초기화 설정
     private void initNfc() {
@@ -70,6 +86,7 @@ public class TreeActivity extends TMActivity implements NfcAdapter.ReaderCallbac
         }
     }
 
+
     @Override
     protected void onPause() {
         super.onPause();
@@ -79,6 +96,7 @@ public class TreeActivity extends TMActivity implements NfcAdapter.ReaderCallbac
             nfcAdapter.disableReaderMode(this);
         }
     }
+
 
     @Override
     protected void onNewIntent(Intent intent) {
@@ -92,11 +110,9 @@ public class TreeActivity extends TMActivity implements NfcAdapter.ReaderCallbac
             // 태그의 UID 처리
             Toast.makeText(this, "NFC 태그 UID: " + tagUid, Toast.LENGTH_SHORT).show();
 
-            Intent intent1=new Intent(this, RegistTreeBasicInfoActivity.class);
-            startActivity(intent1);
-
         }
     }
+
 
     // NFC 인식
     @Override
@@ -109,6 +125,15 @@ public class TreeActivity extends TMActivity implements NfcAdapter.ReaderCallbac
         Log.d(TAG, "** NFC 아이디 가공 ** "+idHex);
 
 
+        // 화면 전환하기
+        Intent intent = new Intent(this, RegistTreeBasicInfoActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+        enableNfcForegroundDispatch(pendingIntent);
+
+        intent.putExtra(IDHEX, idHex);
+        startActivity(intent);
+
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -118,15 +143,17 @@ public class TreeActivity extends TMActivity implements NfcAdapter.ReaderCallbac
     }
 
 
-    private void enableNfcForegroundDispatch() {
-        Intent intent = new Intent(this, TreeActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        nfcAdapter.enableForegroundDispatch(this, PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE), null, null);
+    private void enableNfcForegroundDispatch(PendingIntent pendingIntent) {
+        nfcAdapter.enableForegroundDispatch(this, pendingIntent, null, null);
+
+        //nfcAdapter.enableForegroundDispatch(this, PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE), null, null);
     }
+
 
     private void disableNfcForegroundDispatch() {
         nfcAdapter.disableForegroundDispatch(TreeActivity.this);
     }
+
 
     private String bytesToHexString(byte[] bytes) {
         StringBuilder sb = new StringBuilder();
@@ -135,10 +162,6 @@ public class TreeActivity extends TMActivity implements NfcAdapter.ReaderCallbac
         }
         return sb.toString();
     }
-
-
-
-
 
 
 

@@ -8,6 +8,8 @@ import com.snd.app.sharedPreferences.SharedApplication;
 import com.snd.app.sharedPreferences.SharedModule;
 import com.snd.app.ui.home.HomeViewModel;
 import com.snd.app.ui.login.LoginActivity;
+import com.snd.app.ui.tree.TreeActivity;
+import com.snd.app.ui.write.RegistTreeBasicInfoActivity;
 
 import javax.inject.Singleton;
 import dagger.Component;
@@ -20,6 +22,7 @@ public interface AppComponent {
 
     void inject(HomeViewModel viewModel);
     void inject(LoginActivity loginActivity);
+    void inject(RegistTreeBasicInfoActivity registTreeBasicInfoActivity);
 
 
     // 커스텀 어플리케이션
