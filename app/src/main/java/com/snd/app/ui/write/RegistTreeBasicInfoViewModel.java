@@ -21,10 +21,10 @@ public class RegistTreeBasicInfoViewModel extends ViewModel {
 // 2 세팅된 디티오 받아서 변수 대입?
     public void setTextViewModel(TreeBasicInfoDTO treeBasicInfoDTO){
         // 여기가 null
-        NFC.set("test");
-        species.set("test");
-        submitter.set("test");
-        vendor.set("test");
+        NFC.set(treeBasicInfoDTO.getNFC());
+        species.set(treeBasicInfoDTO.getSpecies());
+        submitter.set(treeBasicInfoDTO.getSubmitter());
+        vendor.set(treeBasicInfoDTO.getVendor());
     }
 
 

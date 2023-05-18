@@ -40,7 +40,7 @@ public class TreeActivity extends TMActivity implements NfcAdapter.ReaderCallbac
     public NfcAdapter nfcAdapter = null;
     public PendingIntent nfcPendingIntent;
 
-
+    // 전달할 NFC 코드
     private static final String IDHEX="idHex";
 
     @Override
@@ -53,7 +53,35 @@ public class TreeActivity extends TMActivity implements NfcAdapter.ReaderCallbac
         treeActBinding.setLifecycleOwner(this);
 
         initNfc();
+    }
 
+
+    // NFC 인식
+    @Override
+    public void onTagDiscovered(Tag tag) {
+        Log.d(TAG, "** NFC 인식하였음 !! ** ");
+
+        byte[] id = tag.getId();
+        String idHex = bytesToHexString(id);
+        Log.d(TAG, "** NFC 아이디 추출 ** "+id);
+        Log.d(TAG, "** NFC 아이디 가공 ** "+idHex);
+
+
+        // 화면 전환하기
+        Intent intent = new Intent(this, RegistTreeBasicInfoActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+        enableNfcForegroundDispatch(pendingIntent);
+
+        intent.putExtra(IDHEX, idHex);
+        startActivity(intent);
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(TreeActivity.this, "NFC 발견", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
 
@@ -111,35 +139,6 @@ public class TreeActivity extends TMActivity implements NfcAdapter.ReaderCallbac
             Toast.makeText(this, "NFC 태그 UID: " + tagUid, Toast.LENGTH_SHORT).show();
 
         }
-    }
-
-
-    // NFC 인식
-    @Override
-    public void onTagDiscovered(Tag tag) {
-        Log.d(TAG, "** NFC 인식하였음 !! ** ");
-
-        byte[] id = tag.getId();
-        String idHex = bytesToHexString(id);
-        Log.d(TAG, "** NFC 아이디 추출 ** "+id);
-        Log.d(TAG, "** NFC 아이디 가공 ** "+idHex);
-
-
-        // 화면 전환하기
-        Intent intent = new Intent(this, RegistTreeBasicInfoActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
-        enableNfcForegroundDispatch(pendingIntent);
-
-        intent.putExtra(IDHEX, idHex);
-        startActivity(intent);
-
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(TreeActivity.this, "NFC 발견", Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 
 

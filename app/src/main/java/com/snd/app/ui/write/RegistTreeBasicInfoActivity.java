@@ -37,6 +37,8 @@ public class RegistTreeBasicInfoActivity extends TMActivity {
     RegistTreeBasicInfoViewModel registTreeBasicInfoViewModel;
     TreeBasicInfoDTO treeBasicInfoDTO;
 
+    private static final String IDHEX="idHex";
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -52,8 +54,13 @@ public class RegistTreeBasicInfoActivity extends TMActivity {
         sharedPreferencesManager=appComponent.sharedPreferencesManager();
         registTreeBasicInfoViewModel=new RegistTreeBasicInfoViewModel();
 
+        // 아이디 추출
+        idHex=getIntent().getStringExtra(IDHEX);
+        Log.d(TAG,"** 아이디 확인 **"+idHex);
+
         registTreeBasicInfoActBinding.setTreeBasicInfoVM(registTreeBasicInfoViewModel);
         setTreeBasicInfoDTO();
+
 
         Log.d(TAG,"** 나니? **");
     }
@@ -61,14 +68,15 @@ public class RegistTreeBasicInfoActivity extends TMActivity {
 
     public void setTreeBasicInfoDTO(){
         // 디티오 현재 null
+        treeBasicInfoDTO=new TreeBasicInfoDTO();
+
         Log.d(TAG, "디티오 확인"+treeBasicInfoDTO);
-        //treeBasicInfoDTO.setNFC("1234");
-        //treeBasicInfoDTO.setSpecies("나무");
-        //treeBasicInfoDTO.setSubmitter(sharedPreferencesManager.getUserInfo("name",null));
-        //treeBasicInfoDTO.setVendor(sharedPreferencesManager.getUserInfo("company",null));
+        treeBasicInfoDTO.setNFC(idHex);
+        treeBasicInfoDTO.setSpecies("산사나무");
+        treeBasicInfoDTO.setSubmitter(sharedPreferencesManager.getUserInfo("name",null));
+        treeBasicInfoDTO.setVendor(sharedPreferencesManager.getUserInfo("company",null));
 
         registTreeBasicInfoViewModel.setTextViewModel(treeBasicInfoDTO);
-
     }
 
 
