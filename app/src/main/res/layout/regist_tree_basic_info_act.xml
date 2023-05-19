@@ -5,7 +5,7 @@
 
     <data>
         <variable
-            name="TreeBasicInfoVM"
+            name="treeBasicInfoVM"
             type="com.snd.app.ui.write.RegistTreeBasicInfoViewModel"/>
     </data>
 
@@ -90,12 +90,13 @@
                     style="@style/tree_info_edt"
                     android:completionThreshold="0"
                     android:nextFocusDown="@id/tree_nfc_tv"
-                    android:text="@{TreeBasicInfoVM.NFC}"
+                    android:text="@{treeBasicInfoVM.NFC}"
                     app:layout_constraintEnd_toEndOf="@id/tree_nfc_tv"
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="@id/tree_nfc_tv"
 
                     app:layout_constraintTop_toBottomOf="@id/tree_nfc_tv"
+                    tools:text="0485cc0a635a80"
                     />
 
                 <androidx.appcompat.widget.AppCompatTextView
@@ -112,13 +113,13 @@
                     style="@style/tree_info_edt"
                     android:completionThreshold="0"
                     android:longClickable="false"
-                    android:text="@{TreeBasicInfoVM.species}"
+                    android:text="@{treeBasicInfoVM.species}"
                     app:layout_constraintEnd_toEndOf="@id/tr_name_tv"
                     app:layout_constraintStart_toStartOf="@id/tr_name_tv"
                     app:layout_constraintTop_toBottomOf="@id/tr_name_tv"
 
                     tools:hint="소유주를 입력해주세요."
-                    tools:text="느티나무" />
+                    tools:text="산사나무" />
 
 
                 <androidx.appcompat.widget.AppCompatTextView
@@ -137,12 +138,12 @@
                     style="@style/tree_info_edt"
                     android:completionThreshold="0"
                     android:longClickable="false"
-                    android:text="@{TreeBasicInfoVM.submitter}"
+                    android:text="@{treeBasicInfoVM.submitter}"
 
                     app:layout_constraintEnd_toEndOf="@id/tr_submitter_tv"
                     app:layout_constraintStart_toStartOf="@id/tr_submitter_tv"
                     app:layout_constraintTop_toBottomOf="@id/tr_submitter_tv"
-                    tools:text="황규민" />
+                    tools:text="전현찬" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tr_vendor_tv"
@@ -160,7 +161,7 @@
                     style="@style/tree_info_edt"
                     android:completionThreshold="0"
                     android:longClickable="false"
-                    android:text="@{TreeBasicInfoVM.vendor}"
+                    android:text="@{treeBasicInfoVM.vendor}"
                     app:layout_constraintEnd_toEndOf="@id/tr_vendor_tv"
                     app:layout_constraintStart_toStartOf="@id/tr_vendor_tv"
                     app:layout_constraintTop_toBottomOf="@id/tr_vendor_tv"
@@ -188,9 +189,10 @@
             style="@style/primary_button_1"
             android:layout_width="match_parent"
             android:layout_height="60dp"
-
+           android:onClick="@{()->treeBasicInfoVM.regist()}"
             android:text="저 장"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            tools:layout_editor_absoluteX="0dp" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

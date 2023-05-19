@@ -46,6 +46,7 @@ public class LoginActivity extends AppCompatActivity {
     EditText t_id;
     EditText t_pass;
     String sndUrl="http://snd.synology.me:9955";
+    String token;
 
     // 1 로그인 정보
     JSONObject loginData=new JSONObject();
@@ -91,8 +92,8 @@ public class LoginActivity extends AppCompatActivity {
                         Log.d(TAG, "** 로그인 응답 ** "+response);
 
                         try {
-                            String token = response.get("data").toString();
-                            validationCheckRequest(token);
+                            token = response.get("data").toString();
+                            validationCheckRequest();
                         } catch (JSONException e) {
                             throw new RuntimeException(e);
                         }
@@ -115,7 +116,7 @@ public class LoginActivity extends AppCompatActivity {
 
 
     // 2 유효성 검증
-    public void validationCheckRequest(String token){
+    public void validationCheckRequest(){
         Log.d(TAG, "** 넘어온 토큰 ** "+token);
 
         StringRequest request2=new StringRequest(Request.Method.GET, sndUrl+"/app/validationCheck", new Response.Listener<String>() {
@@ -213,10 +214,11 @@ public class LoginActivity extends AppCompatActivity {
        sharedPreferencesManager.saveUserInfo("company",user.getCompany());  // key, value
        sharedPreferencesManager.saveUserInfo("name",user.getName());  // key, value
 
+       // 토큰 저장
+       sharedPreferencesManager.saveUserInfo("Authorization", "Bearer "+token);
 
         String company=sharedPreferencesManager.getUserInfo("company",null);
         Log.d(TAG, "** 저장된 SP 객체의 회사명 ** "+company);
-
 
         // 의존성 주입됨
         appComponent.inject(this);

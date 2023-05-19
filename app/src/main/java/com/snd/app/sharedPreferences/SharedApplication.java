@@ -14,10 +14,7 @@ import com.snd.app.data.user.SharedPreferencesManager;
     // 이 객체를 반환하면 되는 것 아닌가?
 public class SharedApplication extends Application {
     private String TAG=this.getClass().getName();
-
     private static AppComponent appComponent;
-    //private SharedPreferences sharedPreferences;
-    SharedPreferencesManager sharedPreferencesManager;
 
     @Override
     public void onCreate() {
@@ -26,13 +23,7 @@ public class SharedApplication extends Application {
         // 모듈이 있는 이유는?
         AppModule appModule=new AppModule(this);
         appComponent= DaggerAppComponent.builder().appModule(appModule).build();
-
     }
 
-
-    // 어플리케이션을 통해서 생성한 쉐어드프리퍼런스를 반환 !!
-    public AppComponent getAppComponent(){
-        return appComponent;
-    }
 
 }
