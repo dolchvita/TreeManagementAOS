@@ -1,11 +1,11 @@
 package com.snd.app.ui.write;
 
 import androidx.databinding.ObservableField;
-import androidx.lifecycle.ViewModel;
 
+import com.snd.app.common.LocationViewModel;
 import com.snd.app.domain.tree.TreeBasicInfoDTO;
 
-public class RegistTreeBasicInfoViewModel extends ViewModel {
+public class RegistTreeBasicInfoViewModel extends LocationViewModel {
     private String TAG=this.getClass().getName();
 
     public ObservableField<String> NFC=new ObservableField<>();
@@ -14,6 +14,10 @@ public class RegistTreeBasicInfoViewModel extends ViewModel {
     public ObservableField<String> vendor=new ObservableField<>();
 
    private Callback callback;
+
+
+
+
 
     // 데이터바인딩시 참조할 변수 매핑
     public void setTextViewModel(TreeBasicInfoDTO treeBasicInfoDTO){

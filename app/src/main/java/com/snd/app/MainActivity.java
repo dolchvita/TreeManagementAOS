@@ -16,12 +16,9 @@ import com.snd.app.ui.home.HomeFragment;
 import javax.inject.Inject;
 
 public class MainActivity extends AppCompatActivity {
-
         MainActBinding mainActBinding;
-
         @Inject
         MainViewModel mainVM;
-
         private String TAG=this.getClass().getName();
 
         @Override
@@ -52,7 +49,6 @@ public class MainActivity extends AppCompatActivity {
                 public void onChanged(Object o) {
                     // 여기서 UI 업데이트 처리
                     Log.d(TAG,"클릭 감지");
-
                     // 매개변수로 넘어오는 객체는 뷰모델이 설정한 상수의 값! - 세팅된 것이 넘어옴
                     Log.d(TAG,o+"이 객체는 뭘까~~~??");
 
@@ -66,7 +62,6 @@ public class MainActivity extends AppCompatActivity {
 
                     } else if (o.equals(2)) {
                         Log.d(TAG,"맵이 올 예정");
-
                     }
                     transaction.commit();
                 }

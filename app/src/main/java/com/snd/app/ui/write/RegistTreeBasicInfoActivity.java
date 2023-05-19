@@ -17,6 +17,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.snd.app.R;
+import com.snd.app.common.LocationActivity;
 import com.snd.app.common.TMActivity;
 import com.snd.app.data.AppComponent;
 import com.snd.app.data.AppModule;
@@ -35,7 +36,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-public class RegistTreeBasicInfoActivity extends TMActivity implements  Callback{
+public class RegistTreeBasicInfoActivity extends LocationActivity implements  Callback{
     RegistTreeBasicInfoActBinding treeBasicInfoActBinding;
     RegistTreeBasicInfoViewModel treeBasicInfoVM;
     @Inject
@@ -44,6 +45,10 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements  Callback
     private static final String IDHEX="idHex";
     String idHex;
     TreeBasicInfoDTO treeBasicInfoDTO;
+
+    double latitude;
+    double longitude;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -64,25 +69,38 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements  Callback
         // 콜백 인터페이스 연결
         treeBasicInfoVM.setCallback(this);
 
-        try {
-            setTreeBasicInfoDTO();
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+
+        if(checkLocationPermission()==1){
+            try {
+                // 디티오 세팅
+                setTreeBasicInfoDTO();
+
+                // 위치 정보 가져오기
+                getTreeLocation();
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
+
+
+   public void getTreeLocation(){
+       //getLocation();
+       Log.d(TAG,"** 위도 **"+latitude);
+       Log.d(TAG,"** 경도 **"+longitude);
+   }
 
 
     public void setTreeBasicInfoDTO() throws JsonProcessingException {
         treeBasicInfoDTO=new TreeBasicInfoDTO();
         treeBasicInfoDTO.setNFC(idHex);
         treeBasicInfoDTO.setSpecies("산사나무");
-        treeBasicInfoDTO.setSubmitter(sharedPreferencesManager.getUserInfo("name",null));
+        treeBasicInfoDTO.setSubmitter(sharedPreferencesManager.getUserInfo("id",null));
         treeBasicInfoDTO.setVendor(sharedPreferencesManager.getUserInfo("company",null));
 
         // 매핑된 DTO 넘겨줌
         treeBasicInfoVM.setTextViewModel(treeBasicInfoDTO);
     }
-
 
     // 수목 기본정보 등록
     public void registerTreeBasicInfo() {
@@ -100,12 +118,9 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements  Callback
 
             Log.d(TAG,"** 보낼 데이터 모습 **"+treeBasicData);
             Log.d(TAG,"** 보낼 토큰 모습 **"+sharedPreferencesManager.getUserInfo("Authorization",null));
-
-
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
-
         JsonObjectRequest request1 = new JsonObjectRequest(Request.Method.POST, sndUrl+"/app/tree/registerBasicInfo", treeBasicData,
                 new Response.Listener<JSONObject>() {
                     @Override
@@ -138,5 +153,7 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements  Callback
         // 수목 기본 정보 등록
         registerTreeBasicInfo();
     }
+
+
 
 }

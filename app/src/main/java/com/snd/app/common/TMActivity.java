@@ -8,5 +8,4 @@ public class TMActivity extends AppCompatActivity {
    protected String TAG=this.getClass().getName();
    protected String sndUrl="http://snd.synology.me:9955";
 
-
 }

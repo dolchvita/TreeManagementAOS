@@ -47,6 +47,8 @@ public class LoginActivity extends AppCompatActivity {
     EditText t_pass;
     String sndUrl="http://snd.synology.me:9955";
     String token;
+    String id;
+    String password;
 
     // 1 로그인 정보
     JSONObject loginData=new JSONObject();
@@ -75,11 +77,13 @@ public class LoginActivity extends AppCompatActivity {
 
 
     public void loginRequest() {
+        id=t_id.getText().toString();
+        password=t_pass.getText().toString();
 
         // 입력 데이터 보내기
         try {
-            loginData.put("id", t_id.getText().toString());
-            loginData.put("password", t_pass.getText().toString());
+            loginData.put("id", id);
+            loginData.put("password", password);
 
         } catch (JSONException e) {
             throw new RuntimeException(e);
@@ -213,7 +217,7 @@ public class LoginActivity extends AppCompatActivity {
        sharedPreferencesManager.setSharedPreferences(sharedPreferences);
        sharedPreferencesManager.saveUserInfo("company",user.getCompany());  // key, value
        sharedPreferencesManager.saveUserInfo("name",user.getName());  // key, value
-
+       sharedPreferencesManager.saveUserInfo("id",id);
        // 토큰 저장
        sharedPreferencesManager.saveUserInfo("Authorization", "Bearer "+token);
 

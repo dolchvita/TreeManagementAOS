@@ -22,7 +22,6 @@ public class MainViewModel extends ViewModel {
     private MutableLiveData<Integer> _tabClick;  // setter
     LiveData tabClick=getTabClcick();    // getter(결과)
 
-
     // NFC
     ObservableField<Boolean> isNFC=new ObservableField<>();
 
@@ -32,7 +31,6 @@ public class MainViewModel extends ViewModel {
         _tabClick.setValue(value);
         currentFragment.set(value);
     }
-
 
     public LiveData getTabClcick(){
         // 여기서 아래 변수가 null로 뜬다..
