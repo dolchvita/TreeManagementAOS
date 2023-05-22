@@ -4,7 +4,11 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.media.MediaScannerConnection;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.Toast;
@@ -14,8 +18,10 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.Observer;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.AuthFailureError;
@@ -43,9 +49,14 @@ import com.snd.app.ui.tree.TreeActivity;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -63,6 +74,9 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements  Ca
     // 이미지 권한
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     // 이미지 리스트
+    private File currentPhotoFile;
+    // 사진 찍히는 것 제한하기
+    private boolean isPhotoTaken = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -83,7 +97,14 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements  Ca
         // 콜백 인터페이스 연결
         treeBasicInfoVM.setCallback(this);
 
-        getTreeLocation();
+
+        try {
+            setTreeBasicInfoDTO();
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
+        //getTreeLocation();
         registerTreeImage();
     }
 
@@ -122,6 +143,7 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements  Ca
 
             Log.d(TAG,"** 보낼 데이터 모습 **"+treeBasicData);
             Log.d(TAG,"** 보낼 토큰 모습 **"+sharedPreferencesManager.getUserInfo("Authorization",null));
+
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
@@ -148,7 +170,6 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements  Ca
             }
         };
         AppModule.requestQueue.add(request1);
-
     }
 
     // 뷰모델에서 호출
@@ -176,36 +197,143 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements  Ca
         });
     }
 
+
+    // 파일 객체 가져오기
+    private File createImageFile() throws IOException {
+        // 파일 이름 생성
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+
+        // 파일 저장 디렉토리 생성
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        if (storageDir != null && !storageDir.exists()) {
+            storageDir.mkdirs();
+        }
+
+        // 이미지 파일 생성
+        File imageFile = File.createTempFile(
+                imageFileName,  /* 파일 이름 */
+                ".jpg",         /* 파일 확장자 */
+                storageDir      /* 파일이 저장될 디렉토리 */
+        );
+        return imageFile;
+    }
+
+
+
     private void startCamera() {
+        Log.d(TAG,"** startCamera 호출됨 **");
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+
+            // 이미지 파일 생성
+            try {
+                currentPhotoFile = createImageFile();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+
+            // 파일이 정상적으로 생성된 경우에만 카메라 앱에 전달
+            if (currentPhotoFile != null) {
+                Log.d(TAG,"** currentPhotoFile 전달 **");
+                Uri photoUri = FileProvider.getUriForFile(this, "com.snd.app.fileprovider", currentPhotoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
+                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+            }
         }
+
+        Log.d(TAG,"** 통과됨 **"+currentPhotoFile);
     }
+
+    // 사진 저장 되었는지 확인
+    private void scanSavedPhoto(File photoFile) {
+        MediaScannerConnection.scanFile(
+                this,
+                new String[]{photoFile.getAbsolutePath()},
+                null,
+                new MediaScannerConnection.OnScanCompletedListener() {
+                    @Override
+                    public void onScanCompleted(String path, Uri uri) {
+                        Log.d(TAG,"** 여기까지 오나 보자 **");
+
+                        // 미디어 스캐닝이 완료된 후에 수행할 작업을 여기에 추가
+                    }
+                }
+        );
+    }
+
+
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            Bundle extras = data.getExtras();
-            Bitmap image1 = (Bitmap) extras.get("data");
+       Log.d(TAG,"** onActivityResult 호출됨 **");
 
-            Log.d(TAG,"** 정체가 뭘까?1 **"+extras);
+       if (!isPhotoTaken && requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            isPhotoTaken=true;
+           Log.d(TAG,"** 단계 1 **");
 
-            Log.d(TAG,"** 정체가 뭘까?2 **"+image1);
+           scanSavedPhoto(currentPhotoFile);
 
-            // 찍은 사진 파일을 가져와서 이미지 뷰에 적용하기
-            List<Bitmap> photoList=new ArrayList<>();
 
-            photoList.add(image1);
+           // data가 null
+           if (data != null) {
+               Log.d(TAG,"** 단계 2 **");
 
-            RecyclerView recyclerView=findViewById(R.id.rv_image);
-            PhotoAdapter photoAdapter=new PhotoAdapter(photoList);
-            recyclerView.setAdapter(photoAdapter);
+               Bundle extras = data.getExtras();
+
+                if (extras != null) {
+                    Log.d(TAG,"** 단계 3 **");
+
+                    // null
+                    Bitmap image1 = (Bitmap) extras.get("data");
+                    Log.d(TAG,"** 비트맵 ** "+image1);
+
+                    // 찍은 사진 파일을 가져와서 이미지 뷰에 적용하기
+                    List<Bitmap> photoList=new ArrayList<>();
+
+
+                    List<String> photoPaths = new ArrayList<>(); // 사진 파일 경로 리스트
+
+                    //-------------------------------------------------------- 여기 작업 중 -
+                    // 사진 찍은 후 저장할 때 경로를 리스트에 추가
+                    photoPaths.add(currentPhotoFile.getAbsolutePath());
+
+                    // RecyclerView에 표시할 Bitmap 리스트
+                    List<Bitmap> photoBitmaps = new ArrayList<>();
+
+                    // 리스트에 있는 모든 사진 파일을 Bitmap으로 변환하여 리스트에 추가
+                    for (String photoPath : photoPaths) {
+                        Bitmap bitmap = BitmapFactory.decodeFile(photoPath);
+                        if (bitmap != null) {
+                            photoBitmaps.add(bitmap);
+                        }
+                    }
+
+
+                    photoList.add(image1);
+
+                    RecyclerView recyclerView=findViewById(R.id.rv_image);
+                    // 가로 정렬
+                    recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+                    PhotoAdapter photoAdapter = (PhotoAdapter) recyclerView.getAdapter();
+                    if (photoAdapter == null) {
+                        Log.d(TAG,"** 단계 4 **");
+
+                        photoAdapter = new PhotoAdapter(new ArrayList<>());
+                        recyclerView.setAdapter(photoAdapter);
+                    }
+
+                    Log.d(TAG,"** 단계 5 **");
+
+                    photoAdapter.addPhoto(image1);
+                    Log.d(TAG, "** 담긴 사진 수 **"+photoAdapter.getItemCount());
+                }
+            }
         }
     }
-
-
 
 
 

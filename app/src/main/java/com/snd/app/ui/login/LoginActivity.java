@@ -170,13 +170,9 @@ public class LoginActivity extends TMActivity {
                        try {
                            user = gson.fromJson(response.get("data").toString(), UserDTO.class);
 
-
                            Log.d(TAG, "**로그인 화면에서 유저 확인 ** "+user);
 
-                           // new가 아니라 context 로부터 가져와햐 하는 것 같다.
-
                            saveUserInfo(user);
-
 
                        } catch (JSONException e) {
                            throw new RuntimeException(e);

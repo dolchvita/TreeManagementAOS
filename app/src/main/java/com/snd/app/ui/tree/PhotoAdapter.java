@@ -28,6 +28,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
     public PhotoViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.regist_tree_basic_info_act, parent, false);
+
         return new PhotoViewHolder(view);
     }
 
@@ -51,6 +52,18 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
         }
     }
 
+    public void addPhoto(Bitmap photo) {
+        photoList.add(photo);
+        notifyDataSetChanged();
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull PhotoViewHolder holder, int position, @NonNull List<Object> payloads) {
+        super.onBindViewHolder(holder, position, payloads);
+
+        Bitmap photoBitmap = photoList.get(position);
+        holder.photoImageView.setImageBitmap(photoBitmap);
+    }
 
 
 }
