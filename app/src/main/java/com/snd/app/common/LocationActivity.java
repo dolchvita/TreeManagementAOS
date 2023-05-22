@@ -6,12 +6,17 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import com.google.android.gms.location.FusedLocationProviderClient;
 
+// 최대한 적은 양의 로직을 갖고 있기
 public class LocationActivity extends TMActivity{
 
     // 사용자가 허용했는지 확인하는 변수
@@ -19,35 +24,55 @@ public class LocationActivity extends TMActivity{
 
     private LocationManager locationManager;
     private LocationListener locationListener;
-    double latitude;
-    double longitude;
+    protected  double latitude;
+    protected double longitude;
 
     private FusedLocationProviderClient fusedLocationClient;
 
 
-    public LocationActivity() {
-       int code =checkLocationPermission();
-       Log.d(TAG, "** 코드 확인 **"+code);
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Log.d(TAG,"** LocationActivity 생성 **");
 
-       if(code==1){
-           getLocation();
-       }
-    }
 
-    // 사용자에게 권한 부여
-    public int checkLocationPermission() {
+        // 권한 확인
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
+
             // 권한이 허용되지 않은 경우 권한 요청
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     PERMISSION_REQUEST_CODE);
+
         } else {
             // 권한이 이미 허용된 경우
             // GPS 사용에 필요한 초기화 작업을 수행할 수 있습니다.
-            //initializeGPS();
+            Log.d(TAG,"**권한 허용됨 **");
+            getLocation();
         }
-        return PERMISSION_REQUEST_CODE;
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == PERMISSION_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                getLocation();
+                //startLocationUpdates();
+            } else {
+                Toast.makeText(this, "위치 권한이 거부되어 앱을 사용할 수 없습니다.", Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        }
+    }
+
+
+    private void startLocationUpdates(){
+        Log.d(TAG,"** 메서드 startLocationUpdates 호출 **");
+        getLocation();
     }
 
 
@@ -68,9 +93,10 @@ public class LocationActivity extends TMActivity{
             latitude = lastKnownLocation.getLatitude();
             longitude = lastKnownLocation.getLongitude();
 
+            Log.d(TAG,"** 여기까지 왔니? **");
             // 위치 정보를 사용하여 필요한 작업을 수행하세요.
             // 예: 위도와 경도를 로그에 출력
-            Log.d("Location", "Latitude: " + latitude + ", Longitude: " + longitude);
+            Log.d(TAG, "Latitude: " + latitude + ", Longitude: " + longitude);
         } else {
             // 위치 정보를 가져오지 못한 경우
             // 필요한 처리를 수행하세요.
@@ -82,7 +108,6 @@ public class LocationActivity extends TMActivity{
     // 위치 좌표값 받아오는 메서드
     private void initializeGPS() {
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-
 
         // GPS 위치 업데이트 요청 등의 작업을 수행합니다.
         // 예시로는 GPS 위치 업데이트를 1초마다 요청하도록 설정한 것입니다.

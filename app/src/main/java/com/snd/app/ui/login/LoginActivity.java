@@ -24,6 +24,7 @@ import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 import com.snd.app.MainActivity;
 import com.snd.app.R;
+import com.snd.app.common.TMActivity;
 import com.snd.app.data.AppComponent;
 import com.snd.app.data.AppModule;
 import com.snd.app.data.DaggerAppComponent;
@@ -40,7 +41,7 @@ import java.util.Map;
 import javax.inject.Inject;
 
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends TMActivity {
     private String TAG=this.getClass().getName();
 
     EditText t_id;

@@ -1,9 +1,15 @@
 package com.snd.app.ui.write;
 
 import androidx.databinding.ObservableField;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import com.snd.app.common.LocationViewModel;
 import com.snd.app.domain.tree.TreeBasicInfoDTO;
+
+import java.util.ArrayList;
+
+import kotlin.Unit;
 
 public class RegistTreeBasicInfoViewModel extends LocationViewModel {
     private String TAG=this.getClass().getName();
@@ -13,10 +19,16 @@ public class RegistTreeBasicInfoViewModel extends LocationViewModel {
     public ObservableField<String> submitter=new ObservableField<>();
     public ObservableField<String> vendor=new ObservableField<>();
 
-   private Callback callback;
+    public ObservableField<String> latitude=new ObservableField<>();
+    public ObservableField<String> longitude=new ObservableField<>();
 
+    private MutableLiveData _addPhoto;  // setter
+    LiveData addPhoto=getAddPhoto();    // getter(결과)
 
+    private Callback callback;
 
+   private  MutableLiveData<ArrayList> _imageList;
+   LiveData<ArrayList> imageList;
 
 
     // 데이터바인딩시 참조할 변수 매핑
@@ -33,6 +45,7 @@ public class RegistTreeBasicInfoViewModel extends LocationViewModel {
     }
 
 
+    // 콜백 객체를 받아서 액티비티로부터 호출 가능하게 함
     public void setCallback(Callback callback) {
         this.callback = callback;
     }
@@ -41,5 +54,19 @@ public class RegistTreeBasicInfoViewModel extends LocationViewModel {
             callback.onCallback();
         }
     }
+
+
+    public void setAddPhoto(){
+        _addPhoto.setValue("test");
+    }
+
+    public LiveData getAddPhoto(){
+        if(_addPhoto==null){
+            _addPhoto=new MutableLiveData<String>();
+        }
+        return this._addPhoto;
+    }
+
+
 
 }

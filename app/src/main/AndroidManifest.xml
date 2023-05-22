@@ -9,6 +9,11 @@
     <!-- GPS -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <!-- Camera -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" /><!--파일 읽기 권한-->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /><!--파일 쓰기 권한-->
+    <uses-feature android:name="android.hardware.camera" android:required="true"/><!--카메라 기능 사용-->
 
     <application
         android:allowBackup="true"

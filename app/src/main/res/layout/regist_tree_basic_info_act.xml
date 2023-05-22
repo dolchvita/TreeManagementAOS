@@ -63,6 +63,51 @@
                 app:layout_constraintTop_toBottomOf="@id/header">
 
 
+                <View
+                    android:id="@+id/add_camera_view"
+                    android:layout_width="90dp"
+                    android:layout_height="90dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/rectangle_outline_10"
+                    android:onClick="@{()->treeBasicInfoVM.setAddPhoto()}"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/add_image"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    app:layout_constraintBottom_toTopOf="@id/image_cnt"
+                    app:layout_constraintEnd_toEndOf="@id/add_camera_view"
+                    app:layout_constraintStart_toStartOf="@id/add_camera_view"
+                    app:layout_constraintTop_toTopOf="@id/add_camera_view"
+                    app:srcCompat="@drawable/ic_add_photo" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/image_cnt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/cocoa_brown"
+                    app:layout_constraintBottom_toBottomOf="@id/add_camera_view"
+                    app:layout_constraintEnd_toEndOf="@id/add_camera_view"
+                    app:layout_constraintStart_toStartOf="@id/add_camera_view"
+                    app:layout_constraintTop_toBottomOf="@id/add_image"
+                    tools:text="0/2" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_image"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:layout_constraintBottom_toBottomOf="@id/add_camera_view"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/add_camera_view"
+                    app:layout_constraintTop_toTopOf="@id/add_camera_view"
+                    tools:listitem="@layout/image_item" />
+
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tree_nfc_tv"
                     style="@style/tree_info_label"
@@ -71,6 +116,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.551"
                     app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/add_camera_view"
                     />
 
 
@@ -191,11 +237,11 @@
                     app:layout_constraintTop_toBottomOf="@id/location_tv" />
 
                 <androidx.appcompat.widget.AppCompatAutoCompleteTextView
-                    android:id="@+id/big_area"
+                    android:id="@+id/lati"
                     style="@style/sr_no_edt"
                     android:completionThreshold="0"
                     android:nextFocusDown="@id/mid_area"
-
+                    android:text="@{treeBasicInfoVM.latitude}"
                     app:layout_constraintEnd_toEndOf="@id/big_area_tv"
                     app:layout_constraintStart_toStartOf="@id/big_area_tv"
                     app:layout_constraintTop_toBottomOf="@id/big_area_tv" />
@@ -214,7 +260,7 @@
                     android:id="@+id/mid_area"
                     style="@style/sr_no_edt"
                     android:completionThreshold="0"
-
+                    android:text="@{treeBasicInfoVM.longitude}"
                     app:layout_constraintEnd_toEndOf="@id/mid_area_tv"
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="@id/mid_area_tv"

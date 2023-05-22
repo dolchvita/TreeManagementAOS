@@ -1,11 +1,22 @@
 package com.snd.app.ui.write;
 
+import android.Manifest;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatTextView;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.Observer;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -26,12 +37,15 @@ import com.snd.app.data.user.SharedPreferencesManager;
 import com.snd.app.databinding.RegistTreeBasicInfoActBinding;
 import com.snd.app.domain.tree.TreeBasicInfoDTO;
 import com.snd.app.sharedPreferences.SharedApplication;
+import com.snd.app.ui.tree.PhotoAdapter;
 import com.snd.app.ui.tree.TreeActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -46,9 +60,9 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements  Ca
     String idHex;
     TreeBasicInfoDTO treeBasicInfoDTO;
 
-    double latitude;
-    double longitude;
-
+    // 이미지 권한
+    private static final int REQUEST_IMAGE_CAPTURE = 1;
+    // 이미지 리스트
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -69,18 +83,8 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements  Ca
         // 콜백 인터페이스 연결
         treeBasicInfoVM.setCallback(this);
 
-
-        if(checkLocationPermission()==1){
-            try {
-                // 디티오 세팅
-                setTreeBasicInfoDTO();
-
-                // 위치 정보 가져오기
-                getTreeLocation();
-            } catch (JsonProcessingException e) {
-                throw new RuntimeException(e);
-            }
-        }
+        getTreeLocation();
+        registerTreeImage();
     }
 
 
@@ -153,6 +157,55 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements  Ca
         // 수목 기본 정보 등록
         registerTreeBasicInfo();
     }
+
+
+    /*--------------------------------------
+            카메라 관련 로직 start
+        -------------------------------------*/
+    public void registerTreeImage(){
+        treeBasicInfoVM.addPhoto.observe(this, new Observer() {
+            @Override
+            public void onChanged(Object o) {
+                Log.d(TAG, "** 클릭 감지 **");
+
+                // 카메라 실행시키는 로직 수행
+                if(requestPermissions()>0){
+                    startCamera();
+                }
+            }
+        });
+    }
+
+    private void startCamera() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            Bundle extras = data.getExtras();
+            Bitmap image1 = (Bitmap) extras.get("data");
+
+            Log.d(TAG,"** 정체가 뭘까?1 **"+extras);
+
+            Log.d(TAG,"** 정체가 뭘까?2 **"+image1);
+
+            // 찍은 사진 파일을 가져와서 이미지 뷰에 적용하기
+            List<Bitmap> photoList=new ArrayList<>();
+
+            photoList.add(image1);
+
+            RecyclerView recyclerView=findViewById(R.id.rv_image);
+            PhotoAdapter photoAdapter=new PhotoAdapter(photoList);
+            recyclerView.setAdapter(photoAdapter);
+        }
+    }
+
+
 
 
 
