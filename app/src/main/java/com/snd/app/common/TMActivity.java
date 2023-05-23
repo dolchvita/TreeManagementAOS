@@ -28,6 +28,8 @@ public class TMActivity extends AppCompatActivity {
       requestPermissions();
    }
 
+
+   // 카메라 접근 권한
    protected Integer requestPermissions() {
       if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA)
               != PackageManager.PERMISSION_GRANTED ||

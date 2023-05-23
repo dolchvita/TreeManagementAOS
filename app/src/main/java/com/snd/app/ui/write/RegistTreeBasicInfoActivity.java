@@ -1,6 +1,8 @@
 package com.snd.app.ui.write;
 
 import android.Manifest;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -71,12 +73,6 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements  Ca
     String idHex;
     TreeBasicInfoDTO treeBasicInfoDTO;
 
-    // 이미지 권한
-    private static final int REQUEST_IMAGE_CAPTURE = 1;
-    // 이미지 리스트
-    private File currentPhotoFile;
-    // 사진 찍히는 것 제한하기
-    private boolean isPhotoTaken = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -180,9 +176,18 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements  Ca
     }
 
 
+
     /*--------------------------------------
             카메라 관련 로직 start
         -------------------------------------*/
+    // 이미지 권한
+    private static final int REQUEST_PERMISSION = 1;
+    // 이미지 리스트
+    private File currentPhotoFile;
+    // 사진 찍히는 것 제한하기
+    private boolean isPhotoTaken = false;
+
+
     public void registerTreeImage(){
         treeBasicInfoVM.addPhoto.observe(this, new Observer() {
             @Override
@@ -198,143 +203,206 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements  Ca
     }
 
 
-    // 파일 객체 가져오기
+    // 1 파일 객체 가져오기 - 사진 찍기 전에 빈 파이 미리 생성하는 역할
     private File createImageFile() throws IOException {
-        // 파일 이름 생성
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
+        Log.d(TAG, "** createImageFile 호출됨 **");
 
-        // 파일 저장 디렉토리 생성
-        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        if (storageDir != null && !storageDir.exists()) {
-            storageDir.mkdirs();
-        }
+        // 사진 이름 가공
+        String imageFileName = "JPEG_" + System.currentTimeMillis();
+        File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+        File imageFile = new File(storageDir, imageFileName + ".jpg");
 
-        // 이미지 파일 생성
-        File imageFile = File.createTempFile(
-                imageFileName,  /* 파일 이름 */
-                ".jpg",         /* 파일 확장자 */
-                storageDir      /* 파일이 저장될 디렉토리 */
-        );
+        Log.d(TAG, "** 보내기 전에 확인 ** " + imageFile);
         return imageFile;
     }
 
 
-
+    // 2 카메라 촬영
     private void startCamera() {
         Log.d(TAG,"** startCamera 호출됨 **");
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
 
-            // 이미지 파일 생성
             try {
+                // 2-1) 이미지 파일 생성 - 사진이 저장될 경로 반환
                 currentPhotoFile = createImageFile();
+
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
 
-            // 파일이 정상적으로 생성된 경우에만 카메라 앱에 전달
+            // 2-2) 카메라 앱이 사진을 찍은 후 앱으로 결과를 전달할 때 필요한 URI를 설정하는 부분
             if (currentPhotoFile != null) {
                 Log.d(TAG,"** currentPhotoFile 전달 **");
+
+                // 여기가 null
                 Uri photoUri = FileProvider.getUriForFile(this, "com.snd.app.fileprovider", currentPhotoFile);
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
-                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);  // 2-3)저장 경로 설정 후
+
+                // 2-4) 결과 메서드 호출
+                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CODE);
             }
         }
 
         Log.d(TAG,"** 통과됨 **"+currentPhotoFile);
     }
 
-    // 사진 저장 되었는지 확인
-    private void scanSavedPhoto(File photoFile) {
-        MediaScannerConnection.scanFile(
-                this,
-                new String[]{photoFile.getAbsolutePath()},
-                null,
-                new MediaScannerConnection.OnScanCompletedListener() {
-                    @Override
-                    public void onScanCompleted(String path, Uri uri) {
-                        Log.d(TAG,"** 여기까지 오나 보자 **");
 
-                        // 미디어 스캐닝이 완료된 후에 수행할 작업을 여기에 추가
-                    }
-                }
-        );
+    //사진 저장
+    public void saveImage(File photoFile) throws IOException {
+        // 권한 체크
+        if (ContextCompat.checkSelfPermission(RegistTreeBasicInfoActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(RegistTreeBasicInfoActivity.this,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_PERMISSION);
+        } else {
+            // 사진 촬영
+            dispatchTakePictureIntent();
+        }
     }
 
+    private String currentPhotoPath;
 
+    //  사진 파일 저장할 임시 파일 생성
+    private void dispatchTakePictureIntent() throws IOException {
+        Log.d(TAG,"** dispatchTakePictureIntent 호출 ** ");
 
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-       Log.d(TAG,"** onActivityResult 호출됨 **");
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            // 사진을 저장할 파일 생성
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+                currentPhotoPath = photoFile.getAbsolutePath();
+            } catch (Exception ex) {
+                Log.e("Error", ex.getMessage());
+            }
 
-       if (!isPhotoTaken && requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            isPhotoTaken=true;
-           Log.d(TAG,"** 단계 1 **");
-
-           scanSavedPhoto(currentPhotoFile);
-
-
-           // data가 null
-           if (data != null) {
-               Log.d(TAG,"** 단계 2 **");
-
-               Bundle extras = data.getExtras();
-
-                if (extras != null) {
-                    Log.d(TAG,"** 단계 3 **");
-
-                    // null
-                    Bitmap image1 = (Bitmap) extras.get("data");
-                    Log.d(TAG,"** 비트맵 ** "+image1);
-
-                    // 찍은 사진 파일을 가져와서 이미지 뷰에 적용하기
-                    List<Bitmap> photoList=new ArrayList<>();
-
-
-                    List<String> photoPaths = new ArrayList<>(); // 사진 파일 경로 리스트
-
-                    //-------------------------------------------------------- 여기 작업 중 -
-                    // 사진 찍은 후 저장할 때 경로를 리스트에 추가
-                    photoPaths.add(currentPhotoFile.getAbsolutePath());
-
-                    // RecyclerView에 표시할 Bitmap 리스트
-                    List<Bitmap> photoBitmaps = new ArrayList<>();
-
-                    // 리스트에 있는 모든 사진 파일을 Bitmap으로 변환하여 리스트에 추가
-                    for (String photoPath : photoPaths) {
-                        Bitmap bitmap = BitmapFactory.decodeFile(photoPath);
-                        if (bitmap != null) {
-                            photoBitmaps.add(bitmap);
-                        }
-                    }
-
-
-                    photoList.add(image1);
-
-                    RecyclerView recyclerView=findViewById(R.id.rv_image);
-                    // 가로 정렬
-                    recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-                    PhotoAdapter photoAdapter = (PhotoAdapter) recyclerView.getAdapter();
-                    if (photoAdapter == null) {
-                        Log.d(TAG,"** 단계 4 **");
-
-                        photoAdapter = new PhotoAdapter(new ArrayList<>());
-                        recyclerView.setAdapter(photoAdapter);
-                    }
-
-                    Log.d(TAG,"** 단계 5 **");
-
-                    photoAdapter.addPhoto(image1);
-                    Log.d(TAG, "** 담긴 사진 수 **"+photoAdapter.getItemCount());
-                }
+            if (photoFile != null) {
+                Uri photoUri = Uri.fromFile(photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
+                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CODE);
             }
         }
     }
 
 
+    // 3 결과 호출
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // 매개변수로 날라오는 data의 의미 --> 카메라 앱에서 설정한 결과 데이터 (사진의 섬네일 등)
+        // 그러나 사진을 파일로 저장하는 경우 일반적으로 null
+       Log.d(TAG, "순서 좀 알아보자");
+        super.onActivityResult(requestCode, resultCode, data);
 
+       Log.d(TAG,"** onActivityResult 호출됨 **");
+
+
+       if (!isPhotoTaken && requestCode == REQUEST_IMAGE_CODE && resultCode == RESULT_OK) {
+            isPhotoTaken=true;
+           Log.d(TAG,"** 단계 1 **");
+
+           Log.d(TAG,"** 저장 메서드 가기 전 확인 **"+currentPhotoFile);
+           try {
+               saveImage(currentPhotoFile);
+
+           } catch (IOException e) {
+               throw new RuntimeException(e);
+           }
+
+           Log.d(TAG,"** 단계 2 **");
+
+
+            // 찍은 사진 파일을 가져와서 이미지 뷰에 적용하기
+            List<Bitmap> photoList=new ArrayList<>();
+            List<String> photoPaths = new ArrayList<>(); // 사진 파일 경로 리스트
+
+            //-------------------------------------------------------- 여기 작업 중 -
+            // 사진 찍은 후 저장할 때 경로를 리스트에 추가
+            photoPaths.add(currentPhotoFile.getAbsolutePath());
+           scanImageFile(currentPhotoFile);
+
+            // RecyclerView에 표시할 Bitmap 리스트
+            List<Bitmap> photoBitmaps = new ArrayList<>();
+
+           Bitmap bitmap=null;
+            // 리스트에 있는 모든 사진 파일을 Bitmap으로 변환하여 리스트에 추가
+            for (String photoPath : photoPaths) {
+                 bitmap = BitmapFactory.decodeFile(photoPath);
+                if (bitmap != null) {
+                    photoBitmaps.add(bitmap);
+                }
+            }
+           Log.d(TAG,"** 결과 확인 ** "+bitmap);
+
+            RecyclerView recyclerView=findViewById(R.id.rv_image);
+            // 가로 정렬
+            recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+            PhotoAdapter photoAdapter = (PhotoAdapter) recyclerView.getAdapter();
+            if (photoAdapter == null) {
+                Log.d(TAG,"** 단계 4 **");
+                photoAdapter = new PhotoAdapter(photoList);
+                recyclerView.setAdapter(photoAdapter);
+            }
+
+            // 파일이 들어가야 함!
+            photoAdapter.addPhoto(bitmap);
+
+            Log.d(TAG,"** 단계 5 **");
+
+            // photoAdapter 없음
+            Log.d(TAG, "** 담긴 사진 수 **"+photoAdapter.getItemCount());
+
+            // 4 갤러리 저장
+           galleryAddPic();
+        }
+    }
+
+    // 갤러리 저장
+    private void galleryAddPic() {
+        Log.d(TAG,"** galleryAddPic 호출 **");
+
+        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        File imageFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getPath());
+        Uri contentUri = Uri.fromFile(imageFile);
+        mediaScanIntent.setData(contentUri);
+        this.sendBroadcast(mediaScanIntent);
+        Toast.makeText(this, "Saved to Gallery", Toast.LENGTH_SHORT).show();
+    }
+
+
+    // 갤러리 이미지 스캔
+    private void scanImageFile(File imageFile) {
+        Log.d(TAG,"** scanImageFile 호출 **");
+
+        MediaScannerConnection.scanFile(this,
+                new String[]{imageFile.getAbsolutePath()},
+                null,
+                new MediaScannerConnection.OnScanCompletedListener() {
+                    public void onScanCompleted(String path, Uri uri) {
+                        // 스캔 완료 후 갤러리 갱신
+                        refreshGallery();
+                    }
+                });
+    }
+
+    // 갤러리 새로고침
+    private void refreshGallery() {
+        Log.d(TAG,"** refreshGallery 호출 **");
+        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        File galleryDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
+        Uri contentUri = Uri.fromFile(galleryDir);
+        mediaScanIntent.setData(contentUri);
+        sendBroadcast(mediaScanIntent);
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        Log.d(TAG,"** finish 호출 **");
+
+
+    }
 }
