@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
@@ -76,6 +78,7 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements  Ca
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        Log.d(TAG, "** RegistTreeBasicInfoActivity 객체 생성 **");
         super.onCreate(savedInstanceState);
         treeBasicInfoActBinding= DataBindingUtil.setContentView(this, R.layout.regist_tree_basic_info_act);
         treeBasicInfoActBinding.setLifecycleOwner(this);
@@ -298,7 +301,6 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements  Ca
 
        Log.d(TAG,"** onActivityResult 호출됨 **");
 
-
        if (!isPhotoTaken && requestCode == REQUEST_IMAGE_CODE && resultCode == RESULT_OK) {
             isPhotoTaken=true;
            Log.d(TAG,"** 단계 1 **");
@@ -340,12 +342,21 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements  Ca
             // 가로 정렬
             recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
+
             PhotoAdapter photoAdapter = (PhotoAdapter) recyclerView.getAdapter();
             if (photoAdapter == null) {
                 Log.d(TAG,"** 단계 4 **");
                 photoAdapter = new PhotoAdapter(photoList);
                 recyclerView.setAdapter(photoAdapter);
             }
+
+           // 변환된 이미지를 어댑터에 추가
+           for (Bitmap photoBitmap : photoList) {
+               Drawable drawable = new BitmapDrawable(getResources(), photoBitmap);
+               Bitmap convertedBitmap = ((BitmapDrawable) drawable).getBitmap();
+               photoAdapter.addPhoto(convertedBitmap);
+           }
+
 
             // 파일이 들어가야 함!
             photoAdapter.addPhoto(bitmap);
@@ -359,6 +370,7 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements  Ca
            galleryAddPic();
         }
     }
+
 
     // 갤러리 저장
     private void galleryAddPic() {
@@ -388,6 +400,7 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements  Ca
                 });
     }
 
+
     // 갤러리 새로고침
     private void refreshGallery() {
         Log.d(TAG,"** refreshGallery 호출 **");
@@ -398,11 +411,5 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements  Ca
         sendBroadcast(mediaScanIntent);
     }
 
-    @Override
-    public void finish() {
-        super.finish();
-        Log.d(TAG,"** finish 호출 **");
 
-
-    }
 }

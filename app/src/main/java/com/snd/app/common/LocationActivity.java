@@ -49,7 +49,7 @@ public class LocationActivity extends TMActivity{
             // 권한이 이미 허용된 경우
             // GPS 사용에 필요한 초기화 작업을 수행할 수 있습니다.
             Log.d(TAG,"**권한 허용됨 **");
-            getLocation();
+            //getLocation();
         }
     }
 
@@ -79,7 +79,7 @@ public class LocationActivity extends TMActivity{
 
     // 마지막 위치 정보 가져오기
     private void getLocation() {
-        Log.d(TAG,"** 로케이션 함수 호출 **");
+        Log.d(TAG,"** getLocation 함수 호출 **");
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
@@ -93,7 +93,6 @@ public class LocationActivity extends TMActivity{
             latitude = lastKnownLocation.getLatitude();
             longitude = lastKnownLocation.getLongitude();
 
-            Log.d(TAG,"** 여기까지 왔니? **");
             // 위치 정보를 사용하여 필요한 작업을 수행하세요.
             // 예: 위도와 경도를 로그에 출력
             Log.d(TAG, "Latitude: " + latitude + ", Longitude: " + longitude);
