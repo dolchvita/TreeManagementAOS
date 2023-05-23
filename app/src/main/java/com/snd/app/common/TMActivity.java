@@ -1,6 +1,8 @@
 package com.snd.app.common;
 
 import android.Manifest;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.widget.Toast;
@@ -21,16 +23,25 @@ public class TMActivity extends AppCompatActivity {
    private static final int REQUEST_IMAGE_CAPTURE = 1;
    protected int REQUEST_IMAGE_CODE = 0;
 
+   // 사진 저장에 대한 권한
+   private static final int REQUEST_WRITE_EXTERNAL_STORAGE_PERMISSION = 2;
+
+   protected SharedPreferences sharedPreferences;
+   SharedPreferences.Editor editor;
 
    @Override
    protected void onCreate(@Nullable Bundle savedInstanceState) {
       super.onCreate(savedInstanceState);
       requestPermissions();
+
+      // 카메라 권한 담을 SP 객체
+      sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+      editor = sharedPreferences.edit();
    }
 
 
    // 카메라 접근 권한
-   protected Integer requestPermissions() {
+   protected void requestPermissions() {
       if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA)
               != PackageManager.PERMISSION_GRANTED ||
               ContextCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -43,17 +54,24 @@ public class TMActivity extends AppCompatActivity {
          // 이미 권한이 허용된 경우에 대한 처리
          REQUEST_IMAGE_CODE=1;
       }
-      return REQUEST_IMAGE_CODE;
    }
+
 
    @Override
    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
       super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
       if (requestCode == REQUEST_IMAGE_CAPTURE) {
          if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            REQUEST_IMAGE_CODE=1;
+            // 권한이 허용된 경우
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putBoolean("camera_permission_granted", true);
+            editor.apply();
          } else {
-            Toast.makeText(this, "Camera permission denied", Toast.LENGTH_SHORT).show();
+            // 권한이 거부된 경우
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putBoolean("camera_permission_granted", false);
+            editor.apply();
          }
       }
    }

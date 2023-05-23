@@ -20,7 +20,7 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 public class LocationActivity extends TMActivity{
 
     // 사용자가 허용했는지 확인하는 변수
-    private int PERMISSION_REQUEST_CODE = 1;
+   protected static final int PERMISSION_REQUEST_CODE = 1;
 
     private LocationManager locationManager;
     private LocationListener locationListener;
@@ -35,34 +35,47 @@ public class LocationActivity extends TMActivity{
         super.onCreate(savedInstanceState);
         Log.d(TAG,"** LocationActivity 생성 **");
 
-
-        // 권한 확인
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            // 권한이 허용되지 않은 경우 권한 요청
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                    PERMISSION_REQUEST_CODE);
-
-        } else {
-            // 권한이 이미 허용된 경우
-            // GPS 사용에 필요한 초기화 작업을 수행할 수 있습니다.
-            Log.d(TAG,"**권한 허용됨 **");
-            //getLocation();
-        }
     }
 
+    // 위치 정보
+   public void  locationPermission(){
+       // 권한 확인
+       if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+               != PackageManager.PERMISSION_GRANTED) {
 
+           // 권한이 허용되지 않은 경우 권한 요청
+           ActivityCompat.requestPermissions(this,
+                   new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                   PERMISSION_REQUEST_CODE);
+
+       } else {
+           // 권한이 이미 허용된 경우
+           // GPS 사용에 필요한 초기화 작업을 수행할 수 있습니다.
+           Log.d(TAG,"**LocationActivity- 권한 허용됨 **");
+           //getLocation();
+       }
+   }
+
+
+
+   // 권한에 대한 결과 (자동 호출)
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        Log.d(TAG,"** LocationActivity- onRequestPermissionsResult 호출됨 **");
 
+        Log.d(TAG,"** LocationActivity- onRequestPermissionsResult 코드 확인 ** "+requestCode);
+
+        //
         if (requestCode == PERMISSION_REQUEST_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                getLocation();
+                //getLocation();
                 //startLocationUpdates();
+
+                // 다음을 위한 코드가 없음
+
             } else {
+                // 실행부가 왜 여기로 쳐 들어오냐  -> requestCode가 1로 들어오지 않은 것.
                 Toast.makeText(this, "위치 권한이 거부되어 앱을 사용할 수 없습니다.", Toast.LENGTH_SHORT).show();
                 finish();
             }
@@ -71,15 +84,15 @@ public class LocationActivity extends TMActivity{
 
 
     private void startLocationUpdates(){
-        Log.d(TAG,"** 메서드 startLocationUpdates 호출 **");
-        getLocation();
+        Log.d(TAG,"** LocationActivity- 메서드 startLocationUpdates 호출 **");
+        //getLocation();
     }
 
 
 
     // 마지막 위치 정보 가져오기
     private void getLocation() {
-        Log.d(TAG,"** getLocation 함수 호출 **");
+        Log.d(TAG,"** LocationActivity- getLocation 함수 호출 **");
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
@@ -127,5 +140,10 @@ public class LocationActivity extends TMActivity{
             locationManager.removeUpdates(locationListener);
         }
     }
+
+
+
+
+
 
 }
