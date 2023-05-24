@@ -1,5 +1,7 @@
 package com.snd.app.data;
 
+import android.content.SharedPreferences;
+
 import androidx.lifecycle.ViewModel;
 
 import com.snd.app.data.user.SharedPreferencesManager;
@@ -20,17 +22,14 @@ public interface AppComponent {
 
     HomeViewModel homeViewModel();      //의존성 주입 성공
 
-    void inject(HomeViewModel viewModel);
-    void inject(LoginActivity loginActivity);
-    void inject(RegistTreeBasicInfoActivity registTreeBasicInfoActivity);
-
-
     // 커스텀 어플리케이션
-    SharedApplication sharedApplication();
-
     UserDTO userDTO();
 
     SharedPreferencesManager sharedPreferencesManager();
+
+    void inject(HomeViewModel viewModel);
+    void inject(LoginActivity loginActivity);
+    void inject(RegistTreeBasicInfoActivity registTreeBasicInfoActivity);
 
 
     @Component.Builder

@@ -36,33 +36,25 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
+
 import com.snd.app.R;
 import com.snd.app.common.LocationActivity;
-import com.snd.app.common.TMActivity;
 import com.snd.app.data.AppComponent;
 import com.snd.app.data.AppModule;
 import com.snd.app.data.DaggerAppComponent;
 import com.snd.app.data.user.SharedPreferencesManager;
 import com.snd.app.databinding.RegistTreeBasicInfoActBinding;
 import com.snd.app.domain.tree.TreeBasicInfoDTO;
-import com.snd.app.sharedPreferences.SharedApplication;
 import com.snd.app.ui.tree.PhotoAdapter;
-import com.snd.app.ui.tree.TreeActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -77,6 +69,9 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements  Ca
     String idHex;
     TreeBasicInfoDTO treeBasicInfoDTO;
 
+    private RecyclerView recyclerView;
+    private PhotoAdapter photoAdapter;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -85,10 +80,11 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements  Ca
         treeBasicInfoActBinding= DataBindingUtil.setContentView(this, R.layout.regist_tree_basic_info_act);
         treeBasicInfoActBinding.setLifecycleOwner(this);
         // 의존성 주입하기
-        AppComponent appComponent= DaggerAppComponent.builder().appModule(new AppModule(new SharedApplication())).build();
+        AppComponent appComponent= DaggerAppComponent.builder().appModule(new AppModule(this)).build();
         appComponent.inject(this);
         // 로그인 객체 주입하여 사용하기
-        sharedPreferencesManager=appComponent.sharedPreferencesManager();
+        //sharedPreferencesManager=SharedPreferencesManager.getInstance(this);
+
         // 뷰모델 연결
         treeBasicInfoVM=new RegistTreeBasicInfoViewModel();
         treeBasicInfoActBinding.setTreeBasicInfoVM(treeBasicInfoVM);
@@ -99,6 +95,12 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements  Ca
         treeBasicInfoVM.setCallback(this);
 
 
+        // 이미지 저장
+        //recyclerView=findViewById(R.id.rv_image);
+        //recyclerView.setLayoutManager(new LinearLayoutManager(this));        // 가로 정렬
+        //photoAdapter = new PhotoAdapter(new ArrayList<>());
+        //recyclerView.setAdapter(photoAdapter);
+
         try {
             setTreeBasicInfoDTO();
 
@@ -106,8 +108,10 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements  Ca
             throw new RuntimeException(e);
         }
 
+
         //getTreeLocation();
         registerTreeImage();
+
     }
 
 
@@ -119,19 +123,30 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements  Ca
 
 
     public void setTreeBasicInfoDTO() throws JsonProcessingException {
+        Log.d(TAG,"** 매니저 **"+sharedPreferencesManager);
+
         treeBasicInfoDTO=new TreeBasicInfoDTO();
         treeBasicInfoDTO.setNFC(idHex);
         treeBasicInfoDTO.setSpecies("산사나무");
-        treeBasicInfoDTO.setSubmitter(sharedPreferencesManager.getUserInfo("id",null));
-        treeBasicInfoDTO.setVendor(sharedPreferencesManager.getUserInfo("company",null));
+
+
+        // 여기가 문제
+        treeBasicInfoDTO.setSubmitter(sharedPreferences.getString("id",null));
+        treeBasicInfoDTO.setVendor(sharedPreferences.getString("company",null));
+
+
+        Log.d(TAG,"** 확인 **"+sharedPreferences.getString("id",null));
+        Log.d(TAG,"** 확인 **"+sharedPreferences.getString("company",null));
+
 
         // 매핑된 DTO 넘겨줌
         treeBasicInfoVM.setTextViewModel(treeBasicInfoDTO);
     }
 
+
     // 수목 기본정보 등록
     public void registerTreeBasicInfo() {
-        Log.d(TAG,"** 호출 **");
+        Log.d(TAG,"** registerTreeBasicInfo 호출 **");
         Log.d(TAG,"** url **"+sndUrl+"/app/tree/registerBasicInfo");
 
         JSONObject treeBasicData=new JSONObject();
@@ -193,7 +208,9 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements  Ca
     // 사진 찍히는 것 제한하기
     private boolean isPhotoTaken = false;
     // SharedPreferences 객체에서 권한 상태 읽어오기
-    boolean isCameraPermissionGranted;
+    //boolean isCameraPermissionGranted;
+
+    List<String> photoPaths;
 
 
     public void registerTreeImage(){
@@ -202,7 +219,7 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements  Ca
             public void onChanged(Object o) {
                 Log.d(TAG, "** 클릭 감지 **");
 
-                isCameraPermissionGranted=sharedPreferences.getBoolean("camera_permission_granted", false);
+                boolean isCameraPermissionGranted=sharedPreferences.getBoolean("camera_permission_granted", false);
                 // 권한 상태에 따른 처리
                 if (isCameraPermissionGranted) {
                     // 권한이 허용된 경우 처리
@@ -267,30 +284,55 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements  Ca
         // 그러나 사진을 파일로 저장하는 경우 일반적으로 null
        Log.d(TAG,"** onActivityResult 호출됨 **");
 
-       if (!isPhotoTaken && requestCode == REQUEST_IMAGE_CODE && resultCode == RESULT_OK) {
-           isPhotoTaken=true;
+       boolean isCameraPermissionGranted=sharedPreferences.getBoolean("camera_permission_granted", false);
+       if (isCameraPermissionGranted) {
+           //isPhotoTaken=true;
            Log.d(TAG,"** 단계 1 **");
 
-           Log.d(TAG,"** 저장 메서드 가기 전 확인 **"+currentPhotoFile);
+           Log.d(TAG,"** 저장 메서드 가기 전 확인 ** "+currentPhotoFile);
 
-
-            List<String> photoPaths = new ArrayList<>(); // 사진 파일 경로 리스트
-
-            //-------------------------------------------------------- 여기 작업 중 -
-            // 사진 찍은 후 저장할 때 경로를 리스트에 추가
-           photoPaths.add(currentPhotoFile.getAbsolutePath());
+           photoPaths = new ArrayList<>(); // 사진 파일 경로 리스트
+           // 사진 파일 저장
+           photoPaths.add(currentPhotoFile.getAbsolutePath());      // 사진 경로
            scanImageFile(currentPhotoFile);
-
-
-           Log.d(TAG,"** 결과 확인 ** "+photoPaths);
 
             // 4 갤러리 저장
            galleryAddPic();
+
+           // 5 사진 가져오기
+           //getImageList();
         }
     }
 
 
-    // 5 갤러리 저장
+    // 5 사진 가져오기
+    public void getImageList(){
+        // RecyclerView에 표시할 Bitmap 리스트
+        List<Bitmap> bitmapList = new ArrayList<>();
+        Log.d(TAG,"** getImageList- 비트맵 리스트 **"+bitmapList);
+
+        for (String photoPath : photoPaths) {
+            // 경로에 있는 사진 꺼냄
+            Bitmap bitmap = BitmapFactory.decodeFile(photoPath);
+
+            if (bitmap != null) {
+                bitmapList.add(bitmap);
+            }
+        }
+        Log.d(TAG,"** 결과 확인 bitmapList의 크기 ** "+bitmapList.size());
+
+        Log.d(TAG,"** 어댑터 확인 ** "+photoAdapter);
+        Log.d(TAG,"** 어댑터에 들어갈 사진 ** "+bitmapList.get(0));
+        photoAdapter.addPhoto(bitmapList.get(0));
+
+        Log.d(TAG, "** 담긴 사진 수 ** "+photoAdapter.getItemCount());
+
+        // 데이터 갱신
+        photoAdapter.notifyDataSetChanged();
+    }
+
+
+    // 4 갤러리 저장
     private void galleryAddPic() {
         Log.d(TAG,"** galleryAddPic 호출 **");
 

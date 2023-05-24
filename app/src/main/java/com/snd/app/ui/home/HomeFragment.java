@@ -41,14 +41,13 @@ public class HomeFragment extends Fragment {
         homeFrBinding.setLifecycleOwner(this);
 
         // 앱 컴포넌트 - 의존성 주입으로 뷰 모델과 연동
-        AppComponent appComponent = DaggerAppComponent.builder().appModule(new AppModule(new SharedApplication())).build();
+        AppComponent appComponent = DaggerAppComponent.builder().appModule(new AppModule(getContext())).build();
 
         homeVM=appComponent.homeViewModel();
         homeFrBinding.setHomeVM(homeVM);    //홈뷰모델 연동
 
         return homeFrBinding.getRoot();
     }
-
 
 
 

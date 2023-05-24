@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -27,7 +28,7 @@ public class TMActivity extends AppCompatActivity {
    private static final int REQUEST_WRITE_EXTERNAL_STORAGE_PERMISSION = 2;
 
    protected SharedPreferences sharedPreferences;
-   SharedPreferences.Editor editor;
+   protected SharedPreferences.Editor editor;
 
    @Override
    protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -35,7 +36,8 @@ public class TMActivity extends AppCompatActivity {
       requestPermissions();
 
       // 카메라 권한 담을 SP 객체
-      sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+
+      sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
       editor = sharedPreferences.edit();
    }
 

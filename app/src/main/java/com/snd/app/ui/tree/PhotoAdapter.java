@@ -16,10 +16,13 @@ import java.util.List;
 public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHolder> {
 
     private List<Bitmap> photoList;
+    private List<String> photoPaths;
 
-    // 포토리스트를 매개변수로 넘김
-    public PhotoAdapter(List<Bitmap> photoList) {
-        this.photoList = photoList;
+    public ImageView imageView;
+
+    // 생성자
+    public PhotoAdapter(List<String> photoPaths) {
+        this.photoPaths = photoPaths;
     }
 
 

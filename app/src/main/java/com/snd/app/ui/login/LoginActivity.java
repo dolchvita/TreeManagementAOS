@@ -54,6 +54,9 @@ public class LoginActivity extends TMActivity {
     // 1 로그인 정보
     JSONObject loginData=new JSONObject();
 
+    //@Inject
+    //SharedPreferences sharedPreferences;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,6 +70,14 @@ public class LoginActivity extends TMActivity {
         // requestQueue 생성
         if(AppModule.requestQueue == null)
             AppModule.requestQueue = Volley.newRequestQueue(getApplicationContext());
+
+
+        AppComponent appComponent = DaggerAppComponent.builder().appModule(new AppModule(this)).build();
+        // 의존성 주입됨
+        appComponent.inject(this);
+        //sharedPreferences=appComponent.sharedPreferences();
+        Log.d(TAG,"-------------"+sharedPreferences);
+
 
         // 로그인 버튼
         bt_login.setOnClickListener((v) ->{
@@ -202,30 +213,40 @@ public class LoginActivity extends TMActivity {
    public void saveUserInfo(UserDTO user){
 
        // 로그인시 생성한 PS 객체를 매개변수로 넘겨줌
-       SharedPreferences sharedPreferences=this.getSharedPreferences("sharedUser", Context.MODE_PRIVATE);
+        //sharedPreferences=this.getSharedPreferences("sharedUser", Context.MODE_PRIVATE);
        Log.d(TAG, "**로그인 액티비티 쉐어드 객체 확인 ** "+sharedPreferences);
 
 
-       AppComponent appComponent = DaggerAppComponent.builder().appModule(new AppModule(new SharedApplication())).build();
-       // 모듈 2개 이상 추가
-       SharedPreferencesManager sharedPreferencesManager=appComponent.sharedPreferencesManager();
 
+       // 모듈 2개 이상 추가
+       /*
+       SharedPreferencesManager sharedPreferencesManager=SharedPreferencesManager.getInstance(this);
 
        sharedPreferencesManager.setSharedPreferences(sharedPreferences);
+
        sharedPreferencesManager.saveUserInfo("company",user.getCompany());  // key, value
        sharedPreferencesManager.saveUserInfo("name",user.getName());  // key, value
        sharedPreferencesManager.saveUserInfo("id",id);
        // 토큰 저장
        sharedPreferencesManager.saveUserInfo("Authorization", "Bearer "+token);
+       */
 
-        String company=sharedPreferencesManager.getUserInfo("company",null);
-        Log.d(TAG, "** 저장된 SP 객체의 회사명 ** "+company);
+       //SharedPreferences.Editor editor = sharedPreferences.edit();
+       editor.putString("company",user.getCompany());
+       editor.putString("name",user.getName());
+       editor.putString("id",id);
 
-        // 의존성 주입됨
-        appComponent.inject(this);
+       editor.putString("Authorization", "Bearer "+token);
 
-        // 위의 코드를 모듈화 해보기
-   }
+       editor.apply();
+       // 위의 코드를 모듈화 해보기
+       //String company=sharedPreferences.getString("company",null);
+
+
+       // null
+       Log.d(TAG, "** 저장된 SP 객체의 회사명 ** "+sharedPreferences.getString("company",null));
+
+    }
 
     public void startActivity(){
         Intent intent=new Intent(this, MainActivity.class);

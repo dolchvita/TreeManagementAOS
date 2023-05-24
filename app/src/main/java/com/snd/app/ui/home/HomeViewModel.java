@@ -1,5 +1,6 @@
 package com.snd.app.ui.home;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
@@ -30,7 +31,7 @@ public class HomeViewModel extends ViewModel {
 
     private SharedPreferences sharedPreferences;
     private MainHomeFrBinding homeFrBinding;
-    private SharedPreferencesManager sharedPreferencesManager;
+    //private SharedPreferencesManager sharedPreferencesManager;
 
     @Inject
     UserDTO userDTO;
@@ -39,13 +40,13 @@ public class HomeViewModel extends ViewModel {
 
 
     @Inject
-    public HomeViewModel(SharedApplication application, SharedPreferencesManager manager) {
+    public HomeViewModel(Context context, SharedPreferencesManager manager) {
         AppComponent appComponent=DaggerAppComponent.builder().appModule(new AppModule(new SharedApplication())).build();
         appComponent.inject(this);
-        this.sharedPreferencesManager = manager;
+        //this.sharedPreferencesManager = manager;
 
         // 결국....
-        sharedPreferences = manager.getSharedPreferences();
+        //sharedPreferences = appComponent.sharedPreferences();
 
         // 매니저에서 디티오 꺼내기
         UserDTO userDTO=manager.getUserDTO();
