@@ -54,7 +54,6 @@ public class MainActivity extends AppCompatActivity {
 
                     FragmentTransaction transaction=getSupportFragmentManager().beginTransaction();
 
-
                     // 메인 화면을 4가지의 프레그먼트로 분할
                     if(o.equals(1)){
                         Log.d(TAG,"홈이 올 예정");

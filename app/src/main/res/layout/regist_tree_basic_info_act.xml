@@ -67,10 +67,10 @@
 
                 <View
                     android:id="@+id/add_camera_view"
-                    android:layout_width="90dp"
-                    android:layout_height="90dp"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="10dp"
+                    android:layout_width="110dp"
+                    android:layout_height="110dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
                     android:background="@drawable/rectangle_outline_10"
                     android:onClick="@{()->treeBasicInfoVM.setCamera()}"
                     app:layout_constraintStart_toStartOf="parent"
@@ -89,14 +89,16 @@
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/image_cnt"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="9dp"
+                    android:layout_height="7dp"
+                    android:text="@{treeBasicInfoVM._imgCount}"
                     android:textColor="@color/cocoa_brown"
                     app:layout_constraintBottom_toBottomOf="@id/add_camera_view"
                     app:layout_constraintEnd_toEndOf="@id/add_camera_view"
                     app:layout_constraintStart_toStartOf="@id/add_camera_view"
                     app:layout_constraintTop_toBottomOf="@id/add_image"
                     tools:text="0/2" />
+
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rv_image"
@@ -106,9 +108,11 @@
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     app:layout_constraintBottom_toBottomOf="@id/add_camera_view"
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toEndOf="@id/add_camera_view"
                     app:layout_constraintTop_toTopOf="@id/add_camera_view"
-                    tools:listitem="@layout/image_item" />
+                    app:layout_constraintVertical_bias="1.0"
+                    tools:listitem="@layout/image_item"/>
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tree_nfc_tv"

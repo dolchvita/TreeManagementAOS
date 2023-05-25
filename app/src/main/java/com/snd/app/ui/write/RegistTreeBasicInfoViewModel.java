@@ -32,10 +32,27 @@ public class RegistTreeBasicInfoViewModel extends LocationViewModel {
 
     private Callback callback;
 
+    // 사진만 온전히 담는 객체는 없다!!
+
     // 액티비티와 어댑터가 가져갈 리스트
     // 실제 사진이 담기는 리스트
     private MutableLiveData<List<Bitmap>> _listData = new MutableLiveData<>();
     public LiveData listData=getImageList();
+
+
+    // 사진 개수 표현하기
+    public ObservableField<String> _imgCount = new ObservableField<>();      // 동적으로 변화될 카운트 개수
+
+   //public LiveData imgCount=getImgCount();
+
+   int cnt=0;
+
+
+   public void setImgCount(){
+       _imgCount.set(cnt+"/2");
+       cnt+=1;
+   }
+
 
     public void setImageList(Bitmap bitmap) {
         // 추가된 리스트를 이미지 리스트에 세팅
@@ -47,6 +64,9 @@ public class RegistTreeBasicInfoViewModel extends LocationViewModel {
         }
         currentList.add(bitmap);
         _listData.setValue(currentList);
+
+        // 카운터 추가
+        setImgCount();
     }
 
 
@@ -77,9 +97,11 @@ public class RegistTreeBasicInfoViewModel extends LocationViewModel {
         }
     }
 
+
     public void setCamera(){
         _camera.setValue("test");
     }
+
 
     public LiveData getCamera(){
         if(_camera==null){

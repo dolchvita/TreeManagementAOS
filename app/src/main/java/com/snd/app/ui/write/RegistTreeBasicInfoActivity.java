@@ -83,7 +83,7 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements  Ca
 
         // 이미지 저장
         recyclerView=findViewById(R.id.rv_image);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));        // 가로 정렬
+        recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));        // 가로 정렬
         // 어댑터 연결
         photoAdapter=new PhotoAdapter();
         recyclerView.setAdapter(photoAdapter);
@@ -108,6 +108,7 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements  Ca
                 Log.d(TAG, "개수 확인"+photoAdapter.getItemCount());
             }
         });
+
     }
 
    public void getTreeLocation(){
@@ -202,9 +203,8 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements  Ca
     //boolean isCameraPermissionGranted;
 
     List<String> photoPaths;
-
     // 어댑터가 가져갈 리스트
-    private List<Bitmap> photoList;
+    //private List<Bitmap> photoList;
 
     public void registerTreeImage(){
         treeBasicInfoVM.camera.observe(this, new Observer() {

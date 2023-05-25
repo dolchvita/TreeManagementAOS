@@ -30,15 +30,22 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
     @NonNull
     @Override
     public PhotoViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        // 레이아웃을 새롭게 생성한다.
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.regist_tree_basic_info_act, parent, false);
+                .inflate(R.layout.image_item, parent, false);
+
+        int width = 240;  // 원하는 너비
+        int height = 240; // 원하는 높이
+        ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(width, height);
+        view.setLayoutParams(layoutParams);
+
         return new PhotoViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull PhotoViewHolder holder, int position) {
         Bitmap photo = imageList.get(position);
-        //holder.photoImageView.setImageBitmap(photo);
+        holder.bind(photo);
     }
 
     @Override
@@ -49,22 +56,25 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
     }
 
     static class PhotoViewHolder extends RecyclerView.ViewHolder {
-        RecyclerView photoImageView;
+        ImageView photoImageView;
 
         PhotoViewHolder(View itemView) {
             super(itemView);
-            photoImageView = itemView.findViewById(R.id.rv_image);
+            photoImageView = itemView.findViewById(R.id.img);
+
+            photoImageView.setScaleType(ImageView.ScaleType.CENTER_CROP);   // 비율 조정
         }
 
 
         public void bind(Bitmap image) {
             if (image != null) {
                 // ImageView에 이미지를 바인딩합니다.
-               //photoImageView.setImageBitmap(image);
+               photoImageView.setImageBitmap(image);
+
             } else {
                 // 이미지가 null인 경우 기본 이미지 또는 오류 이미지 등을 설정할 수 있습니다.
                 // 예시:
-                // photoImageView.setImageResource(R.drawable.default_image);
+                photoImageView.setImageResource(R.drawable.ic_nfc_on);
                 // 또는
                 // photoImageView.setImageDrawable(ContextCompat.getDrawable(photoImageView.getContext(), R.drawable.default_image));
             }
@@ -76,6 +86,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
         super.onBindViewHolder(holder, position, payloads);
 
         Bitmap photoBitmap = imageList.get(position);
+        holder.bind(photoBitmap);
         //holder.photoImageView.setImageBitmap(photoBitmap);
     }
 
