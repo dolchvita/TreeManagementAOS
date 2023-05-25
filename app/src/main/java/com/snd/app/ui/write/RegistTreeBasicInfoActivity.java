@@ -81,14 +81,12 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements  Ca
         // 콜백 인터페이스 연결
         treeBasicInfoVM.setCallback(this);
 
-
         // 이미지 저장
         recyclerView=findViewById(R.id.rv_image);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));        // 가로 정렬
         // 어댑터 연결
         photoAdapter=new PhotoAdapter();
         recyclerView.setAdapter(photoAdapter);
-
 
         try {
             setTreeBasicInfoDTO();
@@ -268,13 +266,10 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements  Ca
     }
 
 
-    private String currentPhotoPath;
-
     // 3 결과 호출
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         // 매개변수로 날라오는 data의 의미 --> 카메라 앱에서 설정한 결과 데이터 (사진의 섬네일 등)
         // 그러나 사진을 파일로 저장하는 경우 일반적으로 null
        Log.d(TAG,"** onActivityResult 호출됨 **");
@@ -291,8 +286,9 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements  Ca
            photoPaths.add(uri);      // 사진 경로
 
            scanImageFile(currentPhotoFile);
+           // 4 갤러리 저장
+           galleryAddPic();
 
-           // 실제 뷰모델에 있는 addImage 호출
            // 5-1) 경로에 있는 사진 꺼냄
            Bitmap bitmap = BitmapFactory.decodeFile(uri);
            Log.d(TAG,"** 리스트에 담기는 사진! ** "+bitmap);
@@ -300,22 +296,8 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements  Ca
            if (bitmap != null) {
                // 5-2) 실제 사진을 리스트에 담기
                treeBasicInfoVM.setImageList(bitmap);
-
-               // 여기 리스트에 사진이 담기는 것을 관찰해야함 - 즉, 이 리스트를 담은 데이터
-               // 예상 : listData 의 변경이 감지되어야 함 !
            }
-
-            // 4 갤러리 저장
-           galleryAddPic();
         }
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        Log.d(TAG,"** onStart 호출 **");
-
-
     }
 
 
@@ -334,8 +316,6 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements  Ca
 
     // 갤러리 이미지 스캔
     private void scanImageFile(File imageFile) {
-        Log.d(TAG,"** scanImageFile 호출 **");
-
         MediaScannerConnection.scanFile(this,
                 new String[]{imageFile.getAbsolutePath()},
                 null,
@@ -349,7 +329,6 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements  Ca
 
     // 갤러리 새로고침
     private void refreshGallery() {
-        Log.d(TAG,"** refreshGallery 호출 **");
         Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
         File galleryDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
         Uri contentUri = Uri.fromFile(galleryDir);

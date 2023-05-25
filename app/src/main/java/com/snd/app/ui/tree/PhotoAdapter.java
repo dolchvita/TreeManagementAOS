@@ -24,9 +24,8 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
         Log.d(TAG,"** setImageList 호출 ** "+imageList);
 
         this.imageList = imageList;
-        notifyDataSetChanged();
+        notifyDataSetChanged();     // 리스트 갱신
     }
-
 
     @NonNull
     @Override
@@ -39,7 +38,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
     @Override
     public void onBindViewHolder(@NonNull PhotoViewHolder holder, int position) {
         Bitmap photo = imageList.get(position);
-        holder.photoImageView.setImageBitmap(photo);
+        //holder.photoImageView.setImageBitmap(photo);
     }
 
     @Override
@@ -50,16 +49,25 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
     }
 
     static class PhotoViewHolder extends RecyclerView.ViewHolder {
-        ImageView photoImageView;
+        RecyclerView photoImageView;
 
         PhotoViewHolder(View itemView) {
             super(itemView);
             photoImageView = itemView.findViewById(R.id.rv_image);
         }
 
+
         public void bind(Bitmap image) {
-            // ImageView에 이미지를 바인딩합니다.
-            photoImageView.setImageBitmap(image);
+            if (image != null) {
+                // ImageView에 이미지를 바인딩합니다.
+               //photoImageView.setImageBitmap(image);
+            } else {
+                // 이미지가 null인 경우 기본 이미지 또는 오류 이미지 등을 설정할 수 있습니다.
+                // 예시:
+                // photoImageView.setImageResource(R.drawable.default_image);
+                // 또는
+                // photoImageView.setImageDrawable(ContextCompat.getDrawable(photoImageView.getContext(), R.drawable.default_image));
+            }
         }
     }
 
@@ -68,7 +76,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
         super.onBindViewHolder(holder, position, payloads);
 
         Bitmap photoBitmap = imageList.get(position);
-        holder.photoImageView.setImageBitmap(photoBitmap);
+        //holder.photoImageView.setImageBitmap(photoBitmap);
     }
 
 

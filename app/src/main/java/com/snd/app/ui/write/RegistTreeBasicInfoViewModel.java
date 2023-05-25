@@ -37,32 +37,6 @@ public class RegistTreeBasicInfoViewModel extends LocationViewModel {
     private MutableLiveData<List<Bitmap>> _listData = new MutableLiveData<>();
     public LiveData listData=getImageList();
 
-   //private MutableLiveData<String> _addData;
-    //LiveData addData=getAddData();
-
-    // 카메라로 사진 찍을 시에 가동할 메서드
-    /*
-    public void setAddData(){
-        Log.d(TAG,"** setAddData 호출 **");
-
-        if(_ListData.getValue()!=null&&_ListData.getValue().size()<2){
-            Log.d(TAG,"** 진입1 **");
-
-            _addData.setValue("데이터 들어가기");
-            setCamera();
-        }else {
-            Log.d(TAG,"** 진입2 **");
-
-            //Toast.makeText(new RegistTreeBasicInfoActivity(),"최대 2장까지입니다.",Toast.LENGTH_SHORT);
-        }
-    }
-
-    public LiveData getAddData(){
-        return _addData;
-    }
-     */
-
-
     public void setImageList(Bitmap bitmap) {
         // 추가된 리스트를 이미지 리스트에 세팅
         // 이게 시행되어야 getImageList에 변화가 생긴다.
