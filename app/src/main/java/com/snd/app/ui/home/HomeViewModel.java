@@ -3,6 +3,7 @@ package com.snd.app.ui.home;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.util.Log;
 import android.view.View;
 
@@ -10,12 +11,8 @@ import androidx.databinding.ObservableField;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.snd.app.data.AppComponent;
-import com.snd.app.data.AppModule;
-import com.snd.app.data.DaggerAppComponent;
-import com.snd.app.databinding.MainHomeFrBinding;
+
 import com.snd.app.domain.UserDTO;
-import com.snd.app.sharedPreferences.SharedApplication;
 import com.snd.app.data.user.SharedPreferencesManager;
 import com.snd.app.ui.tree.TreeActivity;
 
@@ -29,8 +26,8 @@ public class HomeViewModel extends ViewModel {
     public ObservableField<String> company = new ObservableField<>();
     public ObservableField<String> name = new ObservableField<>();
 
-    private SharedPreferences sharedPreferences;
-    private MainHomeFrBinding homeFrBinding;
+    //private SharedPreferences sharedPreferences;
+    //private MainHomeFrBinding homeFrBinding;
     //private SharedPreferencesManager sharedPreferencesManager;
 
     @Inject
@@ -41,8 +38,8 @@ public class HomeViewModel extends ViewModel {
 
     @Inject
     public HomeViewModel(Context context, SharedPreferencesManager manager) {
-        AppComponent appComponent=DaggerAppComponent.builder().appModule(new AppModule(new SharedApplication())).build();
-        appComponent.inject(this);
+        //AppComponent appComponent=DaggerAppComponent.builder().appModule(new AppModule(new SharedApplication())).build();
+        //appComponent.inject(this);
         //this.sharedPreferencesManager = manager;
 
         // 결국....

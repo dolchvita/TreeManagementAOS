@@ -1,29 +1,17 @@
 package com.snd.app.ui.write;
 
-import android.Manifest;
-import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.provider.Settings;
 import android.util.Log;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.AppCompatTextView;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.Observer;
@@ -72,7 +60,6 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements  Ca
     private RecyclerView recyclerView;
     private PhotoAdapter photoAdapter;
 
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         Log.d(TAG, "** RegistTreeBasicInfoActivity 객체 생성 **");
@@ -96,10 +83,12 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements  Ca
 
 
         // 이미지 저장
-        //recyclerView=findViewById(R.id.rv_image);
-        //recyclerView.setLayoutManager(new LinearLayoutManager(this));        // 가로 정렬
-        //photoAdapter = new PhotoAdapter(new ArrayList<>());
-        //recyclerView.setAdapter(photoAdapter);
+        recyclerView=findViewById(R.id.rv_image);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));        // 가로 정렬
+        // 어댑터 연결
+        photoAdapter=new PhotoAdapter();
+        recyclerView.setAdapter(photoAdapter);
+
 
         try {
             setTreeBasicInfoDTO();
@@ -108,12 +97,20 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements  Ca
             throw new RuntimeException(e);
         }
 
-
         //getTreeLocation();
         registerTreeImage();
 
-    }
+        treeBasicInfoVM.listData.observe(this, new Observer<List<Bitmap>>() {
+            @Override
+            public void onChanged(List<Bitmap> bitmaps) {
+                // 5-3) 변경 감지
+                Log.d(TAG,"** listData 변경 감지 **");
 
+                photoAdapter.setImageList(bitmaps);
+                Log.d(TAG, "개수 확인"+photoAdapter.getItemCount());
+            }
+        });
+    }
 
    public void getTreeLocation(){
        //getLocation();
@@ -129,20 +126,17 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements  Ca
         treeBasicInfoDTO.setNFC(idHex);
         treeBasicInfoDTO.setSpecies("산사나무");
 
-
         // 여기가 문제
         treeBasicInfoDTO.setSubmitter(sharedPreferences.getString("id",null));
         treeBasicInfoDTO.setVendor(sharedPreferences.getString("company",null));
 
-
-        Log.d(TAG,"** 확인 **"+sharedPreferences.getString("id",null));
-        Log.d(TAG,"** 확인 **"+sharedPreferences.getString("company",null));
+        //Log.d(TAG,"** 확인 **"+sharedPreferences.getString("id",null));
+        //Log.d(TAG,"** 확인 **"+sharedPreferences.getString("company",null));
 
 
         // 매핑된 DTO 넘겨줌
         treeBasicInfoVM.setTextViewModel(treeBasicInfoDTO);
     }
-
 
     // 수목 기본정보 등록
     public void registerTreeBasicInfo() {
@@ -197,7 +191,6 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements  Ca
     }
 
 
-
     /*--------------------------------------
             카메라 관련 로직 start
         -------------------------------------*/
@@ -212,9 +205,12 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements  Ca
 
     List<String> photoPaths;
 
+    // 어댑터가 가져갈 리스트
+    private List<Bitmap> photoList;
 
     public void registerTreeImage(){
-        treeBasicInfoVM.addPhoto.observe(this, new Observer() {
+        treeBasicInfoVM.camera.observe(this, new Observer() {
+
             @Override
             public void onChanged(Object o) {
                 Log.d(TAG, "** 클릭 감지 **");
@@ -242,7 +238,6 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements  Ca
         Log.d(TAG, "** 보내기 전에 확인 ** " + imageFile);
         return imageFile;
     }
-
 
     // 2 카메라 촬영 - 아마 문제 없음
     private void startCamera() {
@@ -288,47 +283,39 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements  Ca
        if (isCameraPermissionGranted) {
            //isPhotoTaken=true;
            Log.d(TAG,"** 단계 1 **");
-
            Log.d(TAG,"** 저장 메서드 가기 전 확인 ** "+currentPhotoFile);
 
            photoPaths = new ArrayList<>(); // 사진 파일 경로 리스트
            // 사진 파일 저장
-           photoPaths.add(currentPhotoFile.getAbsolutePath());      // 사진 경로
+           String uri=currentPhotoFile.getAbsolutePath();
+           photoPaths.add(uri);      // 사진 경로
+
            scanImageFile(currentPhotoFile);
+
+           // 실제 뷰모델에 있는 addImage 호출
+           // 5-1) 경로에 있는 사진 꺼냄
+           Bitmap bitmap = BitmapFactory.decodeFile(uri);
+           Log.d(TAG,"** 리스트에 담기는 사진! ** "+bitmap);
+
+           if (bitmap != null) {
+               // 5-2) 실제 사진을 리스트에 담기
+               treeBasicInfoVM.setImageList(bitmap);
+
+               // 여기 리스트에 사진이 담기는 것을 관찰해야함 - 즉, 이 리스트를 담은 데이터
+               // 예상 : listData 의 변경이 감지되어야 함 !
+           }
 
             // 4 갤러리 저장
            galleryAddPic();
-
-           // 5 사진 가져오기
-           //getImageList();
         }
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d(TAG,"** onStart 호출 **");
 
-    // 5 사진 가져오기
-    public void getImageList(){
-        // RecyclerView에 표시할 Bitmap 리스트
-        List<Bitmap> bitmapList = new ArrayList<>();
-        Log.d(TAG,"** getImageList- 비트맵 리스트 **"+bitmapList);
 
-        for (String photoPath : photoPaths) {
-            // 경로에 있는 사진 꺼냄
-            Bitmap bitmap = BitmapFactory.decodeFile(photoPath);
-
-            if (bitmap != null) {
-                bitmapList.add(bitmap);
-            }
-        }
-        Log.d(TAG,"** 결과 확인 bitmapList의 크기 ** "+bitmapList.size());
-
-        Log.d(TAG,"** 어댑터 확인 ** "+photoAdapter);
-        Log.d(TAG,"** 어댑터에 들어갈 사진 ** "+bitmapList.get(0));
-        photoAdapter.addPhoto(bitmapList.get(0));
-
-        Log.d(TAG, "** 담긴 사진 수 ** "+photoAdapter.getItemCount());
-
-        // 데이터 갱신
-        photoAdapter.notifyDataSetChanged();
     }
 
 
@@ -359,7 +346,6 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements  Ca
                     }
                 });
     }
-
 
     // 갤러리 새로고침
     private void refreshGallery() {
