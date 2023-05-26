@@ -69,8 +69,6 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements  Ca
         // 의존성 주입하기
         AppComponent appComponent= DaggerAppComponent.builder().appModule(new AppModule(this)).build();
         appComponent.inject(this);
-        // 로그인 객체 주입하여 사용하기
-        //sharedPreferencesManager=SharedPreferencesManager.getInstance(this);
 
         // 뷰모델 연결
         treeBasicInfoVM=new RegistTreeBasicInfoViewModel();
@@ -109,6 +107,14 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements  Ca
             }
         });
 
+        treeBasicInfoVM.imgCount.observe(this, new Observer<String>() {
+            @Override
+            public void onChanged(String s) {
+                treeBasicInfoVM.cnt+=1;
+            }
+        });
+
+
     }
 
    public void getTreeLocation(){
@@ -128,10 +134,6 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements  Ca
         // 여기가 문제
         treeBasicInfoDTO.setSubmitter(sharedPreferences.getString("id",null));
         treeBasicInfoDTO.setVendor(sharedPreferences.getString("company",null));
-
-        //Log.d(TAG,"** 확인 **"+sharedPreferences.getString("id",null));
-        //Log.d(TAG,"** 확인 **"+sharedPreferences.getString("company",null));
-
 
         // 매핑된 DTO 넘겨줌
         treeBasicInfoVM.setTextViewModel(treeBasicInfoDTO);
@@ -189,7 +191,6 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements  Ca
         registerTreeBasicInfo();
     }
 
-
     /*--------------------------------------
             카메라 관련 로직 start
         -------------------------------------*/
@@ -199,12 +200,8 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements  Ca
     private File currentPhotoFile;
     // 사진 찍히는 것 제한하기
     private boolean isPhotoTaken = false;
-    // SharedPreferences 객체에서 권한 상태 읽어오기
-    //boolean isCameraPermissionGranted;
 
     List<String> photoPaths;
-    // 어댑터가 가져갈 리스트
-    //private List<Bitmap> photoList;
 
     public void registerTreeImage(){
         treeBasicInfoVM.camera.observe(this, new Observer() {
@@ -294,6 +291,7 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements  Ca
            Log.d(TAG,"** 리스트에 담기는 사진! ** "+bitmap);
 
            if (bitmap != null) {
+
                // 5-2) 실제 사진을 리스트에 담기
                treeBasicInfoVM.setImageList(bitmap);
            }

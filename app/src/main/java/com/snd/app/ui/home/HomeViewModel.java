@@ -26,9 +26,6 @@ public class HomeViewModel extends ViewModel {
     public ObservableField<String> company = new ObservableField<>();
     public ObservableField<String> name = new ObservableField<>();
 
-    //private SharedPreferences sharedPreferences;
-    //private MainHomeFrBinding homeFrBinding;
-    //private SharedPreferencesManager sharedPreferencesManager;
 
     @Inject
     UserDTO userDTO;
@@ -38,12 +35,6 @@ public class HomeViewModel extends ViewModel {
 
     @Inject
     public HomeViewModel(Context context, SharedPreferencesManager manager) {
-        //AppComponent appComponent=DaggerAppComponent.builder().appModule(new AppModule(new SharedApplication())).build();
-        //appComponent.inject(this);
-        //this.sharedPreferencesManager = manager;
-
-        // 결국....
-        //sharedPreferences = appComponent.sharedPreferences();
 
         // 매니저에서 디티오 꺼내기
         UserDTO userDTO=manager.getUserDTO();

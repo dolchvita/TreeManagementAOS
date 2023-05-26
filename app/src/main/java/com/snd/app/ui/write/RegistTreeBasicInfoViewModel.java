@@ -1,11 +1,13 @@
 package com.snd.app.ui.write;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.Log;
 import android.widget.Toast;
 
 import androidx.databinding.ObservableField;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.snd.app.common.LocationViewModel;
@@ -32,48 +34,61 @@ public class RegistTreeBasicInfoViewModel extends LocationViewModel {
 
     private Callback callback;
 
-    // 사진만 온전히 담는 객체는 없다!!
-
     // 액티비티와 어댑터가 가져갈 리스트
     // 실제 사진이 담기는 리스트
     private MutableLiveData<List<Bitmap>> _listData = new MutableLiveData<>();
     public LiveData listData=getImageList();
 
-
     // 사진 개수 표현하기
-    public ObservableField<String> _imgCount = new ObservableField<>();      // 동적으로 변화될 카운트 개수
+    MutableLiveData<String> _imgCount=new MediatorLiveData<>();
+    LiveData<String> imgCount=getImgCount();
+    public int cnt=0;
 
-   //public LiveData imgCount=getImgCount();
+    List<Bitmap> currentList;   // 실제 사진이 담겨있는 리스트
 
-   int cnt=0;
+    // 카메라 실행 or 제한 메서드
 
 
-   public void setImgCount(){
-       _imgCount.set(cnt+"/2");
-       cnt+=1;
+
+    // 생성자
+    public RegistTreeBasicInfoViewModel() {
+        setImgCount();
+    }
+
+    public void setImgCount(){
+        _imgCount.setValue(cnt+"/2");
+    }
+
+   public LiveData getImgCount(){
+       return _imgCount;
    }
 
-
+   // 사진 추가하는 메서드
     public void setImageList(Bitmap bitmap) {
         // 추가된 리스트를 이미지 리스트에 세팅
         // 이게 시행되어야 getImageList에 변화가 생긴다.
 
-        List<Bitmap> currentList = _listData.getValue();
+        currentList = _listData.getValue();
         if (currentList == null) {
             currentList = new ArrayList<>();
         }
-        currentList.add(bitmap);
-        _listData.setValue(currentList);
 
-        // 카운터 추가
-        setImgCount();
+        if(currentList.size()<2){
+            currentList.add(bitmap);
+            _listData.setValue(currentList);
+
+            setImgCount();
+
+        }else{
+            Log.d(TAG, "2개 이상 초과됨");
+        }
+
     }
 
 
     public MutableLiveData<List<Bitmap>> getImageList() {
         return _listData;
     }
-
     // 데이터바인딩시 참조할 변수 매핑
     public void setTextViewModel(TreeBasicInfoDTO treeBasicInfoDTO){
         NFC.set(treeBasicInfoDTO.getNFC());
@@ -91,6 +106,7 @@ public class RegistTreeBasicInfoViewModel extends LocationViewModel {
     public void setCallback(Callback callback) {
         this.callback = callback;
     }
+
     public void viewModelMethod() {
         if (callback != null) {
             callback.onCallback();
@@ -98,6 +114,8 @@ public class RegistTreeBasicInfoViewModel extends LocationViewModel {
     }
 
 
+
+    // 카메라 실행시키는 메서드
     public void setCamera(){
         _camera.setValue("test");
     }

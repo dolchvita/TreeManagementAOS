@@ -32,17 +32,14 @@ public class MainActivity extends AppCompatActivity {
             mainActBinding.setMainVM(mainVM);
             mainVM=mainActBinding.getMainVM();  // 뷰모델 연동
 
-
             Log.d(TAG, mainActBinding+" 바인딩 객체 뭔데");
             Log.d(TAG, mainVM+"!!!!!!!asaswqdwqedd!!!!!");
-
 
             // 화면에 보일 프레그먼트
             // HomeFragment homeFragment=new HomeFragment();
 
             // 처음 화면을 메인으로 갖추는 것
             getSupportFragmentManager().beginTransaction().replace(R.id.content, new HomeFragment()).commit();
-
 
             mainVM.tabClick.observe(this, new Observer() {
                 @Override
