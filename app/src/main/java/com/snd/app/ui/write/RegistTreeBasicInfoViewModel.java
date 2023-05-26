@@ -40,14 +40,11 @@ public class RegistTreeBasicInfoViewModel extends LocationViewModel {
     public LiveData listData=getImageList();
 
     // 사진 개수 표현하기
-    MutableLiveData<String> _imgCount=new MediatorLiveData<>();
-    LiveData<String> imgCount=getImgCount();
+    private MutableLiveData<String> _imgCount=new MediatorLiveData<>();
+    public LiveData<String> imgCount=getImgCount();
     public int cnt=0;
 
     List<Bitmap> currentList;   // 실제 사진이 담겨있는 리스트
-
-    // 카메라 실행 or 제한 메서드
-
 
 
     // 생성자
@@ -89,6 +86,7 @@ public class RegistTreeBasicInfoViewModel extends LocationViewModel {
     public MutableLiveData<List<Bitmap>> getImageList() {
         return _listData;
     }
+
     // 데이터바인딩시 참조할 변수 매핑
     public void setTextViewModel(TreeBasicInfoDTO treeBasicInfoDTO){
         NFC.set(treeBasicInfoDTO.getNFC());

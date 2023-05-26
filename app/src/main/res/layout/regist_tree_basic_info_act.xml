@@ -96,11 +96,10 @@
                     app:layout_constraintStart_toStartOf="@id/add_camera_view"
                     app:layout_constraintTop_toBottomOf="@id/add_image"
                     />
-
-                <androidx.recyclerview.widget.RecyclerView
+                \<androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rv_image"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="100dp"
                     android:orientation="horizontal"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     app:layout_constraintBottom_toBottomOf="@id/add_camera_view"
@@ -157,7 +156,7 @@
                     app:layout_constraintTop_toBottomOf="@id/tr_name_tv"
 
                     tools:hint="소유주를 입력해주세요."
-                    tools:text="산사나무" />
+                    />
 
 
                 <androidx.appcompat.widget.AppCompatTextView

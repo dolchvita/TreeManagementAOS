@@ -34,6 +34,7 @@ import com.snd.app.data.user.SharedPreferencesManager;
 import com.snd.app.databinding.RegistTreeBasicInfoActBinding;
 import com.snd.app.domain.tree.TreeBasicInfoDTO;
 import com.snd.app.ui.tree.PhotoAdapter;
+import com.snd.app.ui.tree.SpaceItemDecoration;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -82,6 +83,9 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements  Ca
         // 이미지 저장
         recyclerView=findViewById(R.id.rv_image);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));        // 가로 정렬
+        recyclerView.addItemDecoration(new SpaceItemDecoration(20));
+
+
         // 어댑터 연결
         photoAdapter=new PhotoAdapter();
         recyclerView.setAdapter(photoAdapter);
@@ -237,6 +241,12 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements  Ca
     // 2 카메라 촬영 - 아마 문제 없음
     private void startCamera() {
         Log.d(TAG,"** startCamera 호출됨 **");
+
+        if (treeBasicInfoVM.listData.getValue() != null && treeBasicInfoVM.currentList.size() >= 2) {
+            Toast.makeText(this, "이미지 업로드 최대 2개를 초과하였습니다.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
 
@@ -282,19 +292,17 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements  Ca
            String uri=currentPhotoFile.getAbsolutePath();
            photoPaths.add(uri);      // 사진 경로
 
-           scanImageFile(currentPhotoFile);
+
            // 4 갤러리 저장
+           scanImageFile(currentPhotoFile);
            galleryAddPic();
 
            // 5-1) 경로에 있는 사진 꺼냄
            Bitmap bitmap = BitmapFactory.decodeFile(uri);
            Log.d(TAG,"** 리스트에 담기는 사진! ** "+bitmap);
 
-           if (bitmap != null) {
-
-               // 5-2) 실제 사진을 리스트에 담기
-               treeBasicInfoVM.setImageList(bitmap);
-           }
+           // 5-2) 실제 사진을 리스트에 담기
+           treeBasicInfoVM.setImageList(bitmap);
         }
     }
 
