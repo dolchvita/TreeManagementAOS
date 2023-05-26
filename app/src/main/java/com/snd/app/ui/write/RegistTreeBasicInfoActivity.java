@@ -1,5 +1,7 @@
 package com.snd.app.ui.write;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -61,6 +63,8 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements  Ca
     private RecyclerView recyclerView;
     private PhotoAdapter photoAdapter;
 
+    public Boolean flag;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         Log.d(TAG, "** RegistTreeBasicInfoActivity 객체 생성 **");
@@ -85,7 +89,6 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements  Ca
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));        // 가로 정렬
         recyclerView.addItemDecoration(new SpaceItemDecoration(20));
 
-
         // 어댑터 연결
         photoAdapter=new PhotoAdapter();
         recyclerView.setAdapter(photoAdapter);
@@ -104,8 +107,6 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements  Ca
             @Override
             public void onChanged(List<Bitmap> bitmaps) {
                 // 5-3) 변경 감지
-                Log.d(TAG,"** listData 변경 감지 **");
-
                 photoAdapter.setImageList(bitmaps);
                 Log.d(TAG, "개수 확인"+photoAdapter.getItemCount());
             }
@@ -118,7 +119,37 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements  Ca
             }
         });
 
+        // 2
+        photoAdapter.tabClick.observe(this, new Observer() {
+            @Override
+            public void onChanged(Object o) {
+                showAlertDialog();
+            }
+        });
+    }
 
+    private void showAlertDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("");
+        builder.setMessage("사진을 삭제하시겠습니까?");
+
+        builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // 확인 버튼을 눌렀을 때
+                flag=true;
+                photoAdapter.setAlertDialog(photoAdapter.clickedPosition, flag);
+            }
+        });
+        builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // 취소 버튼을 눌렀을 때
+                flag=false;
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
    public void getTreeLocation(){
@@ -126,7 +157,6 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements  Ca
        Log.d(TAG,"** 위도 **"+latitude);
        Log.d(TAG,"** 경도 **"+longitude);
    }
-
 
     public void setTreeBasicInfoDTO() throws JsonProcessingException {
         Log.d(TAG,"** 매니저 **"+sharedPreferencesManager);

@@ -20,12 +20,12 @@ import java.util.List;
 
 public class RegistTreeBasicInfoViewModel extends LocationViewModel {
     private String TAG=this.getClass().getName();
-
+    // 기본 정보
     public ObservableField<String> NFC=new ObservableField<>();
     public ObservableField<String> species=new ObservableField<>();
     public ObservableField<String> submitter=new ObservableField<>();
     public ObservableField<String> vendor=new ObservableField<>();
-
+    // 위치 정보
     public ObservableField<String> latitude=new ObservableField<>();
     public ObservableField<String> longitude=new ObservableField<>();
 
@@ -43,9 +43,21 @@ public class RegistTreeBasicInfoViewModel extends LocationViewModel {
     private MutableLiveData<String> _imgCount=new MediatorLiveData<>();
     public LiveData<String> imgCount=getImgCount();
     public int cnt=0;
-
     List<Bitmap> currentList;   // 실제 사진이 담겨있는 리스트
 
+    // 사진 삭제하기
+    private MutableLiveData _delImage=new MutableLiveData<>();
+    public LiveData delImage=getDelImage();
+
+
+    public void setDelImage() {
+        Log.d(TAG,"** 클릭 감지???? **");
+        _delImage.setValue("click");
+    }
+
+    public LiveData getDelImage(){
+        return _delImage;
+    }
 
     // 생성자
     public RegistTreeBasicInfoViewModel() {
@@ -64,8 +76,8 @@ public class RegistTreeBasicInfoViewModel extends LocationViewModel {
     public void setImageList(Bitmap bitmap) {
         // 추가된 리스트를 이미지 리스트에 세팅
         // 이게 시행되어야 getImageList에 변화가 생긴다.
-
         currentList = _listData.getValue();
+
         if (currentList == null) {
             currentList = new ArrayList<>();
         }
@@ -73,15 +85,12 @@ public class RegistTreeBasicInfoViewModel extends LocationViewModel {
         if(currentList.size()<2){
             currentList.add(bitmap);
             _listData.setValue(currentList);
-
             setImgCount();
 
         }else{
             Log.d(TAG, "2개 이상 초과됨");
         }
-
     }
-
 
     public MutableLiveData<List<Bitmap>> getImageList() {
         return _listData;
@@ -111,13 +120,10 @@ public class RegistTreeBasicInfoViewModel extends LocationViewModel {
         }
     }
 
-
-
     // 카메라 실행시키는 메서드
     public void setCamera(){
         _camera.setValue("test");
     }
-
 
     public LiveData getCamera(){
         if(_camera==null){
@@ -125,6 +131,5 @@ public class RegistTreeBasicInfoViewModel extends LocationViewModel {
         }
         return this._camera;
     }
-
 
 }

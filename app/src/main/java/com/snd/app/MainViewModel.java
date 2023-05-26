@@ -25,7 +25,6 @@ public class MainViewModel extends ViewModel {
     // NFC
     ObservableField<Boolean> isNFC=new ObservableField<>();
 
-
     public void setTabClick(Integer value){
         // 클릭된 수로 속성 변경하기
         _tabClick.setValue(value);

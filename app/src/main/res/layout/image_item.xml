@@ -3,12 +3,6 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <data>
-        <variable
-            name="treeBasicInfoVM"
-            type="com.snd.app.ui.write.RegistTreeBasicInfoViewModel"/>
-    </data>
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
@@ -35,7 +29,8 @@
             app:layout_constraintEnd_toEndOf="@+id/img"
             android:layout_marginTop="5dp"
             android:layout_marginRight="5dp"
-            app:layout_constraintVertical_bias="0.525" />
+            app:layout_constraintVertical_bias="0.525"
+            />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
