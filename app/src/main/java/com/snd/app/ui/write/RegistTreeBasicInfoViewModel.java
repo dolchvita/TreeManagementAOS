@@ -42,19 +42,6 @@ public class RegistTreeBasicInfoViewModel extends LocationViewModel {
     public int cnt=0;
     List<Bitmap> currentList;   // 실제 사진이 담겨있는 리스트
 
-    // 사진 삭제하기
-    private MutableLiveData _delImage=new MutableLiveData<>();
-    public LiveData delImage=getDelImage();
-
-    public void setDelImage() {
-        Log.d(TAG,"** 클릭 감지???? **");
-        _delImage.setValue("click");
-    }
-
-    public LiveData getDelImage(){
-        return _delImage;
-    }
-
     // 생성자
     public RegistTreeBasicInfoViewModel() {
         setImgCount();

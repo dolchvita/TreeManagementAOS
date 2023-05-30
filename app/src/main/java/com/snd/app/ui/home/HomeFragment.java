@@ -10,6 +10,7 @@ import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 
+import com.snd.app.MainActivity;
 import com.snd.app.MainViewModel;
 import com.snd.app.R;
 import com.snd.app.data.AppComponent;
@@ -17,7 +18,6 @@ import com.snd.app.data.AppModule;
 import com.snd.app.data.DaggerAppComponent;
 import com.snd.app.databinding.MainHomeFrBinding;
 import com.snd.app.domain.UserDTO;
-import com.snd.app.sharedPreferences.SharedApplication;
 
 import javax.inject.Inject;
 
@@ -25,6 +25,7 @@ public class HomeFragment extends Fragment {
 
     // 바인딩 객체
     MainHomeFrBinding homeFrBinding;
+    MainActivity mainActivity;
 
     @Inject
     MainViewModel mainVM;
@@ -47,5 +48,10 @@ public class HomeFragment extends Fragment {
 
         return homeFrBinding.getRoot();
     }
+
+    public HomeFragment(MainActivity mainActivity) {
+        this.mainActivity=mainActivity;
+    }
+
 
 }

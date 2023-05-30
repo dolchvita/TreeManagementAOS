@@ -7,6 +7,7 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -39,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
             // HomeFragment homeFragment=new HomeFragment();
 
             // 처음 화면을 메인으로 갖추는 것
-            getSupportFragmentManager().beginTransaction().replace(R.id.content, new HomeFragment()).commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.content, new HomeFragment(this)).commit();
 
             mainVM.tabClick.observe(this, new Observer() {
                 @Override

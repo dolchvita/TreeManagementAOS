@@ -1,13 +1,6 @@
 package com.snd.app.ui.login;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelStoreOwner;
-
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
@@ -54,8 +47,7 @@ public class LoginActivity extends TMActivity {
     // 1 로그인 정보
     JSONObject loginData=new JSONObject();
 
-    //@Inject
-    //SharedPreferences sharedPreferences;
+    UserDTO userDTO;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,9 +67,6 @@ public class LoginActivity extends TMActivity {
         AppComponent appComponent = DaggerAppComponent.builder().appModule(new AppModule(this)).build();
         // 의존성 주입됨
         appComponent.inject(this);
-        //sharedPreferences=appComponent.sharedPreferences();
-        Log.d(TAG,"-------------"+sharedPreferences);
-
 
         // 로그인 버튼
         bt_login.setOnClickListener((v) ->{
@@ -213,36 +202,16 @@ public class LoginActivity extends TMActivity {
    public void saveUserInfo(UserDTO user){
 
        // 로그인시 생성한 PS 객체를 매개변수로 넘겨줌
-        //sharedPreferences=this.getSharedPreferences("sharedUser", Context.MODE_PRIVATE);
        Log.d(TAG, "**로그인 액티비티 쉐어드 객체 확인 ** "+sharedPreferences);
 
-
-       // 모듈 2개 이상 추가
-       /*
-       SharedPreferencesManager sharedPreferencesManager=SharedPreferencesManager.getInstance(this);
-
-       sharedPreferencesManager.setSharedPreferences(sharedPreferences);
-
-       sharedPreferencesManager.saveUserInfo("company",user.getCompany());  // key, value
-       sharedPreferencesManager.saveUserInfo("name",user.getName());  // key, value
-       sharedPreferencesManager.saveUserInfo("id",id);
-       // 토큰 저장
-       sharedPreferencesManager.saveUserInfo("Authorization", "Bearer "+token);
-       */
-
-       //SharedPreferences.Editor editor = sharedPreferences.edit();
        editor.putString("company",user.getCompany());
        editor.putString("name",user.getName());
        editor.putString("id",id);
 
        editor.putString("Authorization", "Bearer "+token);
-
        editor.apply();
+
        // 위의 코드를 모듈화 해보기
-       //String company=sharedPreferences.getString("company",null);
-
-
-       // null
        Log.d(TAG, "** 저장된 SP 객체의 회사명 ** "+sharedPreferences.getString("company",null));
 
     }
