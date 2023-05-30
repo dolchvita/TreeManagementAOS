@@ -34,7 +34,7 @@ public class LocationActivity extends TMActivity{
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG,"** LocationActivity 생성 **");
-
+        locationPermission();
     }
 
     // 위치 정보
@@ -52,7 +52,7 @@ public class LocationActivity extends TMActivity{
            // 권한이 이미 허용된 경우
            // GPS 사용에 필요한 초기화 작업을 수행할 수 있습니다.
            Log.d(TAG,"**LocationActivity- 권한 허용됨 **");
-           //getLocation();
+           getLocation();
        }
    }
 
@@ -87,7 +87,6 @@ public class LocationActivity extends TMActivity{
         Log.d(TAG,"** LocationActivity- 메서드 startLocationUpdates 호출 **");
         //getLocation();
     }
-
 
 
     // 마지막 위치 정보 가져오기

@@ -29,7 +29,7 @@ public class AppModule {
    @Provides
    HomeViewModel provideHomeViewModel(){
        //return new HomeViewModel(application,SharedPreferencesManager.getInstance(application));
-       return new HomeViewModel(context,SharedPreferencesManager.getInstance(context));
+       return new HomeViewModel(context);
    };
 
 

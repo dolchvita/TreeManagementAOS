@@ -4,6 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+        <import type="androidx.databinding.ObservableField" />
+
         <variable
             name="treeBasicInfoVM"
             type="com.snd.app.ui.write.RegistTreeBasicInfoViewModel"/>
@@ -88,7 +90,7 @@
                     android:id="@+id/image_cnt"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@{treeBasicInfoVM.imgCount}"
+                    android:text="@{treeBasicInfoVM.getImgCount}"
                     android:textColor="@color/cocoa_brown"
                     app:layout_constraintBottom_toBottomOf="@id/add_camera_view"
                     app:layout_constraintEnd_toEndOf="@id/add_camera_view"
@@ -199,7 +201,6 @@
                     app:layout_constraintEnd_toEndOf="@id/tr_vendor_tv"
                     app:layout_constraintStart_toStartOf="@id/tr_vendor_tv"
                     app:layout_constraintTop_toBottomOf="@id/tr_vendor_tv"
-
                     tools:text="시내엔들" />
 
 
@@ -226,12 +227,12 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/big_area_tv"
+                    android:id="@+id/lati_tv"
                     style="@style/sr_no_label"
                     android:layout_width="0dp"
                     android:gravity="center"
                     android:text="위도"
-                    app:layout_constraintEnd_toStartOf="@id/mid_area_tv"
+                    app:layout_constraintEnd_toStartOf="@id/longi_tv"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/location_tv" />
 
@@ -239,31 +240,39 @@
                     android:id="@+id/lati"
                     style="@style/sr_no_edt"
                     android:completionThreshold="0"
-                    android:nextFocusDown="@id/mid_area"
-                    android:text="@{treeBasicInfoVM.latitude}"
-                    app:layout_constraintEnd_toEndOf="@id/big_area_tv"
-                    app:layout_constraintStart_toStartOf="@id/big_area_tv"
-                    app:layout_constraintTop_toBottomOf="@id/big_area_tv" />
+                    android:text="@{treeBasicInfoVM.getLatitude}"
+                    app:layout_constraintEnd_toStartOf="@id/mid_area"
+                    app:layout_constraintStart_toStartOf="@id/lati_tv"
+                    app:layout_constraintTop_toBottomOf="@id/lati_tv"
+                    app:layout_constraintWidth_percent="0.5" />
 
                 <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/mid_area_tv"
+                    android:id="@+id/mid_area"
+                    style="@style/sr_no_label"
+                    android:gravity="center"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/lati"
+                    app:layout_constraintTop_toTopOf="@id/location_layout"
+                    app:layout_constraintBottom_toBottomOf="@id/location_tv"/>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/longi_tv"
                     style="@style/sr_no_label"
                     android:layout_width="0dp"
                     android:gravity="center"
                     android:text="경도"
-                    app:layout_constraintEnd_toStartOf="@id/parent"
-                    app:layout_constraintStart_toEndOf="@id/big_area_tv"
-                    app:layout_constraintTop_toBottomOf="@id/location_tv" />
+                    app:layout_constraintEnd_toEndOf="@id/mid_area"
+                    app:layout_constraintStart_toEndOf="@id/lati"
+                    app:layout_constraintTop_toBottomOf="@id/mid_area" />
 
                 <androidx.appcompat.widget.AppCompatAutoCompleteTextView
-                    android:id="@+id/mid_area"
+                    android:id="@+id/longi"
                     style="@style/sr_no_edt"
-                    android:completionThreshold="0"
-                    android:text="@{treeBasicInfoVM.longitude}"
-                    app:layout_constraintEnd_toEndOf="@id/mid_area_tv"
+                    android:text="@{treeBasicInfoVM.getLongitude}"
+                    app:layout_constraintEnd_toEndOf="@id/mid_area"
                     app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintStart_toStartOf="@id/mid_area_tv"
-                    app:layout_constraintTop_toBottomOf="@id/mid_area_tv"
+                    app:layout_constraintStart_toStartOf="@id/longi_tv"
+                    app:layout_constraintTop_toBottomOf="@id/longi_tv"
                     />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
@@ -279,7 +288,6 @@
             android:text="저 장"
             android:onClick="@{()->treeBasicInfoVM.regist()}"
             app:layout_constraintBottom_toBottomOf="parent" />
-
-
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 </layout>

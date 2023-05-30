@@ -37,10 +37,19 @@ public class RegistTreeBasicInfoViewModel extends LocationViewModel {
     public LiveData listData=getImageList();
 
     // 사진 개수 표현하기
-    public MutableLiveData<String> _imgCount=new MediatorLiveData<>();
-    public LiveData<String> imgCount=getImgCount();
+    public MutableLiveData<String> _imgCount=new MutableLiveData<>();
+    public LiveData imgCount=getImgCount();
+
     public int cnt=0;
     List<Bitmap> currentList;   // 실제 사진이 담겨있는 리스트
+
+    public ObservableField getLatitude(){
+        return latitude;
+    }
+
+    public ObservableField getLongitude(){
+        return longitude;
+    }
 
     // 생성자
     public RegistTreeBasicInfoViewModel() {

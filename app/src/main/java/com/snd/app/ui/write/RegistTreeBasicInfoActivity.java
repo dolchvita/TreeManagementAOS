@@ -29,9 +29,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 
 import com.snd.app.R;
 import com.snd.app.common.LocationActivity;
-import com.snd.app.data.AppComponent;
 import com.snd.app.data.AppModule;
-import com.snd.app.data.DaggerAppComponent;
 import com.snd.app.data.user.SharedPreferencesManager;
 import com.snd.app.databinding.RegistTreeBasicInfoActBinding;
 import com.snd.app.domain.tree.TreeBasicInfoDTO;
@@ -84,8 +82,7 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements MyC
         treeBasicInfoActBinding= DataBindingUtil.setContentView(this, R.layout.regist_tree_basic_info_act);
         treeBasicInfoActBinding.setLifecycleOwner(this);
         // 의존성 주입하기
-        AppComponent appComponent= DaggerAppComponent.builder().appModule(new AppModule(this)).build();
-        appComponent.inject(this);
+
         // 뷰모델 연결
         treeBasicInfoVM=new RegistTreeBasicInfoViewModel();
         treeBasicInfoActBinding.setTreeBasicInfoVM(treeBasicInfoVM);
@@ -106,7 +103,6 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements MyC
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-        //getTreeLocation();
         onCamera();
 
         treeBasicInfoVM.listData.observe(this, new Observer<List<Bitmap>>() {
@@ -131,6 +127,8 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements MyC
                 showAlertDialog();
             }
         });
+
+        getTreeLocation();
     }
 
     private void showAlertDialog() {
@@ -161,9 +159,12 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements MyC
     }
 
    public void getTreeLocation(){
-       //getLocation();
        Log.d(TAG,"** 위도 **"+latitude);
        Log.d(TAG,"** 경도 **"+longitude);
+
+       // 디자인 요소에 세팅하기
+       treeBasicInfoVM.latitude.set(""+latitude);
+       treeBasicInfoVM.longitude.set(""+longitude);
    }
 
     public void setTreeBasicInfoDTO() throws JsonProcessingException {
