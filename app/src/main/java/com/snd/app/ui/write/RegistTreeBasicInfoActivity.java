@@ -13,6 +13,7 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 import androidx.databinding.DataBindingUtil;
@@ -21,7 +22,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
@@ -50,7 +50,16 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-public class RegistTreeBasicInfoActivity extends LocationActivity implements  Callback{
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+
+
+public class RegistTreeBasicInfoActivity extends LocationActivity implements MyCallback {
     RegistTreeBasicInfoActBinding treeBasicInfoActBinding;
     RegistTreeBasicInfoViewModel treeBasicInfoVM;
     @Inject
@@ -63,7 +72,10 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements  Ca
     private RecyclerView recyclerView;
     private PhotoAdapter photoAdapter;
 
-    public Boolean flag;
+    // 사진 지울시 확인 버튼 감지용
+    public Boolean flag=true;
+
+    List<File> currentList=new ArrayList<>();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -74,7 +86,6 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements  Ca
         // 의존성 주입하기
         AppComponent appComponent= DaggerAppComponent.builder().appModule(new AppModule(this)).build();
         appComponent.inject(this);
-
         // 뷰모델 연결
         treeBasicInfoVM=new RegistTreeBasicInfoViewModel();
         treeBasicInfoActBinding.setTreeBasicInfoVM(treeBasicInfoVM);
@@ -83,25 +94,20 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements  Ca
         Log.d(TAG,"** 아이디 확인 **"+idHex);
         // 콜백 인터페이스 연결
         treeBasicInfoVM.setCallback(this);
-
         // 이미지 저장
         recyclerView=findViewById(R.id.rv_image);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));        // 가로 정렬
         recyclerView.addItemDecoration(new SpaceItemDecoration(20));
-
         // 어댑터 연결
         photoAdapter=new PhotoAdapter();
         recyclerView.setAdapter(photoAdapter);
-
         try {
             setTreeBasicInfoDTO();
-
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-
         //getTreeLocation();
-        registerTreeImage();
+        onCamera();
 
         treeBasicInfoVM.listData.observe(this, new Observer<List<Bitmap>>() {
             @Override
@@ -111,10 +117,9 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements  Ca
                 Log.d(TAG, "개수 확인"+photoAdapter.getItemCount());
             }
         });
-
         treeBasicInfoVM.imgCount.observe(this, new Observer<String>() {
             @Override
-            public void onChanged(String s) {
+            public void onChanged(String event) {
                 treeBasicInfoVM.cnt+=1;
             }
         });
@@ -139,6 +144,9 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements  Ca
                 // 확인 버튼을 눌렀을 때
                 flag=true;
                 photoAdapter.setAlertDialog(photoAdapter.clickedPosition, flag);
+
+                // 삭제버튼 눌렀다면
+                treeBasicInfoVM.cnt-=1;
             }
         });
         builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
@@ -159,8 +167,6 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements  Ca
    }
 
     public void setTreeBasicInfoDTO() throws JsonProcessingException {
-        Log.d(TAG,"** 매니저 **"+sharedPreferencesManager);
-
         treeBasicInfoDTO=new TreeBasicInfoDTO();
         treeBasicInfoDTO.setNFC(idHex);
         treeBasicInfoDTO.setSpecies("산사나무");
@@ -188,12 +194,12 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements  Ca
             treeBasicData.put("vendor",treeBasicInfoDTO.getVendor());
 
             Log.d(TAG,"** 보낼 데이터 모습 **"+treeBasicData);
-            Log.d(TAG,"** 보낼 토큰 모습 **"+sharedPreferencesManager.getUserInfo("Authorization",null));
+            //Log.d(TAG,"** 보낼 토큰 모습 **"+sharedPreferencesManager.getUserInfo("Authorization",null));
 
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
-        JsonObjectRequest request1 = new JsonObjectRequest(Request.Method.POST, sndUrl+"/app/tree/registerBasicInfo", treeBasicData,
+        JsonObjectRequest request1 = new JsonObjectRequest(com.android.volley.Request.Method.POST, sndUrl+"/app/tree/registerBasicInfo", treeBasicData,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
@@ -211,7 +217,7 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements  Ca
             public Map<String, String> getHeaders() throws AuthFailureError {
                 // 헤더에 값 보내기
                 Map<String, String> headers = new HashMap<>();
-                headers.put("Authorization", sharedPreferencesManager.getUserInfo("Authorization",null));
+                headers.put("Authorization", sharedPreferences.getString("Authorization",null));
                 return headers;
             }
         };
@@ -220,9 +226,12 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements  Ca
 
     // 뷰모델에서 호출 - 저장 버튼 누를 시
     @Override
-    public void onCallback() {
+    public void onCustomCallback() {
         // 수목 기본 정보 등록
         registerTreeBasicInfo();
+       if(currentList.size()>0){
+           uploadFile(currentList);
+       }
     }
 
     /*--------------------------------------
@@ -237,7 +246,7 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements  Ca
 
     List<String> photoPaths;
 
-    public void registerTreeImage(){
+    public void onCamera (){
         treeBasicInfoVM.camera.observe(this, new Observer() {
 
             @Override
@@ -322,7 +331,6 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements  Ca
            String uri=currentPhotoFile.getAbsolutePath();
            photoPaths.add(uri);      // 사진 경로
 
-
            // 4 갤러리 저장
            scanImageFile(currentPhotoFile);
            galleryAddPic();
@@ -330,10 +338,47 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements  Ca
            // 5-1) 경로에 있는 사진 꺼냄
            Bitmap bitmap = BitmapFactory.decodeFile(uri);
            Log.d(TAG,"** 리스트에 담기는 사진! ** "+bitmap);
-
            // 5-2) 실제 사진을 리스트에 담기
            treeBasicInfoVM.setImageList(bitmap);
+
+           // 6 보낼 파일 리스트
+           File file=new File(uri);
+           currentList.add(file);
         }
+    }
+
+
+    // 사진 파일 보내기
+    public void uploadFile(List<File> files){
+        OkHttpClient client = new OkHttpClient();
+        MultipartBody.Builder builder = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM);
+
+        builder.addFormDataPart("image1", files.get(0).getName(), RequestBody.create(MediaType.parse("multipart/form-data"), files.get(0)));
+        builder.addFormDataPart("image2", files.get(1).getName(), RequestBody.create(MediaType.parse("multipart/form-data"), files.get(1)));
+        builder.addFormDataPart("tagId", idHex );
+
+        // 업로드할 URL을 생성합니다.
+        String url = sndUrl+"/app/tree/registerTreeImage"; // 실제 업로드할 서버의 URL로 변경해야 합니다.
+
+        // 요청 생성
+        Request request = new Request.Builder()
+                .url(url)
+                .addHeader("Authorization", sharedPreferences.getString("Authorization", null))
+                .post(builder.build())
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull okhttp3.Response response) throws IOException {
+                Log.d(TAG,"** 업로드 성공? **"+response);
+            }
+            @Override
+            public void onFailure(Call call, IOException e) {
+                // 여기에 요청이 실패했을 때 실행될 코드를 작성하세요.
+                Log.d(TAG,"** 업로드 실패? **");
+            }
+        });
     }
 
 
@@ -362,6 +407,7 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements  Ca
                     }
                 });
     }
+
 
     // 갤러리 새로고침
     private void refreshGallery() {

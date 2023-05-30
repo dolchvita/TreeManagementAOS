@@ -30,6 +30,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
     private MutableLiveData<Integer> _tabClick;  // setter
     public LiveData tabClick=getTabClcick();    // getter(결과)
 
+
     public void setImageList(List<Bitmap> imageList) {
         this.imageList = imageList;
         notifyDataSetChanged();     // 리스트 갱신
@@ -67,8 +68,6 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
             photoImageView = itemView.findViewById(R.id.img);
             photoImageView.setScaleType(ImageView.ScaleType.CENTER_CROP);   // 비율 조정
         }
-
-
         public void bind(Bitmap image) {
             if (image != null) {
                 // ImageView에 이미지를 바인딩합니다.

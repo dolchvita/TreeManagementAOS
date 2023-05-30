@@ -1,9 +1,7 @@
 package com.snd.app.ui.write;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.databinding.ObservableField;
 import androidx.lifecycle.LiveData;
@@ -14,7 +12,6 @@ import com.snd.app.common.LocationViewModel;
 import com.snd.app.domain.tree.TreeBasicInfoDTO;
 
 import java.util.ArrayList;
-import java.util.EventListener;
 import java.util.List;
 
 
@@ -32,7 +29,7 @@ public class RegistTreeBasicInfoViewModel extends LocationViewModel {
     private MutableLiveData _camera;  // setter
     LiveData camera=getCamera();    // getter(결과)
 
-    private Callback callback;
+    private MyCallback myCallback;
 
     // 액티비티와 어댑터가 가져갈 리스트
     // 실제 사진이 담기는 리스트
@@ -40,7 +37,7 @@ public class RegistTreeBasicInfoViewModel extends LocationViewModel {
     public LiveData listData=getImageList();
 
     // 사진 개수 표현하기
-    private MutableLiveData<String> _imgCount=new MediatorLiveData<>();
+    public MutableLiveData<String> _imgCount=new MediatorLiveData<>();
     public LiveData<String> imgCount=getImgCount();
     public int cnt=0;
     List<Bitmap> currentList;   // 실제 사진이 담겨있는 리스트
@@ -48,7 +45,6 @@ public class RegistTreeBasicInfoViewModel extends LocationViewModel {
     // 사진 삭제하기
     private MutableLiveData _delImage=new MutableLiveData<>();
     public LiveData delImage=getDelImage();
-
 
     public void setDelImage() {
         Log.d(TAG,"** 클릭 감지???? **");
@@ -86,7 +82,6 @@ public class RegistTreeBasicInfoViewModel extends LocationViewModel {
             currentList.add(bitmap);
             _listData.setValue(currentList);
             setImgCount();
-
         }else{
             Log.d(TAG, "2개 이상 초과됨");
         }
@@ -105,18 +100,19 @@ public class RegistTreeBasicInfoViewModel extends LocationViewModel {
     }
 
     public void regist(){
+        // xml에서 바로 호출
         // RegistTreeBasicInfoActivity 메서드 호출
-        callback.onCallback();
+        myCallback.onCustomCallback();
     }
 
     // 콜백 객체를 받아서 액티비티로부터 호출 가능하게 함
-    public void setCallback(Callback callback) {
-        this.callback = callback;
+    public void setCallback(MyCallback myCallback) {
+        this.myCallback = myCallback;
     }
 
     public void viewModelMethod() {
-        if (callback != null) {
-            callback.onCallback();
+        if (myCallback != null) {
+            myCallback.onCustomCallback();
         }
     }
 

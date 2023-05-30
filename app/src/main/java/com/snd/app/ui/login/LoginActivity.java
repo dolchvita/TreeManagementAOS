@@ -217,7 +217,6 @@ public class LoginActivity extends TMActivity {
        Log.d(TAG, "**로그인 액티비티 쉐어드 객체 확인 ** "+sharedPreferences);
 
 
-
        // 모듈 2개 이상 추가
        /*
        SharedPreferencesManager sharedPreferencesManager=SharedPreferencesManager.getInstance(this);
