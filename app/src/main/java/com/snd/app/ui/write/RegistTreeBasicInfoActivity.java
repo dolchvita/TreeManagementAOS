@@ -129,6 +129,32 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements MyC
         });
 
         getTreeLocation();
+
+        treeBasicInfoVM.back.observe(this, new Observer() {
+            @Override
+            public void onChanged(Object o) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(RegistTreeBasicInfoActivity.this);
+                builder.setTitle("나가시겠습니까?");
+                builder.setMessage("입력 중인 내용은 저장되지 않습니다.");
+
+                builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // 확인 버튼을 눌렀을 때
+                       finish();
+                    }
+                });
+                builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // 취소 버튼을 눌렀을 때
+                        flag=false;
+                    }
+                });
+                AlertDialog dialog = builder.create();
+                dialog.show();
+            }
+        });
     }
 
     private void showAlertDialog() {
@@ -171,31 +197,38 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements MyC
         treeBasicInfoDTO=new TreeBasicInfoDTO();
         treeBasicInfoDTO.setNFC(idHex);
         treeBasicInfoDTO.setSpecies("산사나무");
-
         // 여기가 문제
         treeBasicInfoDTO.setSubmitter(sharedPreferences.getString("id",null));
         treeBasicInfoDTO.setVendor(sharedPreferences.getString("company",null));
-
         // 매핑된 DTO 넘겨줌
         treeBasicInfoVM.setTextViewModel(treeBasicInfoDTO);
     }
+
+
+    // 뷰모델에서 호출 - 저장 버튼 누를 시
+    @Override
+    public void onCustomCallback() {
+        registerTreeBasicInfo();
+        if(currentList.size()>0){
+            registerTreeImage(currentList);
+        }
+        registerTreeLocationInfo();
+    }
+
 
     // 수목 기본정보 등록
     public void registerTreeBasicInfo() {
         Log.d(TAG,"** registerTreeBasicInfo 호출 **");
         Log.d(TAG,"** url **"+sndUrl+"/app/tree/registerBasicInfo");
-
         JSONObject treeBasicData=new JSONObject();
 
-        // 입력 데이터 보내기
         try {
+            // 입력 데이터 보내기
             treeBasicData.put("nfc",treeBasicInfoDTO.getNFC());
             treeBasicData.put("species",treeBasicInfoDTO.getSpecies());
             treeBasicData.put("submitter",treeBasicInfoDTO.getSubmitter());
             treeBasicData.put("vendor",treeBasicInfoDTO.getVendor());
-
             Log.d(TAG,"** 보낼 데이터 모습 **"+treeBasicData);
-            //Log.d(TAG,"** 보낼 토큰 모습 **"+sharedPreferencesManager.getUserInfo("Authorization",null));
 
         } catch (JSONException e) {
             throw new RuntimeException(e);
@@ -210,7 +243,7 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements MyC
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.d(TAG, "** 오류남 **"+error);
+                        Log.d(TAG, "** 기본정보 오류남 **"+error);
                         Toast.makeText(getApplicationContext(),"이미 등록된 나무이거나\n수목 정보가 올바르지 않습니다", Toast.LENGTH_SHORT).show();
                     }
                 }){
@@ -225,15 +258,98 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements MyC
         AppModule.requestQueue.add(request1);
     }
 
-    // 뷰모델에서 호출 - 저장 버튼 누를 시
-    @Override
-    public void onCustomCallback() {
-        // 수목 기본 정보 등록
-        registerTreeBasicInfo();
-       if(currentList.size()>0){
-           uploadFile(currentList);
-       }
+
+    // okHttp 라이브러리 사용하여 서버 통신하기
+    public void registerTreeLocationInfo(){
+        OkHttpClient client = new OkHttpClient();
+        JSONObject treeLocationData=new JSONObject();
+
+        try {
+            // 입력 데이터 보내기
+            String latitudeValue = String.format("%.3f", latitude);
+            treeLocationData.put("latitude", latitudeValue);
+            String longitudeValue = String.format("%.3f", longitude);
+            treeLocationData.put("longitude", longitudeValue);
+            treeLocationData.put("nfc",treeBasicInfoDTO.getNFC());
+            treeLocationData.put("submitter","test");
+            treeLocationData.put("vendor",treeBasicInfoDTO.getVendor());
+
+            Log.d(TAG,"** 보낼 데이터 모습 **"+treeLocationData);
+            Log.d(TAG,"** 보낼 데이터 모습 - 헤더 **"+sharedPreferences.getString("Authorization",null));
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), treeLocationData.toString());
+
+        // 업로드할 URL을 생성합니다.
+        String url = sndUrl+"/app/tree/registerLocationInfo"; // 실제 업로드할 서버의 URL로 변경해야 합니다.
+
+        // 요청 생성
+        Request request = new Request.Builder()
+                .url(url)
+                .addHeader("Authorization", sharedPreferences.getString("Authorization", null))
+                .post(requestBody)
+                .build();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull okhttp3.Response response) throws IOException {
+                Log.d(TAG,"** 위치 전송 **"+response);
+               if (response.isSuccessful()){
+                   String responseData = response.body().string();
+                   Log.d(TAG,"** 위치 성공응답 **"+responseData);
+               }else{
+                   String responseData = response.body().string();
+                   Log.d(TAG,"** 위치 실패 / 응답 **"+responseData);
+               }
+            }
+            @Override
+            public void onFailure(Call call, IOException e) {
+                // 여기에 요청이 실패했을 때 실행될 코드를 작성하세요.
+                Log.d(TAG,"** 위치 등록 오류남 **");
+            }
+        });
     }
+
+
+
+    // 6-2) 사진 파일 보내기
+    public void registerTreeImage(List<File> files){
+        OkHttpClient client = new OkHttpClient();
+        MultipartBody.Builder builder = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM);
+
+        if (files.size()>0){
+            for (int i=0; i<files.size(); i++){
+                builder.addFormDataPart("image"+(i+1), files.get(i).getName(), RequestBody.create(MediaType.parse("multipart/form-data"), files.get(i)));
+            }
+        }
+        builder.addFormDataPart("tagId", idHex );
+
+        // 업로드할 URL을 생성합니다.
+        String url = sndUrl+"/app/tree/registerTreeImage"; // 실제 업로드할 서버의 URL로 변경해야 합니다.
+
+        // 요청 생성
+        Request request = new Request.Builder()
+                .url(url)
+                .addHeader("Authorization", sharedPreferences.getString("Authorization", null))
+                .post(builder.build())
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull okhttp3.Response response) throws IOException {
+                Log.d(TAG,"** 업로드 성공? **"+response);
+            }
+            @Override
+            public void onFailure(Call call, IOException e) {
+                // 여기에 요청이 실패했을 때 실행될 코드를 작성하세요.
+                Log.d(TAG,"** 사진 오류남 **");
+            }
+        });
+    }
+
+
 
     /*--------------------------------------
             카메라 관련 로직 start
@@ -342,44 +458,10 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements MyC
            // 5-2) 실제 사진을 리스트에 담기
            treeBasicInfoVM.setImageList(bitmap);
 
-           // 6 보낼 파일 리스트
+           // 6-1 보낼 파일 리스트
            File file=new File(uri);
            currentList.add(file);
         }
-    }
-
-
-    // 사진 파일 보내기
-    public void uploadFile(List<File> files){
-        OkHttpClient client = new OkHttpClient();
-        MultipartBody.Builder builder = new MultipartBody.Builder()
-                .setType(MultipartBody.FORM);
-
-        builder.addFormDataPart("image1", files.get(0).getName(), RequestBody.create(MediaType.parse("multipart/form-data"), files.get(0)));
-        builder.addFormDataPart("image2", files.get(1).getName(), RequestBody.create(MediaType.parse("multipart/form-data"), files.get(1)));
-        builder.addFormDataPart("tagId", idHex );
-
-        // 업로드할 URL을 생성합니다.
-        String url = sndUrl+"/app/tree/registerTreeImage"; // 실제 업로드할 서버의 URL로 변경해야 합니다.
-
-        // 요청 생성
-        Request request = new Request.Builder()
-                .url(url)
-                .addHeader("Authorization", sharedPreferences.getString("Authorization", null))
-                .post(builder.build())
-                .build();
-
-        client.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onResponse(@NonNull Call call, @NonNull okhttp3.Response response) throws IOException {
-                Log.d(TAG,"** 업로드 성공? **"+response);
-            }
-            @Override
-            public void onFailure(Call call, IOException e) {
-                // 여기에 요청이 실패했을 때 실행될 코드를 작성하세요.
-                Log.d(TAG,"** 업로드 실패? **");
-            }
-        });
     }
 
 

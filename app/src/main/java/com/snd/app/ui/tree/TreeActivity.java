@@ -1,6 +1,8 @@
 package com.snd.app.ui.tree;
 
+import android.app.AlertDialog;
 import android.app.PendingIntent;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
@@ -10,6 +12,7 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.Observer;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -39,20 +42,31 @@ public class TreeActivity extends TMActivity implements NfcAdapter.ReaderCallbac
     TreeActBinding treeActBinding;
     public NfcAdapter nfcAdapter = null;
     public PendingIntent nfcPendingIntent;
+    TreeViewModel treeVM;
 
     // 전달할 NFC 코드
     private static final String IDHEX="idHex";
 
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         Log.d(TAG, "** NFC 클래스 ** ");
 
         treeActBinding= DataBindingUtil.setContentView(this, R.layout.tree_act);
         treeActBinding.setLifecycleOwner(this);
+        treeVM=new TreeViewModel();
+        treeActBinding.setTreeVM(treeVM);
 
         initNfc();
+
+
+        treeVM.back.observe(this, new Observer() {
+            @Override
+            public void onChanged(Object o) {
+                finish();
+            }
+        });
     }
 
 

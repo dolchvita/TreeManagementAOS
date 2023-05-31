@@ -25,23 +25,30 @@ public class RegistTreeBasicInfoViewModel extends LocationViewModel {
     // 위치 정보
     public ObservableField<String> latitude=new ObservableField<>();
     public ObservableField<String> longitude=new ObservableField<>();
-
-    private MutableLiveData _camera;  // setter
-    LiveData camera=getCamera();    // getter(결과)
-
+    // 카메라 실행
+    private MutableLiveData _camera;
+    LiveData camera=getCamera();
+    // 저장버튼
     private MyCallback myCallback;
-
     // 액티비티와 어댑터가 가져갈 리스트
     // 실제 사진이 담기는 리스트
     private MutableLiveData<List<Bitmap>> _listData = new MutableLiveData<>();
     public LiveData listData=getImageList();
-
     // 사진 개수 표현하기
     public MutableLiveData<String> _imgCount=new MutableLiveData<>();
     public LiveData imgCount=getImgCount();
-
     public int cnt=0;
     List<Bitmap> currentList;   // 실제 사진이 담겨있는 리스트
+    // 뒤로가기
+    private MutableLiveData _back=new MutableLiveData<>();
+    public LiveData back=getBack();
+
+    public void setBack(){
+        _back.setValue("click");
+    }
+    public LiveData getBack(){
+        return _back;
+    }
 
     public ObservableField getLatitude(){
         return latitude;
@@ -123,5 +130,11 @@ public class RegistTreeBasicInfoViewModel extends LocationViewModel {
         }
         return this._camera;
     }
+
+
+    public void pageBack(){
+
+    }
+
 
 }

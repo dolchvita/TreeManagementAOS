@@ -62,18 +62,13 @@ public class LocationActivity extends TMActivity{
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        Log.d(TAG,"** LocationActivity- onRequestPermissionsResult 호출됨 **");
-
         Log.d(TAG,"** LocationActivity- onRequestPermissionsResult 코드 확인 ** "+requestCode);
 
-        //
         if (requestCode == PERMISSION_REQUEST_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 //getLocation();
                 //startLocationUpdates();
-
                 // 다음을 위한 코드가 없음
-
             } else {
                 // 실행부가 왜 여기로 쳐 들어오냐  -> requestCode가 1로 들어오지 않은 것.
                 Toast.makeText(this, "위치 권한이 거부되어 앱을 사용할 수 없습니다.", Toast.LENGTH_SHORT).show();
@@ -92,6 +87,10 @@ public class LocationActivity extends TMActivity{
     // 마지막 위치 정보 가져오기
     private void getLocation() {
         Log.d(TAG,"** LocationActivity- getLocation 함수 호출 **");
+        //LocationRequest locationRequest = new LocationRequest();
+        //locationRequest.setInterval(10000); // 위치 업데이트 간격 (밀리초)
+        //locationRequest.setFastestInterval(5000);
+
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
@@ -113,7 +112,6 @@ public class LocationActivity extends TMActivity{
             // 필요한 처리를 수행하세요.
         }
     }
-
 
 
     // 위치 좌표값 받아오는 메서드
@@ -139,10 +137,6 @@ public class LocationActivity extends TMActivity{
             locationManager.removeUpdates(locationListener);
         }
     }
-
-
-
-
 
 
 }

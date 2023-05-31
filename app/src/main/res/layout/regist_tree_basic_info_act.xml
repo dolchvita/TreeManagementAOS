@@ -30,7 +30,7 @@
             android:id="@+id/back"
             style="@style/image_btn"
             android:layout_marginStart="10dp"
-
+            android:onClick="@{()->treeBasicInfoVM.setBack()}"
             app:layout_constraintBottom_toBottomOf="@id/header"
             app:layout_constraintStart_toStartOf="parent"
 
