@@ -39,13 +39,10 @@ public class HomeFragment extends Fragment {
         //프레그먼트가 사용할 xml 파일
         homeFrBinding= DataBindingUtil.inflate(inflater, R.layout.main_home_fr, container, false);
         homeFrBinding.setLifecycleOwner(this);
-
         // 앱 컴포넌트 - 의존성 주입으로 뷰 모델과 연동
         AppComponent appComponent = DaggerAppComponent.builder().appModule(new AppModule(getContext())).build();
-
         homeVM=appComponent.homeViewModel();
         homeFrBinding.setHomeVM(homeVM);    //홈뷰모델 연동
-
         return homeFrBinding.getRoot();
     }
 

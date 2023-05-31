@@ -10,11 +10,16 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatAutoCompleteTextView;
+import androidx.appcompat.widget.AppCompatTextView;
 import androidx.core.content.FileProvider;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.Observer;
@@ -60,8 +65,6 @@ import okhttp3.RequestBody;
 public class RegistTreeBasicInfoActivity extends LocationActivity implements MyCallback {
     RegistTreeBasicInfoActBinding treeBasicInfoActBinding;
     RegistTreeBasicInfoViewModel treeBasicInfoVM;
-    @Inject
-    SharedPreferencesManager sharedPreferencesManager;
     // TreeActivity 로부터 전달 받은 문자 데이터
     private static final String IDHEX="idHex";
     String idHex;
@@ -69,11 +72,12 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements MyC
 
     private RecyclerView recyclerView;
     private PhotoAdapter photoAdapter;
-
     // 사진 지울시 확인 버튼 감지용
     public Boolean flag=true;
 
     List<File> currentList=new ArrayList<>();
+    String species;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -81,8 +85,6 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements MyC
         super.onCreate(savedInstanceState);
         treeBasicInfoActBinding= DataBindingUtil.setContentView(this, R.layout.regist_tree_basic_info_act);
         treeBasicInfoActBinding.setLifecycleOwner(this);
-        // 의존성 주입하기
-
         // 뷰모델 연결
         treeBasicInfoVM=new RegistTreeBasicInfoViewModel();
         treeBasicInfoActBinding.setTreeBasicInfoVM(treeBasicInfoVM);
@@ -98,6 +100,27 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements MyC
         // 어댑터 연결
         photoAdapter=new PhotoAdapter();
         recyclerView.setAdapter(photoAdapter);
+        // 입력 문자열 추출
+        AppCompatAutoCompleteTextView tree_name=(AppCompatAutoCompleteTextView) findViewById(R.id.tr_name);
+        //species=tree_name.getText().toString();
+
+        tree_name.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                Log.d(TAG,"** 2 **");
+            }
+            @Override
+            public void afterTextChanged(Editable s) {
+                species = s.toString();
+                Log.d(TAG,"** 이게 몰까ㅏㅏㅏ **"+species);
+            }
+        });
+
+
+
         try {
             setTreeBasicInfoDTO();
         } catch (JsonProcessingException e) {
@@ -119,8 +142,6 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements MyC
                 treeBasicInfoVM.cnt+=1;
             }
         });
-
-        // 2
         photoAdapter.tabClick.observe(this, new Observer() {
             @Override
             public void onChanged(Object o) {
@@ -136,7 +157,6 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements MyC
                 AlertDialog.Builder builder = new AlertDialog.Builder(RegistTreeBasicInfoActivity.this);
                 builder.setTitle("나가시겠습니까?");
                 builder.setMessage("입력 중인 내용은 저장되지 않습니다.");
-
                 builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -161,14 +181,12 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements MyC
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("");
         builder.setMessage("사진을 삭제하시겠습니까?");
-
         builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 // 확인 버튼을 눌렀을 때
                 flag=true;
                 photoAdapter.setAlertDialog(photoAdapter.clickedPosition, flag);
-
                 // 삭제버튼 눌렀다면
                 treeBasicInfoVM.cnt-=1;
             }
@@ -204,7 +222,6 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements MyC
         treeBasicInfoVM.setTextViewModel(treeBasicInfoDTO);
     }
 
-
     // 뷰모델에서 호출 - 저장 버튼 누를 시
     @Override
     public void onCustomCallback() {
@@ -213,8 +230,9 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements MyC
             registerTreeImage(currentList);
         }
         registerTreeLocationInfo();
-    }
 
+        Toast.makeText(RegistTreeBasicInfoActivity.this, "등록되었습니다", Toast.LENGTH_SHORT).show();
+    }
 
     // 수목 기본정보 등록
     public void registerTreeBasicInfo() {
@@ -224,10 +242,10 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements MyC
 
         try {
             // 입력 데이터 보내기
-            treeBasicData.put("nfc",treeBasicInfoDTO.getNFC());
-            treeBasicData.put("species",treeBasicInfoDTO.getSpecies());
-            treeBasicData.put("submitter",treeBasicInfoDTO.getSubmitter());
-            treeBasicData.put("vendor",treeBasicInfoDTO.getVendor());
+            treeBasicData.put("nfc", idHex);
+            treeBasicData.put("species", species);
+            treeBasicData.put("submitter", sharedPreferences.getString("id",null));
+            treeBasicData.put("vendor", sharedPreferences.getString("company",null));
             Log.d(TAG,"** 보낼 데이터 모습 **"+treeBasicData);
 
         } catch (JSONException e) {
@@ -263,28 +281,23 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements MyC
     public void registerTreeLocationInfo(){
         OkHttpClient client = new OkHttpClient();
         JSONObject treeLocationData=new JSONObject();
-
         try {
             // 입력 데이터 보내기
-            String latitudeValue = String.format("%.3f", latitude);
+            String latitudeValue = String.format("%.7f", latitude);
             treeLocationData.put("latitude", latitudeValue);
-            String longitudeValue = String.format("%.3f", longitude);
+            String longitudeValue = String.format("%.7f", longitude);
             treeLocationData.put("longitude", longitudeValue);
-            treeLocationData.put("nfc",treeBasicInfoDTO.getNFC());
-            treeLocationData.put("submitter","test");
+            treeLocationData.put("nfc",treeBasicInfoDTO.getNFC().toUpperCase());
+            treeLocationData.put("submitter",treeBasicInfoDTO.getSubmitter());
             treeLocationData.put("vendor",treeBasicInfoDTO.getVendor());
 
             Log.d(TAG,"** 보낼 데이터 모습 **"+treeLocationData);
-            Log.d(TAG,"** 보낼 데이터 모습 - 헤더 **"+sharedPreferences.getString("Authorization",null));
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
         RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), treeLocationData.toString());
-
-        // 업로드할 URL을 생성합니다.
-        String url = sndUrl+"/app/tree/registerLocationInfo"; // 실제 업로드할 서버의 URL로 변경해야 합니다.
-
+        String url = sndUrl+"/app/tree/registerLocationInfo";
         // 요청 생성
         Request request = new Request.Builder()
                 .url(url)
@@ -294,10 +307,9 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements MyC
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onResponse(@NonNull Call call, @NonNull okhttp3.Response response) throws IOException {
-                Log.d(TAG,"** 위치 전송 **"+response);
                if (response.isSuccessful()){
                    String responseData = response.body().string();
-                   Log.d(TAG,"** 위치 성공응답 **"+responseData);
+                   Log.d(TAG,"** 위치 성공 / 응답 **"+responseData);
                }else{
                    String responseData = response.body().string();
                    Log.d(TAG,"** 위치 실패 / 응답 **"+responseData);
@@ -310,7 +322,6 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements MyC
             }
         });
     }
-
 
 
     // 6-2) 사진 파일 보내기
@@ -350,7 +361,6 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements MyC
     }
 
 
-
     /*--------------------------------------
             카메라 관련 로직 start
         -------------------------------------*/
@@ -358,18 +368,13 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements MyC
     private static final int REQUEST_PERMISSION = 1;
     // 이미지 리스트
     private File currentPhotoFile;
-    // 사진 찍히는 것 제한하기
-    private boolean isPhotoTaken = false;
-
     List<String> photoPaths;
 
     public void onCamera (){
         treeBasicInfoVM.camera.observe(this, new Observer() {
-
             @Override
             public void onChanged(Object o) {
                 Log.d(TAG, "** 클릭 감지 **");
-
                 boolean isCameraPermissionGranted=sharedPreferences.getBoolean("camera_permission_granted", false);
                 // 권한 상태에 따른 처리
                 if (isCameraPermissionGranted) {
@@ -383,14 +388,10 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements MyC
 
     // 1 파일 객체 가져오기 - 사진 찍기 전에 빈 파이 미리 생성하는 역할
     private File createImageFile() throws IOException {
-        Log.d(TAG, "** createImageFile 호출됨 **");
-
         // 사진 이름 가공
         String imageFileName = "JPEG_" + System.currentTimeMillis();
         File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
         File imageFile = new File(storageDir, imageFileName + ".jpg");
-
-        Log.d(TAG, "** 보내기 전에 확인 ** " + imageFile);
         return imageFile;
     }
 
@@ -402,7 +403,6 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements MyC
             Toast.makeText(this, "이미지 업로드 최대 2개를 초과하였습니다.", Toast.LENGTH_SHORT).show();
             return;
         }
-
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
 
@@ -435,29 +435,19 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements MyC
         super.onActivityResult(requestCode, resultCode, data);
         // 매개변수로 날라오는 data의 의미 --> 카메라 앱에서 설정한 결과 데이터 (사진의 섬네일 등)
         // 그러나 사진을 파일로 저장하는 경우 일반적으로 null
-       Log.d(TAG,"** onActivityResult 호출됨 **");
-
        boolean isCameraPermissionGranted=sharedPreferences.getBoolean("camera_permission_granted", false);
        if (isCameraPermissionGranted) {
-           //isPhotoTaken=true;
-           Log.d(TAG,"** 단계 1 **");
-           Log.d(TAG,"** 저장 메서드 가기 전 확인 ** "+currentPhotoFile);
-
            photoPaths = new ArrayList<>(); // 사진 파일 경로 리스트
            // 사진 파일 저장
            String uri=currentPhotoFile.getAbsolutePath();
            photoPaths.add(uri);      // 사진 경로
-
            // 4 갤러리 저장
            scanImageFile(currentPhotoFile);
            galleryAddPic();
-
            // 5-1) 경로에 있는 사진 꺼냄
            Bitmap bitmap = BitmapFactory.decodeFile(uri);
-           Log.d(TAG,"** 리스트에 담기는 사진! ** "+bitmap);
            // 5-2) 실제 사진을 리스트에 담기
            treeBasicInfoVM.setImageList(bitmap);
-
            // 6-1 보낼 파일 리스트
            File file=new File(uri);
            currentList.add(file);
