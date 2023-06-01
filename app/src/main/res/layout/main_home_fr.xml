@@ -5,9 +5,6 @@
     tools:ignore="HardcodedText, SpUsage">
 
     <data>
-        <variable
-            name="mainVM"
-            type="com.snd.app.MainViewModel" />
 
         <variable
             name="homeVM"
@@ -30,13 +27,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="24dp"
-                android:text="@{homeVM.name}"
                 android:textSize="20dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:text="황규민의 정보 입니다." />
+                tools:text="님의 정보 입니다." />
 
-            <!---->
+            <!--TopBox-->
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/user_info_layout"
                 android:layout_width="match_parent"
@@ -68,7 +64,6 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
                     android:text="@{homeVM.company}"
-
                     android:textSize="20dp"
 
                     app:layout_constraintStart_toStartOf="@id/user_info_layout"
@@ -114,7 +109,9 @@
                     app:layout_constraintTop_toBottomOf="@id/recent"
                     tools:text="나의 정보 수정하기" />
             </androidx.constraintlayout.widget.ConstraintLayout>
+            <!--./TopBox-->
 
+            <!--IconBox-->
             <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/state_info_layout"
             android:layout_width="match_parent"
@@ -132,7 +129,7 @@
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/nfc"
                     style="@style/contentTextStyle"
-                    android:drawableTop="@drawable/ic_nfc_off"
+                    android:drawableTop="@drawable/ic_nfc_on"
                     android:drawablePadding="5dp"
                     android:gravity="center"
                     android:text="NFC상태"
@@ -191,9 +188,9 @@
                     app:layout_constraintTop_toTopOf="parent"
                     tools:text="GPS상태" />
             </androidx.constraintlayout.widget.ConstraintLayout>
-            <!--./-->
+            <!--./IconBox-->
 
-            <!---->
+            <!--ButtonBox-->
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/btn_layout"
                 android:layout_width="match_parent"
@@ -215,7 +212,7 @@
                     android:elevation="3dp"
                     android:fontFamily="@font/notosans_kr_bold"
                     android:gravity="center"
-                    android:onClick="@{homeVM::onTextViewClicked}"
+                    android:onClick="@{() -> homeVM.onTextViewClicked(diagnose)}"
                     android:padding="10dp"
                     android:text="수목 진단"
                     android:textColor="@color/cocoa_brown"
@@ -237,7 +234,6 @@
                     android:elevation="3dp"
                     android:fontFamily="@font/notosans_kr_bold"
                     android:gravity="center"
-                    android:onClick="@{homeVM::onTextViewClicked}"
                     android:padding="15dp"
                     android:text="수목 확인"
                     android:textColor="@color/cocoa_brown"
@@ -273,10 +269,7 @@
                     tools:text="민원 관리" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
-            <!--./-->
-
-
-
+            <!--./ButtonBox-->
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

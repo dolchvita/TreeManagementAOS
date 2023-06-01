@@ -13,13 +13,11 @@ import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatAutoCompleteTextView;
-import androidx.appcompat.widget.AppCompatTextView;
 import androidx.core.content.FileProvider;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.Observer;
@@ -33,10 +31,8 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import com.snd.app.R;
-import com.snd.app.common.LocationActivity;
 import com.snd.app.common.TMActivity;
 import com.snd.app.data.AppModule;
-import com.snd.app.data.user.SharedPreferencesManager;
 import com.snd.app.databinding.RegistTreeBasicInfoActBinding;
 import com.snd.app.domain.tree.TreeBasicInfoDTO;
 import com.snd.app.ui.tree.PhotoAdapter;
@@ -52,7 +48,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.inject.Inject;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -70,12 +65,15 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
     private static final String IDHEX="idHex";
     String idHex;
     TreeBasicInfoDTO treeBasicInfoDTO;
-
+    // 이미지 권한
+    private static final int REQUEST_PERMISSION = 1;
+    // 이미지 리스트
+    private File currentPhotoFile;
+    List<String> photoPaths;
     private RecyclerView recyclerView;
     private PhotoAdapter photoAdapter;
     // 사진 지울시 확인 버튼 감지용
     public Boolean flag=true;
-
     List<File> currentList=new ArrayList<>();
     String species;
 
@@ -103,8 +101,6 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
         recyclerView.setAdapter(photoAdapter);
         // 입력 문자열 추출
         AppCompatAutoCompleteTextView tree_name=(AppCompatAutoCompleteTextView) findViewById(R.id.tr_name);
-        //species=tree_name.getText().toString();
-
         // 위치
         locationPermission();
 
@@ -119,17 +115,15 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
             @Override
             public void afterTextChanged(Editable s) {
                 species = s.toString();
-                Log.d(TAG,"** 이게 몰까ㅏㅏㅏ **"+species);
+                Log.d(TAG,"** 이게 몰까 **"+species);
             }
         });
-
-
-
         try {
             setTreeBasicInfoDTO();
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
+
         onCamera();
 
         treeBasicInfoVM.listData.observe(this, new Observer<List<Bitmap>>() {
@@ -181,6 +175,7 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
         });
     }
 
+
     private void showAlertDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("");
@@ -206,6 +201,7 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
         dialog.show();
     }
 
+
    public void getTreeLocation(){
        Log.d(TAG,"** 위도 **"+latitude);
        Log.d(TAG,"** 경도 **"+longitude);
@@ -215,11 +211,11 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
        treeBasicInfoVM.longitude.set(""+longitude);
    }
 
+
     public void setTreeBasicInfoDTO() throws JsonProcessingException {
         treeBasicInfoDTO=new TreeBasicInfoDTO();
         treeBasicInfoDTO.setNFC(idHex);
-        treeBasicInfoDTO.setSpecies("산사나무");
-        // 여기가 문제
+        treeBasicInfoDTO.setSpecies("소유주를 입력해주세요");
         treeBasicInfoDTO.setSubmitter(sharedPreferences.getString("id",null));
         treeBasicInfoDTO.setVendor(sharedPreferences.getString("company",null));
         // 매핑된 DTO 넘겨줌
@@ -234,9 +230,9 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
             registerTreeImage(currentList);
         }
         registerTreeLocationInfo();
-
         Toast.makeText(RegistTreeBasicInfoActivity.this, "등록되었습니다", Toast.LENGTH_SHORT).show();
     }
+
 
     // 수목 기본정보 등록
     public void registerTreeBasicInfo() {
@@ -368,11 +364,6 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
     /*--------------------------------------
             카메라 관련 로직 start
        -------------------------------------*/
-    // 이미지 권한
-    private static final int REQUEST_PERMISSION = 1;
-    // 이미지 리스트
-    private File currentPhotoFile;
-    List<String> photoPaths;
 
     public void onCamera (){
         treeBasicInfoVM.camera.observe(this, new Observer() {

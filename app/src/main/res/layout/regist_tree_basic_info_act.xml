@@ -288,6 +288,7 @@
             android:text="저 장"
             android:onClick="@{()->treeBasicInfoVM.regist()}"
             app:layout_constraintBottom_toBottomOf="parent" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

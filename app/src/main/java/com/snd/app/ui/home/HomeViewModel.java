@@ -5,30 +5,38 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.view.View;
-import androidx.databinding.ObservableField;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
+
+import com.snd.app.databinding.MainHomeFrBinding;
 import com.snd.app.ui.tree.TreeActivity;
 import javax.inject.Inject;
 
 public class HomeViewModel extends ViewModel {
     public static ViewModelProvider.Factory Factory;
     private String TAG= this.getClass().getName();
-    // 사용자 정보를 가져와서 사용할 곳
-    public ObservableField<String> company = new ObservableField<>();
-    public ObservableField<String> name = new ObservableField<>();
     SharedPreferences sharedPreferences;
+    private MutableLiveData<String> _company;
+    LiveData company=getCompany();
 
     @Inject
     public HomeViewModel(Context context) {
         // 공통의 객체 꺼내기
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
-        setUserInfo();
+        _company=new MutableLiveData<>();
+        setCompany();
     }
 
-    public void setUserInfo(){
-        company.set(sharedPreferences.getString("company", null));
+    public LiveData<String> getCompany() {
+        return _company;
     }
+
+    public void setCompany() {
+        _company.setValue(sharedPreferences.getString("company", null));
+    }
+
 
     // 화면 변경
     public void onTextViewClicked(View view) {
@@ -37,6 +45,5 @@ public class HomeViewModel extends ViewModel {
         // 액티비티 변경 로직
         view.getContext().startActivity(intent);
     }
-
 
 }
