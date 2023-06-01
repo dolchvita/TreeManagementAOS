@@ -27,7 +27,7 @@ public class LocationActivity extends TMActivity{
     protected  double latitude;
     protected double longitude;
 
-    private FusedLocationProviderClient fusedLocationClient;
+    //private FusedLocationProviderClient fusedLocationClient;
 
 
     @Override

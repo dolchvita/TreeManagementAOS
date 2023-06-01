@@ -34,6 +34,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 
 import com.snd.app.R;
 import com.snd.app.common.LocationActivity;
+import com.snd.app.common.TMActivity;
 import com.snd.app.data.AppModule;
 import com.snd.app.data.user.SharedPreferencesManager;
 import com.snd.app.databinding.RegistTreeBasicInfoActBinding;
@@ -62,7 +63,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 
 
-public class RegistTreeBasicInfoActivity extends LocationActivity implements MyCallback {
+public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallback {
     RegistTreeBasicInfoActBinding treeBasicInfoActBinding;
     RegistTreeBasicInfoViewModel treeBasicInfoVM;
     // TreeActivity 로부터 전달 받은 문자 데이터
@@ -103,6 +104,9 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements MyC
         // 입력 문자열 추출
         AppCompatAutoCompleteTextView tree_name=(AppCompatAutoCompleteTextView) findViewById(R.id.tr_name);
         //species=tree_name.getText().toString();
+
+        // 위치
+        locationPermission();
 
         tree_name.addTextChangedListener(new TextWatcher() {
             @Override
@@ -283,7 +287,7 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements MyC
         JSONObject treeLocationData=new JSONObject();
         try {
             // 입력 데이터 보내기
-            String latitudeValue = String.format("%.7f", latitude);
+            String latitudeValue = String.format("%.7f", latitude);     // 자릿수 맞추기
             treeLocationData.put("latitude", latitudeValue);
             String longitudeValue = String.format("%.7f", longitude);
             treeLocationData.put("longitude", longitudeValue);
@@ -363,7 +367,7 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements MyC
 
     /*--------------------------------------
             카메라 관련 로직 start
-        -------------------------------------*/
+       -------------------------------------*/
     // 이미지 권한
     private static final int REQUEST_PERMISSION = 1;
     // 이미지 리스트
@@ -386,7 +390,7 @@ public class RegistTreeBasicInfoActivity extends LocationActivity implements MyC
     }
 
 
-    // 1 파일 객체 가져오기 - 사진 찍기 전에 빈 파이 미리 생성하는 역할
+    // 1 파일 객체 가져오기 - 사진 찍기 전에 빈 파일 미리 생성하는 역할
     private File createImageFile() throws IOException {
         // 사진 이름 가공
         String imageFileName = "JPEG_" + System.currentTimeMillis();

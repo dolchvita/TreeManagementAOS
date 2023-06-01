@@ -26,11 +26,9 @@ public class HomeViewModel extends ViewModel {
         setUserInfo();
     }
 
-
     public void setUserInfo(){
         company.set(sharedPreferences.getString("company", null));
     }
-
 
     // 화면 변경
     public void onTextViewClicked(View view) {
