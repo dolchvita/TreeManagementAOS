@@ -96,7 +96,6 @@ public class TMActivity extends AppCompatActivity {
             editor.apply();
          }
       }
-
       // 위치 허용
       if (requestCode == REQUEST_LOCATION_PERMISSION) {
          if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {

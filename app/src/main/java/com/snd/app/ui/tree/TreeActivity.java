@@ -28,6 +28,7 @@ import com.snd.app.databinding.TreeActBinding;
 import com.snd.app.domain.UserDTO;
 import com.snd.app.domain.tree.TreeBasicInfoDTO;
 import com.snd.app.sharedPreferences.SharedApplication;
+import com.snd.app.ui.read.GetTreeInfoActivity;
 import com.snd.app.ui.write.RegistTreeBasicInfoActivity;
 import com.snd.app.ui.write.RegistTreeBasicInfoViewModel;
 
@@ -45,7 +46,8 @@ public class TreeActivity extends TMActivity implements NfcAdapter.ReaderCallbac
     TreeViewModel treeVM;
 
     // 전달할 NFC 코드
-    private static final String IDHEX="idHex";
+    private static final String IDHEX="IDHEX";
+    String idHex;
 
 
     @Override
@@ -60,7 +62,6 @@ public class TreeActivity extends TMActivity implements NfcAdapter.ReaderCallbac
 
         initNfc();
 
-
         treeVM.back.observe(this, new Observer() {
             @Override
             public void onChanged(Object o) {
@@ -74,21 +75,15 @@ public class TreeActivity extends TMActivity implements NfcAdapter.ReaderCallbac
     @Override
     public void onTagDiscovered(Tag tag) {
         Log.d(TAG, "** NFC 인식하였음 !! ** ");
-
         byte[] id = tag.getId();
-        String idHex = bytesToHexString(id);
+        idHex = bytesToHexString(id);
         Log.d(TAG, "** NFC 아이디 추출 ** "+id);
         Log.d(TAG, "** NFC 아이디 가공 ** "+idHex);
 
-
         // 화면 전환하기
-        Intent intent = new Intent(this, RegistTreeBasicInfoActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
-        enableNfcForegroundDispatch(pendingIntent);
+        Log.d(TAG, "** actName 확인 ** "+getIntent().getStringExtra("actName"));
+        switchActivity(getIntent().getStringExtra("actName"));
 
-        intent.putExtra(IDHEX, idHex);
-        startActivity(intent);
 
         runOnUiThread(new Runnable() {
             @Override
@@ -99,11 +94,25 @@ public class TreeActivity extends TMActivity implements NfcAdapter.ReaderCallbac
     }
 
 
+    public void switchActivity(String actName){
+        Intent intent = null;
+        switch (actName){
+            case "RegistTreeBasicInfoActivity":
+                intent = new Intent(this, RegistTreeBasicInfoActivity.class); break;
+            case "GetTreeInfoActivity":
+                intent = new Intent(this, GetTreeInfoActivity.class); break;
+        }
+        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+        enableNfcForegroundDispatch(pendingIntent);
+        intent.putExtra(IDHEX, idHex);
+        startActivity(intent);
+    }
+
 
     // NFC 초기화 설정
     private void initNfc() {
         Log.d(TAG, "** NFC 초기화 호출 ** ");
-
         nfcAdapter = NfcAdapter.getDefaultAdapter(this);
         nfcPendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), PendingIntent.FLAG_IMMUTABLE);
 
@@ -114,7 +123,6 @@ public class TreeActivity extends TMActivity implements NfcAdapter.ReaderCallbac
             // NFC가 비활성화된 경우 처리
             Toast.makeText(this, "NFC가 비활성화되어 있습니다. 설정에서 활성화해주세요.", Toast.LENGTH_SHORT).show();
         }
-
     }
 
 
@@ -158,8 +166,6 @@ public class TreeActivity extends TMActivity implements NfcAdapter.ReaderCallbac
 
     private void enableNfcForegroundDispatch(PendingIntent pendingIntent) {
         nfcAdapter.enableForegroundDispatch(this, pendingIntent, null, null);
-
-        //nfcAdapter.enableForegroundDispatch(this, PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE), null, null);
     }
 
 
@@ -175,7 +181,6 @@ public class TreeActivity extends TMActivity implements NfcAdapter.ReaderCallbac
         }
         return sb.toString();
     }
-
 
 
 }

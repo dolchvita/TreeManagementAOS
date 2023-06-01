@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.View;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -37,12 +38,21 @@ public class HomeViewModel extends ViewModel {
         _company.setValue(sharedPreferences.getString("company", null));
     }
 
-
     // 화면 변경
     public void onTextViewClicked(View view) {
+        Log.d(TAG,"** 넘어오는 뷰의 정체는? ** "+view);
         // 액티비티 변경을 위한 Intent 생성
         Intent intent = new Intent(view.getContext(), TreeActivity.class);
         // 액티비티 변경 로직
+        intent.putExtra("actName", "RegistTreeBasicInfoActivity");
+        view.getContext().startActivity(intent);
+    }
+    public void onCheckViewClicked(View view) {
+        Log.d(TAG,"** 넘어오는 뷰의 정체는? ** "+view);
+        // 액티비티 변경을 위한 Intent 생성
+        Intent intent = new Intent(view.getContext(), TreeActivity.class);
+        // 액티비티 변경 로직
+        intent.putExtra("actName", "GetTreeInfoActivity");
         view.getContext().startActivity(intent);
     }
 

@@ -242,6 +242,7 @@
                     app:layout_constraintEnd_toStartOf="@id/complaint"
                     app:layout_constraintStart_toEndOf="@id/diagnose"
                     app:layout_constraintTop_toTopOf="parent"
+                    android:onClick="@{() -> homeVM.onCheckViewClicked(check)}"
                     tools:text="수목 확인" />
 
                 <androidx.appcompat.widget.AppCompatTextView
