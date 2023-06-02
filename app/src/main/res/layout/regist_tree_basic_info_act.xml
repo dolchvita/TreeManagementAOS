@@ -46,7 +46,7 @@
             app:layout_constraintTop_toTopOf="@id/header"/>
 
         <androidx.core.widget.NestedScrollView
-            android:id="@+id/scroll_view"
+            android:id="@+id/scroll_view1"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:fillViewport="true"
@@ -97,7 +97,9 @@
                     app:layout_constraintStart_toStartOf="@id/add_camera_view"
                     app:layout_constraintTop_toBottomOf="@id/add_image"
                     />
-                \<androidx.recyclerview.widget.RecyclerView
+
+
+                <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rv_image"
                     android:layout_width="0dp"
                     android:layout_height="100dp"
@@ -108,8 +110,8 @@
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toEndOf="@id/add_camera_view"
                     app:layout_constraintTop_toTopOf="@id/add_camera_view"
-                    app:layout_constraintVertical_bias="1.0"
-                    tools:listitem="@layout/image_item"/>
+                    app:layout_constraintVertical_bias="0.0"
+                    tools:listitem="@layout/image_item" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tree_nfc_tv"

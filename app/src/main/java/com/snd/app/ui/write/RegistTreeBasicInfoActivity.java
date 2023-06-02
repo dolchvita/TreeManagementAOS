@@ -62,7 +62,7 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
     RegistTreeBasicInfoActBinding treeBasicInfoActBinding;
     RegistTreeBasicInfoViewModel treeBasicInfoVM;
     // TreeActivity 로부터 전달 받은 문자 데이터
-    private static final String IDHEX="idHex";
+    private static final String IDHEX="IDHEX";
     String idHex;
     TreeBasicInfoDTO treeBasicInfoDTO;
     // 이미지 권한
@@ -209,13 +209,16 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
        // 디자인 요소에 세팅하기
        treeBasicInfoVM.latitude.set(""+latitude);
        treeBasicInfoVM.longitude.set(""+longitude);
+       editor.putString("latitude",""+latitude);
+       editor.putString("longitude",""+longitude);
+       editor.apply();
    }
 
 
     public void setTreeBasicInfoDTO() throws JsonProcessingException {
         treeBasicInfoDTO=new TreeBasicInfoDTO();
         treeBasicInfoDTO.setNFC(idHex);
-        treeBasicInfoDTO.setSpecies("소유주를 입력해주세요");
+        treeBasicInfoDTO.setSpecies(sharedPreferences.getString("species",null));
         treeBasicInfoDTO.setSubmitter(sharedPreferences.getString("id",null));
         treeBasicInfoDTO.setVendor(sharedPreferences.getString("company",null));
         // 매핑된 DTO 넘겨줌
@@ -304,6 +307,8 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
                 .addHeader("Authorization", sharedPreferences.getString("Authorization", null))
                 .post(requestBody)
                 .build();
+
+
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onResponse(@NonNull Call call, @NonNull okhttp3.Response response) throws IOException {
@@ -475,7 +480,6 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
                     }
                 });
     }
-
 
     // 갤러리 새로고침
     private void refreshGallery() {

@@ -21,22 +21,34 @@ public class HomeViewModel extends ViewModel {
     SharedPreferences sharedPreferences;
     private MutableLiveData<String> _company;
     LiveData company=getCompany();
+    private MutableLiveData<String> _name;
+    LiveData name=getName();
+
 
     @Inject
     public HomeViewModel(Context context) {
         // 공통의 객체 꺼내기
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
         _company=new MutableLiveData<>();
-        setCompany();
+        _name=new MutableLiveData<>();
+
+        setUserInfo();
+    }
+
+    public void setUserInfo() {
+        _company.setValue(sharedPreferences.getString("company", null));
+        _name.setValue(sharedPreferences.getString("name", null));
     }
 
     public LiveData<String> getCompany() {
         return _company;
     }
 
-    public void setCompany() {
-        _company.setValue(sharedPreferences.getString("company", null));
+    public LiveData<String> getName() {
+        return _name;
     }
+
+
 
     // 화면 변경
     public void onTextViewClicked(View view) {

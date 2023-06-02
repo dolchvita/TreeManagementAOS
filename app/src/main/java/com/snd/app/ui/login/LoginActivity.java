@@ -63,7 +63,6 @@ public class LoginActivity extends TMActivity {
         if(AppModule.requestQueue == null)
             AppModule.requestQueue = Volley.newRequestQueue(getApplicationContext());
 
-
         AppComponent appComponent = DaggerAppComponent.builder().appModule(new AppModule(this)).build();
         // 의존성 주입됨
         appComponent.inject(this);
