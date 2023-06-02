@@ -11,6 +11,7 @@ import com.snd.app.R;
 import com.snd.app.common.TMActivity;
 import com.snd.app.databinding.GetTreeInfoActBinding;
 import com.snd.app.domain.tree.TreeBasicInfoDTO;
+import com.snd.app.domain.tree.TreeLocationInfoDTO;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -77,8 +78,10 @@ public class GetTreeInfoActivity extends TMActivity {
                         Log.d(TAG,"** data 추출 **"+ data.getString("species"));
 
                         editor.putString("species", data.getString("species"));
-                        editor.apply();
 
+                        //editor.putString("latitude", data.getString("latitude"));
+                        //editor.putString("longitude", data.getString("longitude"));
+                        editor.apply();
 
                     } catch (JSONException e) {
                         throw new RuntimeException(e);
@@ -104,6 +107,18 @@ public class GetTreeInfoActivity extends TMActivity {
         treeBasicInfoDTO.setSpecies(sharedPreferences.getString("species",null));
         treeBasicInfoDTO.setSubmitter(sharedPreferences.getString("id",null));
         treeBasicInfoDTO.setVendor(sharedPreferences.getString("company",null));
+
+        /*
+        TreeLocationInfoDTO treeLocationInfoDTO=new TreeLocationInfoDTO();
+        String str1=sharedPreferences.getString("latitude", null);
+        String str2=sharedPreferences.getString("longitude", null);
+        double latitude=Double.parseDouble(str1);
+        double longitude=Double.parseDouble(str2);
+        treeLocationInfoDTO.setLatitude(latitude);
+        treeLocationInfoDTO.setLatitude(longitude);
+
+         */
+
         // 매핑된 DTO 넘겨줌
         getTreeInfoVM.setTextViewModel(treeBasicInfoDTO);
     }

@@ -4,9 +4,13 @@ import android.Manifest;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.location.GnssStatus;
+import android.location.GpsSatellite;
+import android.location.GpsStatus;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -17,6 +21,9 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MediatorLiveData;
+import androidx.lifecycle.MutableLiveData;
 
 // 모든 액티비티가 상속받을 최상위 객체
 public class TMActivity extends AppCompatActivity {
@@ -33,14 +40,88 @@ public class TMActivity extends AppCompatActivity {
    private LocationListener locationListener;
    protected  double latitude;
    protected double longitude;
+   Boolean isGranted=false;
+   // 위성 개수 세기
+   private MutableLiveData _satellites;
+   LiveData satellites;
+
+   GnssStatus.Callback gnssCallback = new GnssStatus.Callback() {
+      @Override
+      public void onStarted() {
+         // GNSS 상태가 시작됐을 때 동작
+      }
+
+      @Override
+      public void onStopped() {
+         // GNSS 상태가 중지됐을 때 동작
+      }
+
+      @Override
+      public void onSatelliteStatusChanged(GnssStatus status) {
+         // 위성 상태가 변경될 때 동작
+         int satelliteCount = status.getSatelliteCount();
+         // ...
+      }
+      // 추가적인 메소드들...
+   };
+
 
    @Override
    protected void onCreate(@Nullable Bundle savedInstanceState) {
       super.onCreate(savedInstanceState);
       sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
       editor = sharedPreferences.edit();
+
+      _satellites=new MutableLiveData<>();
+
       requestPermissions();
+      //checkAndCountSatellites();
    }
+
+   // GPS 권한을 확인하고 위성 개수를 세는 메소드
+   private void checkAndCountSatellites() {
+      if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+         // GPS 권한이 허용된 경우
+         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+         if (locationManager != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+               gnssCallback = new GnssStatus.Callback() {
+                  @Override
+                  public void onSatelliteStatusChanged(GnssStatus status) {
+                     int satelliteCount = status.getSatelliteCount();
+                     // 위성 개수 처리
+                  }
+               };
+               locationManager.registerGnssStatusCallback(gnssCallback);
+            } else {
+               locationManager.addGpsStatusListener(new GpsStatus.Listener() {
+                  @Override
+                  public void onGpsStatusChanged(int event) {
+                     if (event == GpsStatus.GPS_EVENT_SATELLITE_STATUS) {
+                        if (ActivityCompat.checkSelfPermission(TMActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                           GpsStatus gpsStatus = locationManager.getGpsStatus(null);
+                           Iterable<GpsSatellite> satellites = gpsStatus.getSatellites();
+                           int satelliteCount = 0;
+                           for (GpsSatellite satellite : satellites) {
+                              if (satellite.usedInFix()) {
+                                 satelliteCount++;
+                              }
+                           }
+                           // 위성 개수 처리
+                           Log.d(TAG, "**위성의 개수는? **"+satelliteCount);
+                        }
+                     }
+                  }
+               });
+            }
+         }
+      } else {
+         // GPS 권한이 거부된 경우에 대한 처리
+         // ...
+      }
+   }
+
 
 
    // 1 제일 먼저 동작하는 메서드 !
@@ -140,7 +221,7 @@ public class TMActivity extends AppCompatActivity {
       Log.d(TAG,"** on Destroy 호출 **");
       super.onDestroy();
       if (locationManager != null) {
-         locationManager.removeUpdates(locationListener);
+         //locationManager.removeUpdates(locationListener);
       }
    }
 

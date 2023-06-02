@@ -117,7 +117,6 @@
             android:gravity="center"
             android:padding="5dp"
             android:textSize="13dp"
-            android:text="민원관리"
 
             android:onClick="@{()->mainVM.setTabClick(mainVM.FRAGMENT_COMPLAINT)}"
 
@@ -125,7 +124,7 @@
             app:layout_constraintEnd_toStartOf="@id/list"
             app:layout_constraintStart_toEndOf="@id/map"
             app:layout_constraintTop_toTopOf="@id/bottom"
-            tools:text="민원관리" />
+            />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/list"

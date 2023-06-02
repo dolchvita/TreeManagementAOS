@@ -209,9 +209,14 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
        // 디자인 요소에 세팅하기
        treeBasicInfoVM.latitude.set(""+latitude);
        treeBasicInfoVM.longitude.set(""+longitude);
+
+       /*
        editor.putString("latitude",""+latitude);
        editor.putString("longitude",""+longitude);
        editor.apply();
+        */
+
+
    }
 
 
@@ -291,6 +296,8 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
             String longitudeValue = String.format("%.7f", longitude);
             treeLocationData.put("longitude", longitudeValue);
             treeLocationData.put("nfc",treeBasicInfoDTO.getNFC().toUpperCase());
+
+
             treeLocationData.put("submitter",treeBasicInfoDTO.getSubmitter());
             treeLocationData.put("vendor",treeBasicInfoDTO.getVendor());
 

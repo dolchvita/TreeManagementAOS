@@ -110,10 +110,11 @@
                     android:nextFocusDown="@id/tr_height"
                     android:paddingEnd="50dp"
                     android:text="@{getTreeInfoVM.species}"
+                    android:hint="산사나무"
                     app:layout_constraintEnd_toEndOf="@id/scarlet_diam_tv"
                     app:layout_constraintStart_toStartOf="@id/scarlet_diam_tv"
                     app:layout_constraintTop_toBottomOf="@id/scarlet_diam_tv"
-                    tools:text="100" />
+                    />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tr_height_label"
@@ -131,10 +132,11 @@
                     android:nextFocusDown="@id/tr_height"
                     android:paddingEnd="50dp"
                     android:text="@{getTreeInfoVM.submitter}"
+                   android:hint="yeseo0502"
                     app:layout_constraintEnd_toEndOf="@id/tr_height_label"
                     app:layout_constraintStart_toStartOf="@id/tr_height_label"
                     app:layout_constraintTop_toBottomOf="@id/tr_height_label"
-                    tools:text="100" />
+                    />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/crw_height_label"
@@ -152,10 +154,11 @@
                     android:nextFocusDown="@id/crw_diam"
                     android:paddingEnd="50dp"
                     android:text="@{getTreeInfoVM.vendor}"
+                    android:hint="snd"
                     app:layout_constraintEnd_toEndOf="@id/crw_height_label"
                     app:layout_constraintStart_toStartOf="@id/crw_height_label"
                     app:layout_constraintTop_toBottomOf="@id/crw_height_label"
-                    tools:text="1" />
+                    />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/crw_diam_tv"
@@ -173,16 +176,17 @@
                     android:longClickable="false"
                     android:nextFocusDown="@id/pest_dmg_state"
                     android:paddingEnd="50dp"
+                    android:hint="2023.06.02"
                     app:layout_constraintEnd_toEndOf="@id/crw_diam_tv"
                     app:layout_constraintStart_toStartOf="@id/crw_diam_tv"
                     app:layout_constraintTop_toBottomOf="@id/crw_diam_tv"
-                    tools:text="1" />
+                    />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/pest_dmg_state_tv"
                     style="@style/tree_info_label"
                     android:layout_marginTop="10dp"
-                    android:text="해시태그"
+                    android:text="위도"
                     app:layout_constraintEnd_toStartOf="@id/tr_state_tv"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/crw_height" />
@@ -193,6 +197,7 @@
                     android:inputType="text"
                     android:nextFocusDown="@id/tr_state"
                     android:paddingEnd="50dp"
+                    android:text="@{getTreeInfoVM.latitude}"
                     app:layout_constraintEnd_toEndOf="@id/pest_dmg_state_tv"
                     app:layout_constraintStart_toStartOf="@id/pest_dmg_state_tv"
                     app:layout_constraintTop_toBottomOf="@id/pest_dmg_state_tv"
@@ -202,7 +207,7 @@
                     android:id="@+id/tr_state_tv"
                     style="@style/tree_info_label"
                     android:layout_marginTop="10dp"
-                    android:text="마지막 정보수정일자"
+                    android:text="경도"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@id/pest_dmg_state_tv"
                     app:layout_constraintTop_toBottomOf="@id/crw_diam" />
@@ -212,14 +217,13 @@
                     style="@style/tree_info_edt"
                     android:inputType="text"
                     android:paddingEnd="50dp"
+                    android:text="@{getTreeInfoVM.longitude}"
                     app:layout_constraintEnd_toEndOf="@id/tr_state_tv"
                     app:layout_constraintStart_toStartOf="@id/tr_state_tv"
                     app:layout_constraintTop_toBottomOf="@id/tr_state_tv"
                     />
 
-
             </androidx.constraintlayout.widget.ConstraintLayout>
-
         </androidx.core.widget.NestedScrollView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -260,7 +260,6 @@
                     android:fontFamily="@font/notosans_kr_bold"
                     android:gravity="center"
                     android:padding="15dp"
-                    android:text="민원 관리"
                     android:textColor="@color/cocoa_brown"
                     android:textSize="15dp"
                     app:drawableTint="@color/cocoa_brown"
@@ -268,7 +267,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@id/check"
                     app:layout_constraintTop_toTopOf="@id/diagnose"
-                    tools:text="민원 관리" />
+                    />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
             <!--./ButtonBox-->

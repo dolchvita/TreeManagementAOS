@@ -76,7 +76,7 @@ public class TreeActivity extends TMActivity implements NfcAdapter.ReaderCallbac
     public void onTagDiscovered(Tag tag) {
         Log.d(TAG, "** NFC 인식하였음 !! ** ");
         byte[] id = tag.getId();
-        idHex = bytesToHexString(id);
+        idHex = bytesToHexString(id).toUpperCase();
         Log.d(TAG, "** NFC 아이디 추출 ** "+id);
         Log.d(TAG, "** NFC 아이디 가공 ** "+idHex);
 
