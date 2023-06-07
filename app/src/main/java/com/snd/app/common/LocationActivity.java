@@ -27,8 +27,6 @@ public class LocationActivity extends TMActivity{
     protected  double latitude;
     protected double longitude;
 
-    //private FusedLocationProviderClient fusedLocationClient;
-
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

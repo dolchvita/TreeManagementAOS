@@ -41,12 +41,6 @@ public class GetTreeInfoActivity extends TMActivity {
 
         getTreeInfoByNFCtagId();
 
-        try {
-            setTreeBasicInfoDTO();
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-
         // 사진 이미지 담기
     }
 
@@ -62,7 +56,7 @@ public class GetTreeInfoActivity extends TMActivity {
                 .addHeader("Authorization", sharedPreferences.getString("Authorization", null))
                 .build();
 
-        // 비동기 방식 사용하기 !!!
+        // 비동기 방식 사용하기 !!! - ** 네트워크 요청 이후 작업할 것 **
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onResponse(@NonNull Call call, @NonNull okhttp3.Response response) throws IOException {
@@ -75,13 +69,18 @@ public class GetTreeInfoActivity extends TMActivity {
                         JSONObject json=new JSONObject(responseData);
                         JSONObject data=json.getJSONObject("data");
                         Log.d(TAG,"** data 추출 **"+data.toString());
-                        Log.d(TAG,"** data 추출 **"+ data.getString("species"));
 
                         editor.putString("species", data.getString("species"));
-
-                        //editor.putString("latitude", data.getString("latitude"));
-                        //editor.putString("longitude", data.getString("longitude"));
+                        editor.putString("latitude", data.getString("latitude"));
+                        editor.putString("longitude", data.getString("longitude"));
                         editor.apply();
+
+                        // 디티오 세팅 순서 바꿔보기
+                        try {
+                            setTreeBasicInfoDTO();
+                        } catch (JsonProcessingException e) {
+                            throw new RuntimeException(e);
+                        }
 
                     } catch (JSONException e) {
                         throw new RuntimeException(e);
@@ -98,29 +97,29 @@ public class GetTreeInfoActivity extends TMActivity {
                 Log.d(TAG,"** 위치 등록 오류남 **");
             }
         });
+
     }
 
 
     public void setTreeBasicInfoDTO() throws JsonProcessingException {
+        // 기본 정보 세팅하기
         treeBasicInfoDTO=new TreeBasicInfoDTO();
         treeBasicInfoDTO.setNFC(idHex);
         treeBasicInfoDTO.setSpecies(sharedPreferences.getString("species",null));
         treeBasicInfoDTO.setSubmitter(sharedPreferences.getString("id",null));
         treeBasicInfoDTO.setVendor(sharedPreferences.getString("company",null));
 
-        /*
+        // 위치 정보 세팅하기
         TreeLocationInfoDTO treeLocationInfoDTO=new TreeLocationInfoDTO();
         String str1=sharedPreferences.getString("latitude", null);
         String str2=sharedPreferences.getString("longitude", null);
         double latitude=Double.parseDouble(str1);
         double longitude=Double.parseDouble(str2);
         treeLocationInfoDTO.setLatitude(latitude);
-        treeLocationInfoDTO.setLatitude(longitude);
-
-         */
+        treeLocationInfoDTO.setLongitude(longitude);
 
         // 매핑된 DTO 넘겨줌
-        getTreeInfoVM.setTextViewModel(treeBasicInfoDTO);
+        getTreeInfoVM.setTextViewModel(treeBasicInfoDTO, treeLocationInfoDTO);
     }
 
 

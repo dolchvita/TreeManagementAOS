@@ -1,5 +1,7 @@
 package com.snd.app.ui.read;
 
+import android.util.Log;
+
 import androidx.databinding.ObservableField;
 
 import com.snd.app.common.LocationViewModel;
@@ -18,16 +20,17 @@ public class GetTreeInfoViewModel extends LocationViewModel {
 
 
     // 데이터바인딩시 참조할 변수 매핑
-    public void setTextViewModel(TreeBasicInfoDTO treeBasicInfoDTO){
+    public void setTextViewModel(TreeBasicInfoDTO treeBasicInfoDTO, TreeLocationInfoDTO treeLocationInfoDTO){
         NFC.set(treeBasicInfoDTO.getNFC());
         species.set(treeBasicInfoDTO.getSpecies());
         submitter.set(treeBasicInfoDTO.getSubmitter());
         vendor.set(treeBasicInfoDTO.getVendor());
-        /*
+
+        Log.d(TAG,"**  **"+treeLocationInfoDTO.getLatitude());
         latitude.set(String.valueOf(treeLocationInfoDTO.getLatitude()));
         longitude.set(String.valueOf(treeLocationInfoDTO.getLongitude()));
 
-         */
+
     }
 
 }

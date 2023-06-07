@@ -75,7 +75,7 @@ public class TMActivity extends AppCompatActivity {
       _satellites=new MutableLiveData<>();
 
       requestPermissions();
-      //checkAndCountSatellites();
+      checkAndCountSatellites();
    }
 
    // GPS 권한을 확인하고 위성 개수를 세는 메소드
@@ -91,6 +91,7 @@ public class TMActivity extends AppCompatActivity {
                   public void onSatelliteStatusChanged(GnssStatus status) {
                      int satelliteCount = status.getSatelliteCount();
                      // 위성 개수 처리
+                     Log.d(TAG, "**위성의 개수는? **"+satelliteCount);
                   }
                };
                locationManager.registerGnssStatusCallback(gnssCallback);
