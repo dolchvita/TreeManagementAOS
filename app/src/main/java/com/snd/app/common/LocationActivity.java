@@ -32,27 +32,10 @@ public class LocationActivity extends TMActivity{
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG,"** LocationActivity 생성 **");
-        locationPermission();
+        //locationPermission();
     }
 
-    // 위치 정보
-   public void  locationPermission(){
-       // 권한 확인
-       if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-               != PackageManager.PERMISSION_GRANTED) {
 
-           // 권한이 허용되지 않은 경우 권한 요청
-           ActivityCompat.requestPermissions(this,
-                   new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                   PERMISSION_REQUEST_CODE);
-
-       } else {
-           // 권한이 이미 허용된 경우
-           // GPS 사용에 필요한 초기화 작업을 수행할 수 있습니다.
-           Log.d(TAG,"**LocationActivity- 권한 허용됨 **");
-           getLocation();
-       }
-   }
 
 
 
@@ -83,7 +66,7 @@ public class LocationActivity extends TMActivity{
 
 
     // 마지막 위치 정보 가져오기
-    private void getLocation() {
+    protected void getLocation() {
         Log.d(TAG,"** LocationActivity- getLocation 함수 호출 **");
         //LocationRequest locationRequest = new LocationRequest();
         //locationRequest.setInterval(10000); // 위치 업데이트 간격 (밀리초)

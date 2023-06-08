@@ -13,6 +13,7 @@ import android.util.Log;
 
 import com.snd.app.databinding.MainActBinding;
 import com.snd.app.ui.home.HomeFragment;
+import com.snd.app.ui.map.Mapfragment;
 
 import javax.inject.Inject;
 
@@ -21,6 +22,8 @@ public class MainActivity extends AppCompatActivity {
         @Inject
         MainViewModel mainVM;
         private String TAG=this.getClass().getName();
+        private HomeFragment homeFragment;
+        private Mapfragment mapFragment;
 
         @Override
         protected void onCreate(Bundle savedInstanceState) {
@@ -37,7 +40,8 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG, mainVM+"!!!!!!!asaswqdwqedd!!!!!");
 
             // 화면에 보일 프레그먼트
-            // HomeFragment homeFragment=new HomeFragment();
+            homeFragment=new HomeFragment(this);
+            mapFragment=new Mapfragment();
 
             // 처음 화면을 메인으로 갖추는 것
             getSupportFragmentManager().beginTransaction().replace(R.id.content, new HomeFragment(this)).commit();
@@ -55,10 +59,11 @@ public class MainActivity extends AppCompatActivity {
                     // 메인 화면을 4가지의 프레그먼트로 분할
                     if(o.equals(1)){
                         Log.d(TAG,"홈이 올 예정");
-                        //transaction.replace(R.id.content, homeFragment);
+                        transaction.replace(R.id.content, homeFragment);
 
                     } else if (o.equals(2)) {
                         Log.d(TAG,"맵이 올 예정");
+                        transaction.replace(R.id.content, mapFragment);
                     }
                     transaction.commit();
                 }

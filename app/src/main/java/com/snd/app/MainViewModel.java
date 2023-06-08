@@ -14,8 +14,7 @@ public class MainViewModel extends ViewModel {
     // 1 fragment 상수
     public static final int FRAGMENT_HOME=1;
     public static final int FRAGMENT_MAP=2;
-    public static final int FRAGMENT_COMPLAINT=3;
-    public static final int FRAGMENT_RECENT=4;
+    public static final int FRAGMENT_RECENT=3;
 
     ObservableField<Integer> currentFragment=new ObservableField<Integer>(FRAGMENT_HOME);
 

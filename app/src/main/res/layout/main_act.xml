@@ -91,40 +91,24 @@
             app:layout_constraintVertical_bias="0.0"
             tools:text="메인"/>
 
+
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/map"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:drawableTop="@drawable/ic_map"
             android:gravity="center"
+            android:onClick="@{()->mainVM.setTabClick(mainVM.FRAGMENT_MAP)}"
             android:padding="5dp"
             android:text="지도"
+
             android:textSize="13dp"
 
-            android:onClick="@{()->mainVM.setTabClick(mainVM.FRAGMENT_MAP)}"
-
             app:layout_constraintBottom_toBottomOf="@+id/bottom"
-            app:layout_constraintEnd_toStartOf="@+id/complaint"
+            app:layout_constraintEnd_toStartOf="@+id/list"
             app:layout_constraintStart_toEndOf="@id/home"
-            app:layout_constraintTop_toTopOf="@id/bottom"/>
-
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/complaint"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:drawableTop="@drawable/ic_list"
-            android:gravity="center"
-            android:padding="5dp"
-            android:textSize="13dp"
-
-            android:onClick="@{()->mainVM.setTabClick(mainVM.FRAGMENT_COMPLAINT)}"
-
-            app:layout_constraintBottom_toBottomOf="@+id/bottom"
-            app:layout_constraintEnd_toStartOf="@id/list"
-            app:layout_constraintStart_toEndOf="@id/map"
             app:layout_constraintTop_toTopOf="@id/bottom"
-            />
+            app:layout_constraintVertical_bias="1.0" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/list"
@@ -141,7 +125,7 @@
             android:textColor="@color/black"
             app:layout_constraintBottom_toBottomOf="@+id/bottom"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/complaint"
+            app:layout_constraintStart_toEndOf="@id/map"
             app:layout_constraintTop_toTopOf="@id/bottom"
             tools:text="최근작업" />
 

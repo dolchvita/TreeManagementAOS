@@ -101,8 +101,9 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
         recyclerView.setAdapter(photoAdapter);
         // 입력 문자열 추출
         AppCompatAutoCompleteTextView tree_name=(AppCompatAutoCompleteTextView) findViewById(R.id.tr_name);
-        // 위치
-        locationPermission();
+
+        // 위치 - 이게 호출되어야만 할까? / 권한 요청하는 메서드.. / 결국 getLocation() 가 호출되어야 했던 것!
+        getLocation();
 
         tree_name.addTextChangedListener(new TextWatcher() {
             @Override
@@ -216,7 +217,6 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
        editor.apply();
         */
 
-
    }
 
 
@@ -229,6 +229,7 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
         // 매핑된 DTO 넘겨줌
         treeBasicInfoVM.setTextViewModel(treeBasicInfoDTO);
     }
+
 
     // 뷰모델에서 호출 - 저장 버튼 누를 시
     @Override
@@ -459,6 +460,9 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
            File file=new File(uri);
            currentList.add(file);
         }
+
+
+
     }
 
 

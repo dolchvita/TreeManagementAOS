@@ -8,14 +8,14 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.snd.app.common.LocationViewModel;
+import com.snd.app.common.TMViewModel;
 import com.snd.app.domain.tree.TreeBasicInfoDTO;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class RegistTreeBasicInfoViewModel extends LocationViewModel {
+public class RegistTreeBasicInfoViewModel extends TMViewModel {
     private String TAG=this.getClass().getName();
     // 기본 정보
     public ObservableField<String> NFC=new ObservableField<>();

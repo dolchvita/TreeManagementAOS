@@ -4,11 +4,11 @@ import android.util.Log;
 
 import androidx.databinding.ObservableField;
 
-import com.snd.app.common.LocationViewModel;
+import com.snd.app.common.TMViewModel;
 import com.snd.app.domain.tree.TreeBasicInfoDTO;
 import com.snd.app.domain.tree.TreeLocationInfoDTO;
 
-public class GetTreeInfoViewModel extends LocationViewModel {
+public class GetTreeInfoViewModel extends TMViewModel {
     private String TAG=this.getClass().getName();
     // 기본 정보
     public ObservableField<String> NFC=new ObservableField<>();
