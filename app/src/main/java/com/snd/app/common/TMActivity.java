@@ -1,13 +1,17 @@
 package com.snd.app.common;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.GnssStatus;
+import android.location.GpsSatellite;
+import android.location.GpsStatus;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -50,6 +54,32 @@ public class TMActivity extends AppCompatActivity {
       tmVM = new TMViewModel();
       Log.d(TAG, "** TMActivity 생성 ** " + tmVM);
 
+      // 매니저 초기화
+      locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+      // 리스너 미리 초기화
+      locationListener=new LocationListener() {
+         @Override
+         public void onLocationChanged(@NonNull Location location) {
+            Log.d(TAG, "** onLocationChanged 호출 **");
+         }
+
+         @Override
+         public void onStatusChanged(String provider, int status, Bundle extras) {
+            Log.d(TAG, "onStatusChanged: " + provider);
+         }
+
+         @Override
+         public void onProviderEnabled(String provider) {
+            Log.d(TAG, "onProviderEnabled: " + provider);
+         }
+
+         @Override
+         public void onProviderDisabled(String provider) {
+            Log.d(TAG, "onProviderDisabled: " + provider);
+         }
+
+      };
+
       requestPermissions();
 
    }
@@ -74,8 +104,10 @@ public class TMActivity extends AppCompatActivity {
          // 이미 권한이 허용된 경우에 대한 처리
          REQUEST_IMAGE_CODE = 1;
 
+         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+
          // 위치 권한이 허용된 경우
-         startLocationUpdates();
+         //startLocationUpdates();
       }
    }
 
@@ -84,13 +116,13 @@ public class TMActivity extends AppCompatActivity {
    @Override
    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
       super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+      Log.d(TAG, "** onRequestPermissionsResult 호출 **");
+
       // 카메라 허용
       if (requestCode == REQUEST_IMAGE_CAPTURE) {
          if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             editor.putBoolean("camera_permission_granted", true);
             editor.apply();
-
-            startLocationUpdates();
 
          } else {
             editor.putBoolean("camera_permission_granted", false);
@@ -100,36 +132,9 @@ public class TMActivity extends AppCompatActivity {
       // 위치 허용
       if (requestCode == REQUEST_LOCATION_PERMISSION) {
          if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            // GNSS 객체 생성 및 콜백 등록
-            // 권한이 허용된 경우에만 GNSS 작업을 수행
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-               // GNSS 객체 생성 및 콜백 등록
-               LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
+            Log.d(TAG, "** onRequestPermissionsResult - 위치 허용 **");
 
-               locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
-
-               // GNSS 콜백 설정
-               gnssCallback = new GnssStatus.Callback() {
-                  @Override
-                  public void onSatelliteStatusChanged(GnssStatus status) {
-                     int satelliteCount = status.getSatelliteCount();
-                     tmVM.setSatelliteCount(satelliteCount);
-                  }
-
-                  // 다른 메서드 오버라이드 생략
-
-
-               };
-
-               locationManager.registerGnssStatusCallback(gnssCallback);
-               Log.i(TAG, "** TMActivity - 위치 허용 지나감 **");
-
-            } else {
-               // 권한이 거부된 경우에 대한 처리
-            }
-
-            getLocation();
 
          } else {
             // 실행부가 왜 여기로 쳐 들어오냐  -> requestCode가 1로 들어오지 않은 것.
@@ -140,6 +145,32 @@ public class TMActivity extends AppCompatActivity {
    }
 
 
+
+   // 위성 개수 세는 메서드
+   @SuppressLint("MissingPermission")
+   private void countSatellites(GnssStatus status) {
+      Log.d(TAG, "** 호출되었으면 알려줘 **");
+      if (isGranted) {
+         int seenSatellites = 0;
+         int satellitesInFix = 0;
+
+         GpsStatus gpsStatus = locationManager.getGpsStatus(null);
+         if (gpsStatus != null) {
+            Iterable<GpsSatellite> satellites = gpsStatus.getSatellites();
+            for (GpsSatellite sat : satellites) {
+               if (sat.usedInFix()) {
+                  satellitesInFix++;
+               }
+               seenSatellites++;
+            }
+         }
+         Log.i("TAG", seenSatellites + "*** Used In Last Fix (" + satellitesInFix + ") ***");
+         tmVM.setSatelliteCount(seenSatellites);
+      }
+   }
+
+
+   // 굳이 필요한가???
    private void startLocationUpdates() {
       locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
@@ -184,7 +215,6 @@ public class TMActivity extends AppCompatActivity {
          // 권한이 이미 허용된 경우
          // GPS 사용에 필요한 초기화 작업을 수행할 수 있습니다.
          Log.d(TAG,"** LocationActivity - 권한 허용됨 **");
-         getLocation();
       }
    }
 
@@ -205,7 +235,7 @@ public class TMActivity extends AppCompatActivity {
       if (lastKnownLocation != null) {
          latitude = lastKnownLocation.getLatitude();
          longitude = lastKnownLocation.getLongitude();
-         Log.d(TAG, "Latitude: " + latitude + ", Longitude: " + longitude);
+         Log.d(TAG, "** 위도: " + latitude + ", 경도 : " + longitude);
 
       } else {
          // 위치 정보를 가져오지 못한 경우

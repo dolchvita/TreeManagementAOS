@@ -204,19 +204,9 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
 
 
    public void getTreeLocation(){
-       Log.d(TAG,"** 위도 **"+latitude);
-       Log.d(TAG,"** 경도 **"+longitude);
-
        // 디자인 요소에 세팅하기
        treeBasicInfoVM.latitude.set(""+latitude);
        treeBasicInfoVM.longitude.set(""+longitude);
-
-       /*
-       editor.putString("latitude",""+latitude);
-       editor.putString("longitude",""+longitude);
-       editor.apply();
-        */
-
    }
 
 
@@ -245,8 +235,6 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
 
     // 수목 기본정보 등록
     public void registerTreeBasicInfo() {
-        Log.d(TAG,"** registerTreeBasicInfo 호출 **");
-        Log.d(TAG,"** url **"+sndUrl+"/app/tree/registerBasicInfo");
         JSONObject treeBasicData=new JSONObject();
 
         try {
@@ -255,7 +243,6 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
             treeBasicData.put("species", species);
             treeBasicData.put("submitter", sharedPreferences.getString("id",null));
             treeBasicData.put("vendor", sharedPreferences.getString("company",null));
-            Log.d(TAG,"** 보낼 데이터 모습 **"+treeBasicData);
 
         } catch (JSONException e) {
             throw new RuntimeException(e);
@@ -315,7 +302,6 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
                 .addHeader("Authorization", sharedPreferences.getString("Authorization", null))
                 .post(requestBody)
                 .build();
-
 
         client.newCall(request).enqueue(new Callback() {
             @Override
@@ -403,6 +389,7 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
         return imageFile;
     }
 
+
     // 2 카메라 촬영 - 아마 문제 없음
     private void startCamera() {
         Log.d(TAG,"** startCamera 호출됨 **");
@@ -460,16 +447,11 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
            File file=new File(uri);
            currentList.add(file);
         }
-
-
-
     }
 
 
     // 4 갤러리 저장
     private void galleryAddPic() {
-        Log.d(TAG,"** galleryAddPic 호출 **");
-
         Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
         File imageFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getPath());
         Uri contentUri = Uri.fromFile(imageFile);
