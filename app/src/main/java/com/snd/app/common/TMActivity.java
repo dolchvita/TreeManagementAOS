@@ -45,8 +45,6 @@ public class TMActivity extends AppCompatActivity {
 
    TMViewModel tmVM;
    // 위성 개수 세기 - 이건 액티비티가 아니라 뷰모델이 가지고 있기
-   private GnssStatus.Callback gnssCallback;
-
    private GpsStatusHelper gpsStatusHelper;
 
    @Override
@@ -172,9 +170,6 @@ public class TMActivity extends AppCompatActivity {
       }
 
       Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-
-      gpsStatusHelper=new GpsStatusHelper(locationManager, this);
-      Log.d(TAG,"** getLocation 함수 - gpsStatusHelper ** "+gpsStatusHelper);
 
       if (lastKnownLocation != null) {
          latitude = lastKnownLocation.getLatitude();

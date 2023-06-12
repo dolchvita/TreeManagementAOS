@@ -131,6 +131,7 @@ public class LocationRepository {
 
                         @Override
                         public void onSatelliteStatusChanged(@NonNull GnssStatus status) {
+                            // 콜백 메서드
                             Log.d(TAG, " **LocationRepo - 3 단계 **"+status.getSatelliteCount());
                             super.onSatelliteStatusChanged(status);
 

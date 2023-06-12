@@ -196,6 +196,7 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
             @Override
             public void onChanged(Integer satellitesCount) {
                 Log.d(TAG, "현재 위성 개수: " + satellitesCount);
+
             }
         });
     }
