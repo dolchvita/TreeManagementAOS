@@ -1,14 +1,10 @@
 package com.snd.app.ui.write;
 
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.location.GnssStatus;
-import android.location.GpsSatellite;
-import android.location.GpsStatus;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
@@ -37,7 +33,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.snd.app.R;
 import com.snd.app.common.TMActivity;
 import com.snd.app.data.AppModule;
-import com.snd.app.data.GpsStatusHelper;
 import com.snd.app.data.LocationRepository;
 import com.snd.app.databinding.RegistTreeBasicInfoActBinding;
 import com.snd.app.domain.tree.TreeBasicInfoDTO;
@@ -86,7 +81,6 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
 
     // 위치 권한과 관련된 변수들!  (**지금 작업 중*)
    Boolean isGranted;
-   private GpsStatusHelper gpsStatusHelper;
 
 
     @Override
@@ -114,7 +108,7 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
         AppCompatAutoCompleteTextView tree_name=(AppCompatAutoCompleteTextView) findViewById(R.id.tr_name);
 
         // 위치 - 이게 호출되어야만 할까? / 권한 요청하는 메서드.. / 결국 getLocation() 가 호출되어야 했던 것!
-        getLocation();
+        //getLocation();
 
         tree_name.addTextChangedListener(new TextWatcher() {
             @Override
@@ -159,7 +153,6 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
             }
         });
 
-        getTreeLocation();
 
         treeBasicInfoVM.back.observe(this, new Observer() {
             @Override
@@ -186,7 +179,7 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
             }
         });
 
-        // 1-1) 리파지토리 생성
+        // 위성 개수 추출
         LocationRepository locationRepository=new LocationRepository(this);
         locationRepository.setPermissionGranted(true);
         locationRepository.startTracking();
@@ -197,12 +190,15 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
             public void onChanged(Integer satellitesCount) {
                 Log.d(TAG, "현재 위성 개수: " + satellitesCount);
 
+                if (satellitesCount>6){
+                    getLocation();
+
+                    // 디자인 요소 반영
+                    getTreeLocation();
+                }
             }
         });
     }
-
-
-    // 위성개수와 관련된 메서드 여기 올 예정!!
 
 
     private void showAlertDialog() {
@@ -312,7 +308,6 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
             String longitudeValue = String.format("%.7f", longitude);
             treeLocationData.put("longitude", longitudeValue);
             treeLocationData.put("nfc",treeBasicInfoDTO.getNFC().toUpperCase());
-
 
             treeLocationData.put("submitter",treeBasicInfoDTO.getSubmitter());
             treeLocationData.put("vendor",treeBasicInfoDTO.getVendor());

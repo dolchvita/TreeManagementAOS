@@ -24,7 +24,6 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Observer;
 
-import com.snd.app.data.GpsStatusHelper;
 
 // 모든 액티비티가 상속받을 최상위 객체
 public class TMActivity extends AppCompatActivity {
@@ -44,8 +43,6 @@ public class TMActivity extends AppCompatActivity {
    Boolean isGranted = false;
 
    TMViewModel tmVM;
-   // 위성 개수 세기 - 이건 액티비티가 아니라 뷰모델이 가지고 있기
-   private GpsStatusHelper gpsStatusHelper;
 
    @Override
    protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -107,7 +104,6 @@ public class TMActivity extends AppCompatActivity {
          locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
 
          // 위치 권한이 허용된 경우
-         //startLocationUpdates();
       }
    }
 
@@ -138,22 +134,6 @@ public class TMActivity extends AppCompatActivity {
             Toast.makeText(this, "위치 권한이 거부되어 앱을 사용할 수 없습니다.", Toast.LENGTH_SHORT).show();
             finish();
          }
-      }
-   }
-
-
-
-   public void  locationPermission(){
-      if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-              != PackageManager.PERMISSION_GRANTED) {
-         // 권한이 허용되지 않은 경우 권한 요청
-         ActivityCompat.requestPermissions(this,
-                 new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                 REQUEST_LOCATION_PERMISSION);
-      } else {
-         // 권한이 이미 허용된 경우
-         // GPS 사용에 필요한 초기화 작업을 수행할 수 있습니다.
-         Log.d(TAG,"** LocationActivity - 권한 허용됨 **");
       }
    }
 

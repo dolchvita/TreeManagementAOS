@@ -6,8 +6,8 @@
 
     <data>
         <variable
-            name="tmVM"
-            type="com.snd.app.common.TMViewModel" />
+            name="mapVM"
+            type="com.snd.app.ui.map.MapViewModel" />
     </data>
 
 
@@ -85,7 +85,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:fontFamily="@font/notosans_kr_medium"
-            android:text="37.1111"
+            android:text="@{}"
             android:textColor="@color/white"
             android:textSize="16dp"
             app:layout_constraintBottom_toBottomOf="@id/longitude_tv"
@@ -144,7 +144,6 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:fontFamily="@font/notosans_kr_medium"
-            android:text="@{tmVM.accuracy}"
             android:textColor="@color/white"
             android:textSize="16dp"
             app:layout_constraintBottom_toBottomOf="@id/accuracy_tv"
@@ -168,7 +167,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:fontFamily="@font/notosans_kr_medium"
-            android:text="@{String.valueOf(tmVM.satelliteCount)}"
+            android:text="@{String.valueOf(mapVM.satellites)}"
             android:textColor="@color/white"
             android:textSize="16dp"
             app:layout_constraintBottom_toBottomOf="@id/satellite_tv"

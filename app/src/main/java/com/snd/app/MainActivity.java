@@ -42,7 +42,7 @@ public class MainActivity extends TMActivity {
 
             // 화면에 보일 프레그먼트
             homeFragment=new HomeFragment(this);
-            mapFragment=new Mapfragment();
+            mapFragment=new Mapfragment(this);
 
             // 처음 화면을 메인으로 갖추는 것
             getSupportFragmentManager().beginTransaction().replace(R.id.content, new HomeFragment(this)).commit();
