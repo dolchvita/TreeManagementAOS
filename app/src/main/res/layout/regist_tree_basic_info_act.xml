@@ -228,6 +228,14 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="위치 정보test"
+                    tools:ignore="MissingConstraints"
+                    tools:layout_editor_absoluteX="5dp"
+                    tools:layout_editor_absoluteY="17dp" />
+
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/lati_tv"
                     style="@style/sr_no_label"

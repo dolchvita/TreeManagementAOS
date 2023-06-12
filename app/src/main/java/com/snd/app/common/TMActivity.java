@@ -22,6 +22,9 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.Observer;
+
+import com.snd.app.data.GpsStatusHelper;
 
 // 모든 액티비티가 상속받을 최상위 객체
 public class TMActivity extends AppCompatActivity {
@@ -44,6 +47,7 @@ public class TMActivity extends AppCompatActivity {
    // 위성 개수 세기 - 이건 액티비티가 아니라 뷰모델이 가지고 있기
    private GnssStatus.Callback gnssCallback;
 
+   private GpsStatusHelper gpsStatusHelper;
 
    @Override
    protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -77,12 +81,11 @@ public class TMActivity extends AppCompatActivity {
          public void onProviderDisabled(String provider) {
             Log.d(TAG, "onProviderDisabled: " + provider);
          }
-
       };
 
       requestPermissions();
-
    }
+
 
    // 1 제일 먼저 동작하는 메서드 !
    protected void requestPermissions() {
@@ -103,7 +106,6 @@ public class TMActivity extends AppCompatActivity {
       } else {
          // 이미 권한이 허용된 경우에 대한 처리
          REQUEST_IMAGE_CODE = 1;
-
          locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
 
          // 위치 권한이 허용된 경우
@@ -123,7 +125,6 @@ public class TMActivity extends AppCompatActivity {
          if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             editor.putBoolean("camera_permission_granted", true);
             editor.apply();
-
          } else {
             editor.putBoolean("camera_permission_granted", false);
             editor.apply();
@@ -132,9 +133,7 @@ public class TMActivity extends AppCompatActivity {
       // 위치 허용
       if (requestCode == REQUEST_LOCATION_PERMISSION) {
          if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
             Log.d(TAG, "** onRequestPermissionsResult - 위치 허용 **");
-
 
          } else {
             // 실행부가 왜 여기로 쳐 들어오냐  -> requestCode가 1로 들어오지 않은 것.
@@ -144,64 +143,6 @@ public class TMActivity extends AppCompatActivity {
       }
    }
 
-
-
-   // 위성 개수 세는 메서드
-   @SuppressLint("MissingPermission")
-   private void countSatellites(GnssStatus status) {
-      Log.d(TAG, "** 호출되었으면 알려줘 **");
-      if (isGranted) {
-         int seenSatellites = 0;
-         int satellitesInFix = 0;
-
-         GpsStatus gpsStatus = locationManager.getGpsStatus(null);
-         if (gpsStatus != null) {
-            Iterable<GpsSatellite> satellites = gpsStatus.getSatellites();
-            for (GpsSatellite sat : satellites) {
-               if (sat.usedInFix()) {
-                  satellitesInFix++;
-               }
-               seenSatellites++;
-            }
-         }
-         Log.i("TAG", seenSatellites + "*** Used In Last Fix (" + satellitesInFix + ") ***");
-         tmVM.setSatelliteCount(seenSatellites);
-      }
-   }
-
-
-   // 굳이 필요한가???
-   private void startLocationUpdates() {
-      locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-
-      // 위치 업데이트 리스너 설정
-      locationListener = new LocationListener() {
-         @Override
-         public void onLocationChanged(Location location) {
-            // 위치 변경 시 동작할 로직
-         }
-
-         // 다른 메서드 오버라이드 생략
-      };
-
-      // 위치 권한 확인
-      if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
-
-         // GNSS 콜백 설정
-         gnssCallback = new GnssStatus.Callback() {
-            @Override
-            public void onSatelliteStatusChanged(GnssStatus status) {
-               int satelliteCount = status.getSatelliteCount();
-               tmVM.setSatelliteCount(satelliteCount);
-            }
-
-            // 다른 메서드 오버라이드 생략
-         };
-         locationManager.registerGnssStatusCallback(gnssCallback);
-      }
-
-   }
 
 
    public void  locationPermission(){
@@ -232,6 +173,9 @@ public class TMActivity extends AppCompatActivity {
 
       Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
+      gpsStatusHelper=new GpsStatusHelper(locationManager, this);
+      Log.d(TAG,"** getLocation 함수 - gpsStatusHelper ** "+gpsStatusHelper);
+
       if (lastKnownLocation != null) {
          latitude = lastKnownLocation.getLatitude();
          longitude = lastKnownLocation.getLongitude();
@@ -240,6 +184,7 @@ public class TMActivity extends AppCompatActivity {
       } else {
          // 위치 정보를 가져오지 못한 경우
       }
+
    }
 
 

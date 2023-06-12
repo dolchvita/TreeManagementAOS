@@ -11,13 +11,14 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.snd.app.common.TMActivity;
 import com.snd.app.databinding.MainActBinding;
 import com.snd.app.ui.home.HomeFragment;
 import com.snd.app.ui.map.Mapfragment;
 
 import javax.inject.Inject;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends TMActivity {
         MainActBinding mainActBinding;
         @Inject
         MainViewModel mainVM;

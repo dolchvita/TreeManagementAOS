@@ -1,10 +1,14 @@
 package com.snd.app.ui.write;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.GnssStatus;
+import android.location.GpsSatellite;
+import android.location.GpsStatus;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
@@ -33,6 +37,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.snd.app.R;
 import com.snd.app.common.TMActivity;
 import com.snd.app.data.AppModule;
+import com.snd.app.data.GpsStatusHelper;
+import com.snd.app.data.LocationRepository;
 import com.snd.app.databinding.RegistTreeBasicInfoActBinding;
 import com.snd.app.domain.tree.TreeBasicInfoDTO;
 import com.snd.app.ui.tree.PhotoAdapter;
@@ -78,6 +84,11 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
     String species;
 
 
+    // 위치 권한과 관련된 변수들!  (**지금 작업 중*)
+   Boolean isGranted;
+   private GpsStatusHelper gpsStatusHelper;
+
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         Log.d(TAG, "** RegistTreeBasicInfoActivity 객체 생성 **");
@@ -94,7 +105,7 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
         treeBasicInfoVM.setCallback(this);
         // 이미지 저장
         recyclerView=findViewById(R.id.rv_image);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));        // 가로 정렬
+        recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));      // 가로 정렬
         recyclerView.addItemDecoration(new SpaceItemDecoration(20));
         // 어댑터 연결
         photoAdapter=new PhotoAdapter();
@@ -174,7 +185,23 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
                 dialog.show();
             }
         });
+
+        // 1-1) 리파지토리 생성
+        LocationRepository locationRepository=new LocationRepository(this);
+        locationRepository.setPermissionGranted(true);
+        locationRepository.startTracking();
+        Log.d(TAG, "** TMActivity 생성 ** " + locationRepository);
+
+        locationRepository.getSatellites().observe(this, new Observer<Integer>() {
+            @Override
+            public void onChanged(Integer satellitesCount) {
+                Log.d(TAG, "현재 위성 개수: " + satellitesCount);
+            }
+        });
     }
+
+
+    // 위성개수와 관련된 메서드 여기 올 예정!!
 
 
     private void showAlertDialog() {
