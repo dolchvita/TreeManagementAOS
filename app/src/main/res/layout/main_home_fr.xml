@@ -126,7 +126,6 @@
             app:layout_constraintBottom_toBottomOf="@id/btn_layout"
             app:layout_constraintTop_toBottomOf="@+id/user_info_layout">
 
-
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/nfc"
                     style="@style/contentTextStyle"
@@ -191,6 +190,7 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
             <!--./IconBox-->
 
+
             <!--ButtonBox-->
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/btn_layout"
@@ -198,7 +198,14 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/state_info_layout">
+                app:layout_constraintTop_toBottomOf="@id/state_info_layout"
+                tools:layout_editor_absoluteX="0dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
+                android:background="@drawable/rectangle_white_5"
+                android:elevation="5dp"
+                android:padding="10dp">
+
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/diagnose"
@@ -215,7 +222,7 @@
                     android:gravity="center"
                     android:onClick="@{() -> homeVM.onTextViewClicked(diagnose)}"
                     android:padding="10dp"
-                    android:text="수목 진단"
+                    android:text="수목 정보 입력"
                     android:textColor="@color/cocoa_brown"
                     android:textSize="15dp"
                     app:drawableTint="@color/cocoa_brown"
@@ -223,51 +230,31 @@
                     app:layout_constraintEnd_toStartOf="@id/check"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    tools:text="수목 진단" />
+                    app:layout_constraintVertical_bias="0.0" />
+
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/check"
                     android:layout_width="0dp"
                     android:layout_height="100dp"
                     android:layout_marginTop="8dp"
+                    android:layout_marginEnd="24dp"
                     android:background="@drawable/rectangle_white_5"
                     android:drawableTop="@drawable/ic_read"
                     android:elevation="3dp"
                     android:fontFamily="@font/notosans_kr_bold"
                     android:gravity="center"
+                    android:onClick="@{() -> homeVM.onCheckViewClicked(check)}"
                     android:padding="15dp"
-                    android:text="수목 확인"
+                    android:text="수목 정보 확인"
                     android:textColor="@color/cocoa_brown"
                     android:textSize="15dp"
                     app:drawableTint="@color/cocoa_brown"
-                    app:layout_constraintEnd_toStartOf="@id/complaint"
                     app:layout_constraintStart_toEndOf="@id/diagnose"
                     app:layout_constraintTop_toTopOf="parent"
-                    android:onClick="@{() -> homeVM.onCheckViewClicked(check)}"
-                    tools:text="수목 확인" />
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/complaint"
-                    android:layout_width="0dp"
-                    android:layout_height="100dp"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginEnd="24dp"
-                    android:layout_marginBottom="10dp"
-                    android:background="@drawable/rectangle_white_5"
-                    android:drawableTop="@drawable/ic_complaint"
-                    android:elevation="3dp"
-                    android:fontFamily="@font/notosans_kr_bold"
-                    android:gravity="center"
-                    android:padding="15dp"
-                    android:textColor="@color/cocoa_brown"
-                    android:textSize="15dp"
-                    app:drawableTint="@color/cocoa_brown"
-                    app:layout_constraintBottom_toBottomOf="@id/diagnose"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/check"
-                    app:layout_constraintTop_toTopOf="@id/diagnose"
-                    />
+                    app:layout_constraintVertical_bias="0.0"/>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
             <!--./ButtonBox-->

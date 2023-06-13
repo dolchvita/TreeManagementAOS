@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.snd.app.common.TMActivity;
+import com.snd.app.data.KeyHash;
 import com.snd.app.databinding.MainActBinding;
 import com.snd.app.ui.home.HomeFragment;
 import com.snd.app.ui.map.Mapfragment;
@@ -44,6 +45,11 @@ public class MainActivity extends TMActivity {
             homeFragment=new HomeFragment(this);
             mapFragment=new Mapfragment(this);
 
+
+            KeyHash keyHash=new KeyHash();
+            Log.d(TAG, "** 키 해시값 추출 ** "+keyHash.getKeyHash(this));
+
+
             // 처음 화면을 메인으로 갖추는 것
             getSupportFragmentManager().beginTransaction().replace(R.id.content, new HomeFragment(this)).commit();
 
@@ -69,6 +75,8 @@ public class MainActivity extends TMActivity {
                     transaction.commit();
                 }
             });
+
+            // 메인 액티비티가 위성 개수를 감지하면 될까?
 
         }
 

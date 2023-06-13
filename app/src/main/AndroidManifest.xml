@@ -74,6 +74,10 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
+
+        <meta-data android:name="com.kakao.sdk.AppKey"
+            android:value="3c68f3d9c6ea0dee252cdc4da2349b3f"/>
+
     </application>
 
 </manifest>
