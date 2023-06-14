@@ -46,35 +46,9 @@ public class Mapfragment extends Fragment {
 
         mapVM=new MapViewModel();
 
-        // 위성 개수 추출 - 리파지토리 생성?
-        LocationRepository locationRepository=new LocationRepository(getContext());
-        locationRepository.setPermissionGranted(true);
-        locationRepository.startTracking();
-
-
-        // 여기서 감지를 하면 맵 버튼을 누를 때마다 리셋이 됨  --> 추후 수정 예정
-        locationRepository.getSatellites().observe(this, new Observer<Integer>() {
-            @Override
-            public void onChanged(Integer satellitesCount) {
-                Log.d(TAG, "현재 위성 개수: " + satellitesCount);
-                mapVM._satellites.setValue(satellitesCount);
-
-                tmActivity.getLocation();
-                latitude=tmActivity.latitude;
-                longitude=tmActivity.longitude;
-
-                Log.d(TAG, "현재 위성 개수: " + latitude);
-                Log.d(TAG, "현재 위성 개수: " + longitude);
-
-                // 데이터 렌더링 하기
-                mapVM._latitude.set(""+latitude);
-                mapVM._longitude.set(""+longitude);
-
-            }
-        });
+        getLocationRepository();
 
     }
-
 
     @Nullable
     @Override
@@ -123,6 +97,33 @@ public class Mapfragment extends Fragment {
         mapView.setCurrentLocationTrackingMode(MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeading);
     }
 
+
+    // 위성 개수 추출 및 좌표값 실시간 렌더링
+    public void getLocationRepository(){
+        LocationRepository locationRepository=new LocationRepository(getContext());
+        locationRepository.setPermissionGranted(true);
+        locationRepository.startTracking();
+
+        // 여기서 감지를 하면 맵 버튼을 누를 때마다 리셋이 됨  --> 추후 수정 예정
+        locationRepository.getSatellites().observe(this, new Observer<Integer>() {
+            @Override
+            public void onChanged(Integer satellitesCount) {
+                Log.d(TAG, "현재 위성 개수: " + satellitesCount);
+                mapVM._satellites.setValue(satellitesCount);
+
+                tmActivity.getLocation();
+                latitude=tmActivity.latitude;
+                longitude=tmActivity.longitude;
+
+                Log.d(TAG, "현재 위성 개수: " + latitude);
+                Log.d(TAG, "현재 위성 개수: " + longitude);
+
+                // 데이터 렌더링 하기
+                mapVM._latitude.set(""+latitude);
+                mapVM._longitude.set(""+longitude);
+            }
+        });
+    }
 
 
 }
