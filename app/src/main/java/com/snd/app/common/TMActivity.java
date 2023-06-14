@@ -1,17 +1,12 @@
 package com.snd.app.common;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.location.GnssStatus;
-import android.location.GpsSatellite;
-import android.location.GpsStatus;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -22,7 +17,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.lifecycle.Observer;
 
 
 // 모든 액티비티가 상속받을 최상위 객체
@@ -36,10 +30,11 @@ public class TMActivity extends AppCompatActivity {
    protected int REQUEST_IMAGE_CODE = 0;
    // 위치 권한
    protected static final int REQUEST_LOCATION_PERMISSION = 1;
-   private LocationManager locationManager;
-   private LocationListener locationListener;
-   protected double latitude;
-   protected double longitude;
+   // 다른 클래스에서 사용 가능
+   public static LocationManager locationManager;
+   public static LocationListener locationListener;
+   public double latitude;
+   public double longitude;
    Boolean isGranted = false;
 
    TMViewModel tmVM;
@@ -61,23 +56,19 @@ public class TMActivity extends AppCompatActivity {
          public void onLocationChanged(@NonNull Location location) {
             Log.d(TAG, "** onLocationChanged 호출 **");
          }
-
          @Override
          public void onStatusChanged(String provider, int status, Bundle extras) {
             Log.d(TAG, "onStatusChanged: " + provider);
          }
-
          @Override
          public void onProviderEnabled(String provider) {
             Log.d(TAG, "onProviderEnabled: " + provider);
          }
-
          @Override
          public void onProviderDisabled(String provider) {
             Log.d(TAG, "onProviderDisabled: " + provider);
          }
       };
-
       requestPermissions();
    }
 
@@ -129,6 +120,8 @@ public class TMActivity extends AppCompatActivity {
          if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             Log.d(TAG, "** onRequestPermissionsResult - 위치 허용 **");
 
+            //initMapView();
+
          } else {
             // 실행부가 왜 여기로 쳐 들어오냐  -> requestCode가 1로 들어오지 않은 것.
             Toast.makeText(this, "위치 권한이 거부되어 앱을 사용할 수 없습니다.", Toast.LENGTH_SHORT).show();
@@ -139,7 +132,7 @@ public class TMActivity extends AppCompatActivity {
 
 
    // 마지막 위치 정보 가져오기
-   protected void getLocation() {
+   public void getLocation() {
       Log.d(TAG,"** getLocation 함수 호출 **");
       LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
@@ -159,7 +152,6 @@ public class TMActivity extends AppCompatActivity {
       } else {
          // 위치 정보를 가져오지 못한 경우
       }
-
    }
 
 

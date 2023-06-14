@@ -45,7 +45,6 @@ public class MainActivity extends TMActivity {
             homeFragment=new HomeFragment(this);
             mapFragment=new Mapfragment(this);
 
-
             KeyHash keyHash=new KeyHash();
             Log.d(TAG, "** 키 해시값 추출 ** "+keyHash.getKeyHash(this));
 

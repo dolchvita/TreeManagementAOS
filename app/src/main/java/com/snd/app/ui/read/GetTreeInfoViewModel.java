@@ -29,8 +29,6 @@ public class GetTreeInfoViewModel extends TMViewModel {
         Log.d(TAG,"**  **"+treeLocationInfoDTO.getLatitude());
         latitude.set(String.valueOf(treeLocationInfoDTO.getLatitude()));
         longitude.set(String.valueOf(treeLocationInfoDTO.getLongitude()));
-
-
     }
 
 }

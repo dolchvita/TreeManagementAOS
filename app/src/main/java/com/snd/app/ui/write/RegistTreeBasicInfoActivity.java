@@ -179,11 +179,11 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
             }
         });
 
+
         // 위성 개수 추출
         LocationRepository locationRepository=new LocationRepository(this);
         locationRepository.setPermissionGranted(true);
         locationRepository.startTracking();
-        Log.d(TAG, "** TMActivity 생성 ** " + locationRepository);
 
         locationRepository.getSatellites().observe(this, new Observer<Integer>() {
             @Override
@@ -191,8 +191,8 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
                 Log.d(TAG, "현재 위성 개수: " + satellitesCount);
 
                 if (satellitesCount>6){
+                    // 위도 경도 가져오기
                     getLocation();
-
                     // 디자인 요소 반영
                     getTreeLocation();
                 }
@@ -227,8 +227,8 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
     }
 
 
+    // 디자인 요소에 세팅하기
    public void getTreeLocation(){
-       // 디자인 요소에 세팅하기
        treeBasicInfoVM.latitude.set(""+latitude);
        treeBasicInfoVM.longitude.set(""+longitude);
    }

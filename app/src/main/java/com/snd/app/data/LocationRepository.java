@@ -119,7 +119,6 @@ public class LocationRepository {
                             super.onStarted();
                             _isGpsEnabled.setValue(true);
                             Log.d(TAG, " **LocationRepo - 2-2 단계 ** "+_isGpsEnabled.getValue());
-
                         }
 
                         @Override
@@ -177,11 +176,6 @@ public class LocationRepository {
 
             Log.i("TAG", seenSatellites + "** 과연... Used In Last Fix (" + satellitesInFix + ")");
             _satellites.setValue(seenSatellites);
-
-            /*
-            GpsStatusHelper gpsStatusHelper=new GpsStatusHelper(locationManager, context);
-            gpsStatusHelper.getSatelliteCount();
-             */
 
         }
     }
