@@ -120,10 +120,7 @@ public class TMActivity extends AppCompatActivity {
          if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             Log.d(TAG, "** onRequestPermissionsResult - 위치 허용 **");
 
-            //initMapView();
-
          } else {
-            // 실행부가 왜 여기로 쳐 들어오냐  -> requestCode가 1로 들어오지 않은 것.
             Toast.makeText(this, "위치 권한이 거부되어 앱을 사용할 수 없습니다.", Toast.LENGTH_SHORT).show();
             finish();
          }
@@ -148,6 +145,9 @@ public class TMActivity extends AppCompatActivity {
          latitude = lastKnownLocation.getLatitude();
          longitude = lastKnownLocation.getLongitude();
          Log.d(TAG, "** 위도: " + latitude + ", 경도 : " + longitude);
+
+         // 여기 추출된 좌표값을 넘길 수 있는 방법 !
+         // 그러나 좌표는 변해야 하는 값이다.
 
       } else {
          // 위치 정보를 가져오지 못한 경우

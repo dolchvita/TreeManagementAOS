@@ -12,6 +12,7 @@ import android.util.Log;
 import com.snd.app.common.TMActivity;
 import com.snd.app.data.KeyHash;
 import com.snd.app.databinding.MainActBinding;
+import com.snd.app.domain.tree.TreeLocationInfoDTO;
 import com.snd.app.ui.home.HomeFragment;
 import com.snd.app.ui.map.Mapfragment;
 
@@ -20,6 +21,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.inject.Inject;
 
@@ -37,6 +39,9 @@ public class MainActivity extends TMActivity {
         private HomeFragment homeFragment;
         private Mapfragment mapFragment;
 
+        // 전달할 리스트
+        ArrayList<TreeLocationInfoDTO> locationList;
+
         @Override
         protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
@@ -47,7 +52,7 @@ public class MainActivity extends TMActivity {
             mainVM=mainActBinding.getMainVM();  // 뷰모델 연동
             // 화면에 보일 프레그먼트
             homeFragment=new HomeFragment(this);
-            mapFragment=new Mapfragment(this);
+            mapFragment=new Mapfragment(locationList);
 
             KeyHash keyHash=new KeyHash();
             Log.d(TAG, "** 키 해시값 추출 ** "+keyHash.getKeyHash(this));
@@ -92,11 +97,15 @@ public class MainActivity extends TMActivity {
                 public void onFailure(@NonNull Call call, @NonNull IOException e) {
                     Log.d(TAG,"** 수목 정보 가져오기 실패 **");
                 }
+
                 @Override
                 public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                     if (response.isSuccessful()){
                         String responseData = response.body().string();
                         Log.d(TAG,"** 조회 성공 / 응답 **"+responseData);
+
+                        locationList= new ArrayList<>();
+
 
                         try {
                             JSONObject json = new JSONObject(responseData);
@@ -107,7 +116,15 @@ public class MainActivity extends TMActivity {
                                 JSONObject treeInfo=data.getJSONObject(i);
                                 Log.d(TAG,"** latitude 추출 **"+treeInfo.getString("latitude"));
                                 Log.d(TAG,"** longitude 추출 **"+treeInfo.getString("longitude"));
+
+                                TreeLocationInfoDTO treeLocationInfoDTO=new TreeLocationInfoDTO();
+                                treeLocationInfoDTO.setLatitude(Double.parseDouble(treeInfo.getString("latitude")));
+                                treeLocationInfoDTO.setLongitude(Double.parseDouble(treeInfo.getString("longitude")));
+
+                                locationList.add(treeLocationInfoDTO);
                             }
+
+                            // 가공한 리스트 전달하기
 
                         } catch (JSONException e) {
                             throw new RuntimeException(e);
@@ -119,7 +136,7 @@ public class MainActivity extends TMActivity {
                     }
                 }
             });
-            
+
         }
 
 

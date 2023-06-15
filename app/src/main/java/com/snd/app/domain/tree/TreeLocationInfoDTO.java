@@ -1,5 +1,6 @@
 package com.snd.app.domain.tree;
 
+
 import java.time.LocalDate;
 
 public class TreeLocationInfoDTO {
@@ -139,4 +140,5 @@ public class TreeLocationInfoDTO {
     public void setModified(LocalDate modified) {
         this.modified = modified;
     }
+
 }
