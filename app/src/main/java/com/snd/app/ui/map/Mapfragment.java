@@ -30,22 +30,13 @@ public class Mapfragment extends Fragment {
     protected double latitude;
     protected double longitude;
     private MapView mapView;
-
-    ArrayList<TreeLocationInfoDTO> locationList;
-
-
-    public Mapfragment(ArrayList<TreeLocationInfoDTO> locationList) {
-       this.locationList=locationList;
-    }
-
+    public ArrayList<TreeLocationInfoDTO> locationList=new ArrayList<>();
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(TAG,"** 맵 프레그먼트 생성 **");
         mapVM=new MapViewModel();
     }
-
 
     @Nullable
     @Override
@@ -56,16 +47,13 @@ public class Mapfragment extends Fragment {
         return mapFrBinding.getRoot();
     }
 
-
     @Override
     public void onResume() {
         super.onResume();
         initMapView();
         mapView.onResume();
         getLocationRepository();
-        addMarkers();
     }
-
 
     public void initMapView(){
         mapView=new MapView(getContext());
@@ -111,24 +99,18 @@ public class Mapfragment extends Fragment {
     }
 
 
-    public ArrayList test(){
-        ArrayList list=new ArrayList();
-        TreeLocationInfoDTO treeLocationInfoDTO=new TreeLocationInfoDTO();
-        treeLocationInfoDTO.setLatitude(37.5079298);
-        treeLocationInfoDTO.setLongitude(127.1335051);
-        list.add(treeLocationInfoDTO);
-        return list;
+    public void setLoctionList(ArrayList<TreeLocationInfoDTO> list){
+        locationList=list;
+        addMarkers();
     }
 
 
     public void addMarkers(){
-        // 기존의 마커를 모두 제거
+        // 기존 마커 모두 제거
         mapView.removeAllPOIItems();
-        ArrayList<TreeLocationInfoDTO> list=test();
 
-        // 배열에서 데이터 꺼내기
         ArrayList<MapPOIItem> markerArr = new ArrayList<MapPOIItem>();
-        for (TreeLocationInfoDTO data : list) {
+        for (TreeLocationInfoDTO data : locationList) {
             MapPOIItem marker = new MapPOIItem();
             marker.setMapPoint(MapPoint.mapPointWithGeoCoord(data.getLatitude(), data.getLongitude()));
             marker.setItemName(("테스트"));
@@ -145,6 +127,5 @@ public class Mapfragment extends Fragment {
             mapView.onPause();
         }
     }
-
 
 }

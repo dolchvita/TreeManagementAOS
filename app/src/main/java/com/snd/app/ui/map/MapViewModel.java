@@ -5,6 +5,9 @@ import androidx.databinding.ObservableField;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import com.snd.app.common.TMViewModel;
+import com.snd.app.domain.tree.TreeLocationInfoDTO;
+
+import java.util.ArrayList;
 
 public class MapViewModel extends TMViewModel {
 
@@ -13,7 +16,6 @@ public class MapViewModel extends TMViewModel {
     // 위치 정보 - 변하는 변수임을 감지 !
     public ObservableField<String> _latitude=new ObservableField<>();
     public ObservableField<String>  _longitude=new ObservableField<>();
-
 
     public LiveData getSatellites(){
         return _satellites;
@@ -24,7 +26,6 @@ public class MapViewModel extends TMViewModel {
     public ObservableField getLongitude(){
         return _longitude;
     }
-
 
 
 }

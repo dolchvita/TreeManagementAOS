@@ -10,6 +10,7 @@ import android.util.Log;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+// 카카오맵 API 등록시 필요한 키해시값 추출
 public class KeyHash {
 
     public static String getKeyHash(Context context) {
