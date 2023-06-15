@@ -2,7 +2,6 @@ package com.snd.app.data;
 
 
 
-import com.snd.app.data.user.SharedPreferencesManager;
 import com.snd.app.domain.UserDTO;
 import com.snd.app.ui.home.HomeViewModel;
 import com.snd.app.ui.login.LoginActivity;
@@ -20,7 +19,6 @@ public interface AppComponent {
     // 커스텀 어플리케이션
     UserDTO userDTO();
 
-    SharedPreferencesManager sharedPreferencesManager();
 
     void inject(HomeViewModel viewModel);
     void inject(LoginActivity loginActivity);

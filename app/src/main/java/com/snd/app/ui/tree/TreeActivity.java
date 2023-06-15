@@ -1,8 +1,6 @@
 package com.snd.app.ui.tree;
 
-import android.app.AlertDialog;
 import android.app.PendingIntent;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
@@ -14,28 +12,12 @@ import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.Observer;
 
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.snd.app.R;
 import com.snd.app.common.TMActivity;
-import com.snd.app.data.AppComponent;
-import com.snd.app.data.AppModule;
-import com.snd.app.data.DaggerAppComponent;
-import com.snd.app.data.user.SharedPreferencesManager;
 import com.snd.app.databinding.TreeActBinding;
-import com.snd.app.domain.UserDTO;
-import com.snd.app.domain.tree.TreeBasicInfoDTO;
-import com.snd.app.sharedPreferences.SharedApplication;
 import com.snd.app.ui.read.GetTreeInfoActivity;
 import com.snd.app.ui.write.RegistTreeBasicInfoActivity;
-import com.snd.app.ui.write.RegistTreeBasicInfoViewModel;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import javax.inject.Inject;
 
 public class TreeActivity extends TMActivity implements NfcAdapter.ReaderCallback {
     private String TAG=this.getClass().getName();

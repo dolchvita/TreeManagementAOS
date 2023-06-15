@@ -1,7 +1,6 @@
 package com.snd.app.ui.map;
 
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,7 +13,6 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 
 import com.snd.app.R;
-import com.snd.app.common.TMActivity;
 import com.snd.app.data.LocationRepository;
 import com.snd.app.databinding.MainMapFrBinding;
 import com.snd.app.domain.tree.TreeLocationInfoDTO;
@@ -40,6 +38,7 @@ public class Mapfragment extends Fragment {
        this.locationList=locationList;
     }
 
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,7 +50,7 @@ public class Mapfragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        mapFrBinding= DataBindingUtil.inflate(inflater, R.layout.main_map_fr,container, false);
+        mapFrBinding= DataBindingUtil.inflate(inflater, R.layout.main_map_fr, container, false);
         mapFrBinding.setLifecycleOwner(this);
         mapFrBinding.setMapVM(mapVM);
         return mapFrBinding.getRoot();
@@ -70,7 +69,7 @@ public class Mapfragment extends Fragment {
 
     public void initMapView(){
         mapView=new MapView(getContext());
-        mapView.setDaumMapApiKey("3c68f3d9c6ea0dee252cdc4da2349b3f");
+        //mapView.setDaumMapApiKey("3c68f3d9c6ea0dee252cdc4da2349b3f");
         mapFrBinding.kakaoMap.addView(mapView);
 
         // 초기 세팅하기

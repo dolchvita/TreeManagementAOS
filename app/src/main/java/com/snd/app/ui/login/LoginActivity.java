@@ -20,11 +20,7 @@ import com.snd.app.R;
 import com.snd.app.common.TMActivity;
 import com.snd.app.data.AppComponent;
 import com.snd.app.data.AppModule;
-import com.snd.app.data.DaggerAppComponent;
-import com.snd.app.data.user.SharedPreferencesManager;
 import com.snd.app.domain.UserDTO;
-import com.snd.app.sharedPreferences.SharedApplication;
-import com.snd.app.ui.home.HomeViewModel;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -62,10 +58,6 @@ public class LoginActivity extends TMActivity {
         // requestQueue 생성
         if(AppModule.requestQueue == null)
             AppModule.requestQueue = Volley.newRequestQueue(getApplicationContext());
-
-        AppComponent appComponent = DaggerAppComponent.builder().appModule(new AppModule(this)).build();
-        // 의존성 주입됨
-        appComponent.inject(this);
 
         // 로그인 버튼
         bt_login.setOnClickListener((v) ->{

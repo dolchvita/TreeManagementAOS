@@ -1,13 +1,9 @@
 package com.snd.app.data;
 
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 
 import com.android.volley.RequestQueue;
-import com.snd.app.data.user.SharedPreferencesManager;
 import com.snd.app.domain.UserDTO;
-import com.snd.app.sharedPreferences.SharedApplication;
 import com.snd.app.ui.home.HomeViewModel;
 
 import javax.inject.Singleton;
@@ -38,23 +34,6 @@ public class AppModule {
     UserDTO provideUserDTO(){
         return new UserDTO();
     }
-
-    // 매니저 자체를 주입하기
-
-    @Provides
-    @Singleton
-    SharedPreferencesManager provideSharedPreferencesManager(){
-        return SharedPreferencesManager.getInstance(context);
-    }
-
-/*
-    @Provides
-    @Singleton
-    SharedPreferences provideSharedPreferences(){
-        return PreferenceManager.getDefaultSharedPreferences(context);
-    }
-
- */
 
 
 }
