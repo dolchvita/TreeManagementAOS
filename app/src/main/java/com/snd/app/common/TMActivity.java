@@ -146,8 +146,6 @@ public class TMActivity extends AppCompatActivity {
          longitude = lastKnownLocation.getLongitude();
          Log.d(TAG, "** 위도: " + latitude + ", 경도 : " + longitude);
 
-         // 여기 추출된 좌표값을 넘길 수 있는 방법 !
-         // 그러나 좌표는 변해야 하는 값이다.
 
       } else {
          // 위치 정보를 가져오지 못한 경우

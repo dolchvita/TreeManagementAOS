@@ -22,7 +22,7 @@ import com.snd.app.databinding.MainHomeFrBinding;
 
 public class HomeFragment extends Fragment {
     MainHomeFrBinding homeFrBinding;
-    MainActivity mainActivity;
+    //MainActivity mainActivity;
     HomeViewModel homeVM;
     SharedPreferences sharedPreferences;
 
@@ -38,8 +38,5 @@ public class HomeFragment extends Fragment {
         return homeFrBinding.getRoot();
     }
 
-    public HomeFragment(MainActivity mainActivity) {
-        this.mainActivity=mainActivity;
-    }
 
 }

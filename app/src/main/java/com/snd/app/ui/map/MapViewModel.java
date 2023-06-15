@@ -27,5 +27,4 @@ public class MapViewModel extends TMViewModel {
         return _longitude;
     }
 
-
 }

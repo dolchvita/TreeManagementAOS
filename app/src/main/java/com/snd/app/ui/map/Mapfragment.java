@@ -13,9 +13,10 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 
 import com.snd.app.R;
+import com.snd.app.common.TMActivity;
 import com.snd.app.data.LocationRepository;
 import com.snd.app.databinding.MainMapFrBinding;
-import com.snd.app.domain.tree.TreeLocationInfoDTO;
+import com.snd.app.domain.tree.TreeTotalDTO;
 
 import net.daum.mf.map.api.MapPOIItem;
 import net.daum.mf.map.api.MapPoint;
@@ -29,8 +30,16 @@ public class Mapfragment extends Fragment {
     MapViewModel mapVM;
     protected double latitude;
     protected double longitude;
+    // 카카오맵
     private MapView mapView;
-    public ArrayList<TreeLocationInfoDTO> locationList=new ArrayList<>();
+    public ArrayList<TreeTotalDTO> treeInfoList=new ArrayList<>();
+    //ArrayList<TreeBasicInfoDTO> treeBasicList = new ArrayList<>();
+
+    TMActivity tmActivity;
+
+    public Mapfragment(TMActivity tmActivity) {
+        this.tmActivity = tmActivity;
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -55,9 +64,9 @@ public class Mapfragment extends Fragment {
         getLocationRepository();
     }
 
+
     public void initMapView(){
         mapView=new MapView(getContext());
-        //mapView.setDaumMapApiKey("3c68f3d9c6ea0dee252cdc4da2349b3f");
         mapFrBinding.kakaoMap.addView(mapView);
 
         // 초기 세팅하기
@@ -94,13 +103,27 @@ public class Mapfragment extends Fragment {
             public void onChanged(Integer satellitesCount) {
                 Log.d(TAG, "현재 위성 개수: " + satellitesCount);
                 mapVM._satellites.setValue(satellitesCount);
+
+                if(satellitesCount>6){
+                    latitude=tmActivity.latitude;
+                    longitude=tmActivity.longitude;
+
+                    Log.d(TAG, "현재 위성 개수: " + latitude);
+                    Log.d(TAG, "현재 위성 개수: " + longitude);
+
+                    // 데이터 렌더링 하기
+                    mapVM._latitude.set(""+latitude);
+                    mapVM._longitude.set(""+longitude);
+                }
+
             }
         });
     }
 
 
-    public void setLoctionList(ArrayList<TreeLocationInfoDTO> list){
-        locationList=list;
+    public void setLoctionList(ArrayList<TreeTotalDTO> treeInfoList){
+        this.treeInfoList=treeInfoList;
+        // 이 두 디티오를 하나의 디티오로 합칠 수 있는 방법!
         addMarkers();
     }
 
@@ -110,10 +133,10 @@ public class Mapfragment extends Fragment {
         mapView.removeAllPOIItems();
 
         ArrayList<MapPOIItem> markerArr = new ArrayList<MapPOIItem>();
-        for (TreeLocationInfoDTO data : locationList) {
+        for (TreeTotalDTO data : treeInfoList) {
             MapPOIItem marker = new MapPOIItem();
             marker.setMapPoint(MapPoint.mapPointWithGeoCoord(data.getLatitude(), data.getLongitude()));
-            marker.setItemName(("테스트"));
+            marker.setItemName((data.getSpecies()));
             markerArr.add(marker);
         }
         mapView.addPOIItems(markerArr.toArray(new MapPOIItem[markerArr.size()]));

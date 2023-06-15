@@ -10,9 +10,8 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.snd.app.common.TMActivity;
-import com.snd.app.data.KeyHash;
 import com.snd.app.databinding.MainActBinding;
-import com.snd.app.domain.tree.TreeLocationInfoDTO;
+import com.snd.app.domain.tree.TreeTotalDTO;
 import com.snd.app.ui.home.HomeFragment;
 import com.snd.app.ui.map.MapViewModel;
 import com.snd.app.ui.map.Mapfragment;
@@ -40,6 +39,8 @@ public class MainActivity extends TMActivity {
     private HomeFragment homeFragment;
     private Mapfragment mapFragment;
 
+    MapViewModel mapVM;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,11 +50,12 @@ public class MainActivity extends TMActivity {
         mainActBinding.setMainVM(mainVM);
         mainVM=mainActBinding.getMainVM();  // 뷰모델 연동
         // 화면에 보일 프레그먼트
-        homeFragment=new HomeFragment(this);
-        mapFragment=new Mapfragment();
+        homeFragment=new HomeFragment();
+        mapFragment=new Mapfragment(this);
 
         // 처음 화면을 메인으로 갖추는 것
-        getSupportFragmentManager().beginTransaction().replace(R.id.content, new HomeFragment(this)).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.content, new HomeFragment()).commit();
+
 
         mainVM.tabClick.observe(this, new Observer() {
             @Override
@@ -74,6 +76,8 @@ public class MainActivity extends TMActivity {
                 transaction.commit();
             }
         });
+
+        getLocation();
     }
 
 
@@ -86,20 +90,20 @@ public class MainActivity extends TMActivity {
                 .url(url)
                 .addHeader("Authorization", sharedPreferences.getString("Authorization", null))
                 .build();
-
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 Log.d(TAG,"** 수목 정보 가져오기 실패 **");
             }
-
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (response.isSuccessful()){
                     String responseData = response.body().string();
                     Log.d(TAG,"** 조회 성공 / 응답 **"+responseData);
 
-                    ArrayList<TreeLocationInfoDTO> locationList= new ArrayList<>();
+                    ArrayList<TreeTotalDTO> treeInfoList= new ArrayList<>();
+
+
                     try {
                         JSONObject json = new JSONObject(responseData);
                         JSONArray data=json.getJSONArray("data");
@@ -107,13 +111,14 @@ public class MainActivity extends TMActivity {
 
                         for(int i=0; i<data.length(); i++){
                             JSONObject treeInfo=data.getJSONObject(i);
-                            TreeLocationInfoDTO treeLocationInfoDTO=new TreeLocationInfoDTO();
-                            treeLocationInfoDTO.setLatitude(Double.parseDouble(treeInfo.getString("latitude")));
-                            treeLocationInfoDTO.setLongitude(Double.parseDouble(treeInfo.getString("longitude")));
+                            TreeTotalDTO dto = new TreeTotalDTO();
+                            dto.setLatitude(Double.parseDouble(treeInfo.getString("latitude")));
+                            dto.setLongitude(Double.parseDouble(treeInfo.getString("longitude")));
+                            dto.setSpecies(treeInfo.getString("species"));
 
-                            locationList.add(treeLocationInfoDTO);
+                            treeInfoList.add(dto);
                         }
-                        mapFragment.setLoctionList(locationList);
+                        mapFragment.setLoctionList(treeInfoList);
 
                     } catch (JSONException e) {
                         throw new RuntimeException(e);
