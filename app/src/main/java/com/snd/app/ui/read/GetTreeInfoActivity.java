@@ -2,6 +2,7 @@ package com.snd.app.ui.read;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.Observer;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -42,6 +43,13 @@ public class GetTreeInfoActivity extends TMActivity {
         getTreeInfoByNFCtagId();
 
         // 사진 이미지 담기
+
+        getTreeInfoVM.back.observe(this, new Observer() {
+            @Override
+            public void onChanged(Object o) {
+                finish();
+            }
+        });
     }
 
 

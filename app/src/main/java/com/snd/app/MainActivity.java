@@ -56,7 +56,6 @@ public class MainActivity extends TMActivity {
         // 처음 화면을 메인으로 갖추는 것
         getSupportFragmentManager().beginTransaction().replace(R.id.content, new HomeFragment()).commit();
 
-
         mainVM.tabClick.observe(this, new Observer() {
             @Override
             public void onChanged(Object o) {
@@ -103,7 +102,6 @@ public class MainActivity extends TMActivity {
 
                     ArrayList<TreeTotalDTO> treeInfoList= new ArrayList<>();
 
-
                     try {
                         JSONObject json = new JSONObject(responseData);
                         JSONArray data=json.getJSONArray("data");
@@ -112,13 +110,14 @@ public class MainActivity extends TMActivity {
                         for(int i=0; i<data.length(); i++){
                             JSONObject treeInfo=data.getJSONObject(i);
                             TreeTotalDTO dto = new TreeTotalDTO();
+                            dto.setNFC(treeInfo.getString("nfc"));
                             dto.setLatitude(Double.parseDouble(treeInfo.getString("latitude")));
                             dto.setLongitude(Double.parseDouble(treeInfo.getString("longitude")));
                             dto.setSpecies(treeInfo.getString("species"));
 
                             treeInfoList.add(dto);
                         }
-                        mapFragment.setLoctionList(treeInfoList);
+                        mapFragment.setLocationList(treeInfoList);
 
                     } catch (JSONException e) {
                         throw new RuntimeException(e);

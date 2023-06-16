@@ -1,5 +1,6 @@
 package com.snd.app.ui.map;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,6 +18,7 @@ import com.snd.app.common.TMActivity;
 import com.snd.app.data.LocationRepository;
 import com.snd.app.databinding.MainMapFrBinding;
 import com.snd.app.domain.tree.TreeTotalDTO;
+import com.snd.app.ui.read.GetTreeInfoActivity;
 
 import net.daum.mf.map.api.MapPOIItem;
 import net.daum.mf.map.api.MapPoint;
@@ -24,7 +26,7 @@ import net.daum.mf.map.api.MapView;
 
 import java.util.ArrayList;
 
-public class Mapfragment extends Fragment {
+public class Mapfragment extends Fragment implements MapView.POIItemEventListener{
     private String TAG = this.getClass().getName();
     MainMapFrBinding mapFrBinding;
     MapViewModel mapVM;
@@ -33,9 +35,8 @@ public class Mapfragment extends Fragment {
     // 카카오맵
     private MapView mapView;
     public ArrayList<TreeTotalDTO> treeInfoList=new ArrayList<>();
-    //ArrayList<TreeBasicInfoDTO> treeBasicList = new ArrayList<>();
-
     TMActivity tmActivity;
+    int clickCount=0;
 
     public Mapfragment(TMActivity tmActivity) {
         this.tmActivity = tmActivity;
@@ -62,6 +63,7 @@ public class Mapfragment extends Fragment {
         initMapView();
         mapView.onResume();
         getLocationRepository();
+        addMarkers();
     }
 
 
@@ -115,13 +117,12 @@ public class Mapfragment extends Fragment {
                     mapVM._latitude.set(""+latitude);
                     mapVM._longitude.set(""+longitude);
                 }
-
             }
         });
     }
 
 
-    public void setLoctionList(ArrayList<TreeTotalDTO> treeInfoList){
+    public void setLocationList(ArrayList<TreeTotalDTO> treeInfoList){
         this.treeInfoList=treeInfoList;
         // 이 두 디티오를 하나의 디티오로 합칠 수 있는 방법!
         addMarkers();
@@ -136,12 +137,37 @@ public class Mapfragment extends Fragment {
         for (TreeTotalDTO data : treeInfoList) {
             MapPOIItem marker = new MapPOIItem();
             marker.setMapPoint(MapPoint.mapPointWithGeoCoord(data.getLatitude(), data.getLongitude()));
-            marker.setItemName((data.getSpecies()));
+            marker.setItemName((data.getNFC()));
             markerArr.add(marker);
         }
+        // 이벤트 리스너 등록
+        mapView.setPOIItemEventListener(this);
         mapView.addPOIItems(markerArr.toArray(new MapPOIItem[markerArr.size()]));
     }
 
+
+    // 마커 클릭시 이벤트 처리
+    @Override
+    public void onPOIItemSelected(MapView mapView, MapPOIItem mapPOIItem) {
+        // 마커 클릭
+        String itemName = mapPOIItem.getItemName();
+    }
+
+    @Override
+    public void onCalloutBalloonOfPOIItemTouched(MapView mapView, MapPOIItem mapPOIItem) {
+    }
+
+    @Override
+    public void onCalloutBalloonOfPOIItemTouched(MapView mapView, MapPOIItem mapPOIItem, MapPOIItem.CalloutBalloonButtonType calloutBalloonButtonType) {
+        // 말풍선 클릭
+        Intent intent = new Intent(getContext(), GetTreeInfoActivity.class);
+        intent.putExtra("IDHEX", mapPOIItem.getItemName());
+        startActivity(intent);
+    }
+
+    @Override
+    public void onDraggablePOIItemMoved(MapView mapView, MapPOIItem mapPOIItem, MapPoint mapPoint) {
+    }
 
     @Override
     public void onPause() {
@@ -150,5 +176,6 @@ public class Mapfragment extends Fragment {
             mapView.onPause();
         }
     }
+
 
 }

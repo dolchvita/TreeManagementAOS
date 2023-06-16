@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <style name="toggleStyle" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="boxStrokeColor">@drawable/selector_input_outline</item>
+        <item name="colorPrimary">@color/cocoa_brown</item>
+        <item name="colorPrimaryDark">@color/cocoa_brown</item>
+        <item name="colorAccent">@color/cocoa_brown</item>
+        <item name="colorControlNormal">@color/cocoa_brown</item>           // unFocus 상태일때 밑줄
+        <item name="android:textCursorDrawable">@color/cocoa_brown</item>   // cursor 색
+        <!--<item name="android:textColorHint">@color/disable</item>        // hint-->
+        <item name="hintTextColor">@color/cocoa_brown</item>                // floating hint
+        <item name="helperTextTextColor">@color/cocoa_brown</item>
+        <item name="errorTextColor">@color/cocoa_brown</item>
+    </style>
+
+
+</resources>
