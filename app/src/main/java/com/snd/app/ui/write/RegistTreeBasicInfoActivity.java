@@ -248,12 +248,39 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
     // 뷰모델에서 호출 - 저장 버튼 누를 시
     @Override
     public void onCustomCallback() {
-        registerTreeBasicInfo();
-        if(currentList.size()>0){
-            registerTreeImage(currentList);
-        }
-        registerTreeLocationInfo();
-        Toast.makeText(RegistTreeBasicInfoActivity.this, "등록되었습니다", Toast.LENGTH_SHORT).show();
+
+        //팝업 창 띄우기
+        AlertDialog.Builder builder = new AlertDialog.Builder(RegistTreeBasicInfoActivity.this);
+        builder.setTitle("추가 입력");
+        builder.setMessage("수목 상태 정보를 등록하시겠습니까?");
+        builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // 확인 버튼을 눌렀을 때
+                Intent intent=new Intent(RegistTreeBasicInfoActivity.this, RegistTreeStatusInfoActivity.class);
+                startActivity(intent);
+            }
+        });
+        builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // 취소 버튼을 눌렀을 때
+                registerTreeInfo();
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+    }
+
+
+   public void registerTreeInfo(){
+       registerTreeBasicInfo();
+       if(currentList.size()>0){
+           registerTreeImage(currentList);
+       }
+       registerTreeLocationInfo();
+       Toast.makeText(RegistTreeBasicInfoActivity.this, "등록되었습니다", Toast.LENGTH_SHORT).show();
     }
 
 

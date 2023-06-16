@@ -4,6 +4,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:ignore="HardcodedText" >
 
+    <data>
+        <variable
+            name="treeStatusInfoVM"
+            type="com.snd.app.ui.write.RegistTreeStatusInfoViewModel" />
+    </data>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -56,7 +62,6 @@
                     android:layout_height="90dp"
                     android:orientation="horizontal"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    app:layout_constraintEnd_toEndOf=""
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintVertical_bias="1.0"
                     tools:listitem="@layout/image_item"
@@ -328,11 +333,13 @@
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:text="저 장"
+            android:onClick="@{()->treeStatusInfoVM.regist()}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             tools:enabled="false" />
-        
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

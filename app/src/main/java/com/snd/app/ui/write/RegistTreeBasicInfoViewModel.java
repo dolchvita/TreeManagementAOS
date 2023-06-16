@@ -49,11 +49,9 @@ public class RegistTreeBasicInfoViewModel extends TMViewModel {
     public LiveData getBack(){
         return _back;
     }
-
     public ObservableField getLatitude(){
         return latitude;
     }
-
     public ObservableField getLongitude(){
         return longitude;
     }
@@ -62,11 +60,9 @@ public class RegistTreeBasicInfoViewModel extends TMViewModel {
     public RegistTreeBasicInfoViewModel() {
         setImgCount();
     }
-
     public void setImgCount(){
         _imgCount.setValue(cnt+"/2");
     }
-
    public LiveData getImgCount(){
        return _imgCount;
    }
@@ -102,9 +98,11 @@ public class RegistTreeBasicInfoViewModel extends TMViewModel {
         vendor.set(treeBasicInfoDTO.getVendor());
     }
 
+
     public void regist(){
         // xml에서 바로 호출
         // RegistTreeBasicInfoActivity 메서드 호출
+
         myCallback.onCustomCallback();
     }
 

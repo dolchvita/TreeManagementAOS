@@ -7,7 +7,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 public class TMViewModel extends ViewModel {
-    private String TAG = this.getClass().getName();
+   public String TAG = this.getClass().getName();
     // 위성 개수 세기 - 이건 액티비티가 아니라 뷰모델이 가지고 있기
     private MutableLiveData<Integer> satelliteCount;
     private MutableLiveData<String> accuracy;
