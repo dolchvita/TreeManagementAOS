@@ -78,7 +78,6 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
     List<File> currentList=new ArrayList<>();
     String species;
 
-
     // 위치 권한과 관련된 변수들!  (**지금 작업 중*)
    Boolean isGranted;
 

@@ -5,6 +5,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -43,12 +47,14 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 
 // 수목 상태 정보 등록
-public class RegistTreeStatusInfoActivity extends TMActivity implements MyCallback{
+public class RegistTreeStatusInfoActivity extends TMActivity implements MyCallback, AdapterView.OnItemSelectedListener {
 
     RegistTreeStatusInfoActBinding treeStatusInfoBinding;
     RegistTreeStatusInfoViewModel treeStatusInfoVM;
     TreeStatusInfoDTO statusInfoDTO;
     String NFC;
+    Spinner spinner;
+   Boolean flag;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -59,9 +65,13 @@ public class RegistTreeStatusInfoActivity extends TMActivity implements MyCallba
         treeStatusInfoBinding.setTreeStatusInfoVM(treeStatusInfoVM);
         // 콜백 연결
         treeStatusInfoVM.setCallback(this);
-
         // NFC 코드 추출
         NFC=getIntent().getStringExtra("NFC");
+        statusInfoDTO=new TreeStatusInfoDTO();
+        // 스피너 설정
+        spinner=findViewById(R.id.treeStatus_tr_state);
+        ArrayAdapter adapter=ArrayAdapter.createFromResource(this, R.array.treeStatus_pest,  android.R.layout.simple_spinner_item);
+        spinner.setAdapter(adapter);
     }
 
 
@@ -98,14 +108,14 @@ public class RegistTreeStatusInfoActivity extends TMActivity implements MyCallba
         JSONObject treeStatusData=new JSONObject();
         try {
             // 입력 데이터 보내기
-            treeStatusData.put("creation", null);
+            treeStatusData.put("creation", statusInfoDTO.getCreation());
             treeStatusData.put("nfc", NFC);
             treeStatusData.put("dbh", statusInfoDTO.getDBH());
             treeStatusData.put("rcc", statusInfoDTO.getRCC());
             treeStatusData.put("height", statusInfoDTO.getHeight());
             treeStatusData.put("length", statusInfoDTO.getLength());
             treeStatusData.put("width", statusInfoDTO.getWidth());
-            treeStatusData.put("pest", statusInfoDTO.isPest());
+            treeStatusData.put("pest", flag);
             treeStatusData.put("submitter", sharedPreferences.getString("id", null));
             treeStatusData.put("vendor", sharedPreferences.getString("company", null));
             treeStatusData.put("modified", null);
@@ -161,18 +171,39 @@ public class RegistTreeStatusInfoActivity extends TMActivity implements MyCallba
        String length= String.valueOf(editText4.getText());
        AppCompatEditText editText5=findViewById(R.id.treeStatus_pest_dmg_state);
        String width= String.valueOf(editText5.getText());
-       AppCompatEditText editText6=findViewById(R.id.treeStatus_tr_state);
-       //String pest= String.valueOf(editText6.getText());
 
-       statusInfoDTO=new TreeStatusInfoDTO();
        statusInfoDTO.setDBH(Double.parseDouble(dbh));
        statusInfoDTO.setRCC(Double.parseDouble(rcc));
        statusInfoDTO.setHeight(Double.parseDouble(height));
        statusInfoDTO.setLength(Double.parseDouble(length));
        statusInfoDTO.setWidth(Double.parseDouble(width));
-       statusInfoDTO.setPest(true);
        statusInfoDTO.setCreation(currentDate);
    }
 
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        spinner.setOnItemSelectedListener(this);
+    }
+
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        //Log.d(TAG, "** 선택된 아이템의 결과 ! **" + position);
+
+        if(position==0){
+            flag=false;
+        } else {
+            flag=true;
+        }
+    }
+
+
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+        Log.d(TAG, "** onNothingSelected 호출됨 **" );
+    }
 
 }

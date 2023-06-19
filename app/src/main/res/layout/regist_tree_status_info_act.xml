@@ -234,7 +234,7 @@
                     app:layout_constraintStart_toEndOf="@id/treeStatus_pest_dmg_state_tv"
                     app:layout_constraintTop_toBottomOf="@id/treeStatus_crw_diam" />
 
-                <androidx.appcompat.widget.AppCompatEditText
+                <Spinner
                     android:id="@+id/treeStatus_tr_state"
                     style="@style/tree_info_edt"
                     android:inputType="text"

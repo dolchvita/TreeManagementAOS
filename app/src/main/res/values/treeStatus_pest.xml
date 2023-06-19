@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="treeStatus_pest">
+        <item>없음 X</item>
+        <item>있음 O</item>
+    </string-array>
+</resources>
