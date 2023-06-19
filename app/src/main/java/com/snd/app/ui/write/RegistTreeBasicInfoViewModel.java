@@ -102,7 +102,6 @@ public class RegistTreeBasicInfoViewModel extends TMViewModel {
     public void regist(){
         // xml에서 바로 호출
         // RegistTreeBasicInfoActivity 메서드 호출
-
         myCallback.onCustomCallback();
     }
 

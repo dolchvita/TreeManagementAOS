@@ -248,7 +248,6 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
     // 뷰모델에서 호출 - 저장 버튼 누를 시
     @Override
     public void onCustomCallback() {
-
         //팝업 창 띄우기
         AlertDialog.Builder builder = new AlertDialog.Builder(RegistTreeBasicInfoActivity.this);
         builder.setTitle("추가 입력");
@@ -256,9 +255,8 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
         builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                // 확인 버튼을 눌렀을 때
-                Intent intent=new Intent(RegistTreeBasicInfoActivity.this, RegistTreeStatusInfoActivity.class);
-                startActivity(intent);
+                registerTreeInfo();
+
             }
         });
         builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
@@ -303,6 +301,11 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
                     @Override
                     public void onResponse(JSONObject response) {
                         Log.d(TAG, "** 기본정보 응답 ** "+response);
+
+                        // 확인 버튼을 눌렀을 때
+                        Intent intent=new Intent(RegistTreeBasicInfoActivity.this, RegistTreeStatusInfoActivity.class);
+                        intent.putExtra("NFC",  idHex);
+                        startActivity(intent);
                     }
                 },
                 new Response.ErrorListener() {
@@ -324,7 +327,7 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
     }
 
 
-    // okHttp 라이브러리 사용하여 서버 통신하기
+    // okHttp 라이브러리 사용하여 서버 통신하기    -- 환경 정보 등록
     public void registerTreeLocationInfo(){
         OkHttpClient client = new OkHttpClient();
         JSONObject treeLocationData=new JSONObject();
@@ -335,7 +338,6 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
             String longitudeValue = String.format("%.7f", longitude);
             treeLocationData.put("longitude", longitudeValue);
             treeLocationData.put("nfc",treeBasicInfoDTO.getNFC().toUpperCase());
-
             treeLocationData.put("submitter",treeBasicInfoDTO.getSubmitter());
             treeLocationData.put("vendor",treeBasicInfoDTO.getVendor());
 
@@ -359,6 +361,7 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
                if (response.isSuccessful()){
                    String responseData = response.body().string();
                    Log.d(TAG,"** 위치 성공 / 응답 **"+responseData);
+
                }else{
                    String responseData = response.body().string();
                    Log.d(TAG,"** 위치 실패 / 응답 **"+responseData);

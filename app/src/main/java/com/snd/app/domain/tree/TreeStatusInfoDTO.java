@@ -3,7 +3,7 @@ package com.snd.app.domain.tree;
 import java.time.LocalDate;
 
 public class TreeStatusInfoDTO {
-    private String NFC;
+    private String NFC;     // not Null
     private double DBH;
     private double RCC;
     private double height;
@@ -11,8 +11,8 @@ public class TreeStatusInfoDTO {
     private double width;
     private boolean pest;
     private LocalDate creation;
-    private String submitter;
-    private String vendor;
+    private String submitter;       // not Null
+    private String vendor;          // not Null
     private LocalDate inserted;
     private LocalDate modified;
 

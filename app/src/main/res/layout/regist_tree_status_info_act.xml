@@ -218,7 +218,7 @@
                 <androidx.appcompat.widget.AppCompatEditText
                     android:id="@+id/treeStatus_pest_dmg_state"
                     style="@style/tree_info_edt"
-                    android:inputType="text"
+                    android:inputType="numberDecimal"
                     android:nextFocusDown="@id/treeStatus_tr_state"
                     android:paddingEnd="50dp"
                     app:layout_constraintEnd_toEndOf="@id/treeStatus_pest_dmg_state_tv"
