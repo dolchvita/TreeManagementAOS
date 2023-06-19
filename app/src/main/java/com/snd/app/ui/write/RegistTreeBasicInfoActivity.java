@@ -249,13 +249,12 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
     public void onCustomCallback() {
         //팝업 창 띄우기
         AlertDialog.Builder builder = new AlertDialog.Builder(RegistTreeBasicInfoActivity.this);
-        builder.setTitle("추가 입력");
-        builder.setMessage("수목 상태 정보를 등록하시겠습니까?");
+        builder.setTitle("수목 기본 정보 입력이 완료되었습니다.");
+        builder.setMessage("이어서 상태 정보를 등록하시겠습니까?");
         builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 registerTreeInfo();
-
             }
         });
         builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {

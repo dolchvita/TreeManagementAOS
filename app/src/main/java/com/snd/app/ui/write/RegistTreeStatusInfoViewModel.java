@@ -10,6 +10,7 @@ import com.snd.app.domain.tree.TreeStatusInfoDTO;
 
 public class RegistTreeStatusInfoViewModel extends TMViewModel {
 
+    /*
     public ObservableField<String> NFC=new ObservableField<>();
     public ObservableField<Double> DBH=new ObservableField<>();
     public ObservableField<Double> RCC=new ObservableField<>();
@@ -17,14 +18,10 @@ public class RegistTreeStatusInfoViewModel extends TMViewModel {
     public ObservableField<Double> length=new ObservableField<>();
     public ObservableField<Double> width=new ObservableField<>();
     public ObservableField<Boolean> pest=new ObservableField<>();
+     */
 
-    MutableLiveData<TreeStatusInfoDTO> treeStatusInfo = new MutableLiveData<>();
     private MyCallback myCallback;
 
-
-    public void setTreeStatusInfo() {
-        TreeStatusInfoDTO statusDTO=new TreeStatusInfoDTO();
-    }
 
     // 등록 버튼
    public void regist(){
@@ -37,7 +34,6 @@ public class RegistTreeStatusInfoViewModel extends TMViewModel {
     public void setCallback(MyCallback myCallback) {
         this.myCallback = myCallback;
     }
-
 
 
 }

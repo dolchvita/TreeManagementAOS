@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -55,6 +56,7 @@ public class RegistTreeStatusInfoActivity extends TMActivity implements MyCallba
     String NFC;
     Spinner spinner;
    Boolean flag;
+    AppCompatEditText editText1, editText2, editText3, editText4, editText5;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -79,8 +81,8 @@ public class RegistTreeStatusInfoActivity extends TMActivity implements MyCallba
     public void onCustomCallback() {
         //팝업 창 띄우기
         AlertDialog.Builder builder = new AlertDialog.Builder(RegistTreeStatusInfoActivity.this);
-        builder.setTitle("추가 입력");
-        builder.setMessage("수목 환경 정보를 등록하시겠습니까?");
+        builder.setTitle("수목 상태 정보 입력이 완료되었습니다.");
+        builder.setMessage("이어서 환경 정보 등록하시겠습니까?");
         builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -161,6 +163,7 @@ public class RegistTreeStatusInfoActivity extends TMActivity implements MyCallba
        Log.d(TAG, "** 현재 날짜 추출 **"+currentDate);
 
        // 레이아웃 매핑
+       /*
        AppCompatEditText editText1=findViewById(R.id.treeStatus_scarlet_diam);
        String dbh= String.valueOf(editText1.getText());
        AppCompatEditText editText2=findViewById(R.id.treeStatus_tr_height);
@@ -171,6 +174,18 @@ public class RegistTreeStatusInfoActivity extends TMActivity implements MyCallba
        String length= String.valueOf(editText4.getText());
        AppCompatEditText editText5=findViewById(R.id.treeStatus_pest_dmg_state);
        String width= String.valueOf(editText5.getText());
+        */
+
+       AppCompatEditText editText1=findViewById(R.id.treeStatus_scarlet_diam);
+       String dbh= TextUtils.isEmpty(editText1.getText()) ? "0" : String.valueOf(editText1.getText());
+       AppCompatEditText editText2=findViewById(R.id.treeStatus_tr_height);
+       String rcc= TextUtils.isEmpty(editText2.getText()) ? "0" : String.valueOf(editText2.getText());
+       AppCompatEditText editText3=findViewById(R.id.treeStatus_crw_height);
+       String height= TextUtils.isEmpty(editText3.getText()) ? "0" : String.valueOf(editText3.getText());
+       AppCompatEditText editText4=findViewById(R.id.treeStatus_crw_diam);
+       String length= TextUtils.isEmpty(editText4.getText()) ? "0" : String.valueOf(editText4.getText());
+       AppCompatEditText editText5=findViewById(R.id.treeStatus_pest_dmg_state);
+       String width= TextUtils.isEmpty(editText5.getText()) ? "0" : String.valueOf(editText5.getText());
 
        statusInfoDTO.setDBH(Double.parseDouble(dbh));
        statusInfoDTO.setRCC(Double.parseDouble(rcc));
@@ -198,7 +213,6 @@ public class RegistTreeStatusInfoActivity extends TMActivity implements MyCallba
             flag=true;
         }
     }
-
 
 
     @Override
