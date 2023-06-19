@@ -49,14 +49,14 @@ import okhttp3.RequestBody;
 
 // 수목 상태 정보 등록
 public class RegistTreeStatusInfoActivity extends TMActivity implements MyCallback, AdapterView.OnItemSelectedListener {
-
     RegistTreeStatusInfoActBinding treeStatusInfoBinding;
     RegistTreeStatusInfoViewModel treeStatusInfoVM;
     TreeStatusInfoDTO statusInfoDTO;
     String NFC;
     Spinner spinner;
-   Boolean flag;
-    AppCompatEditText editText1, editText2, editText3, editText4, editText5;
+    Boolean flag;
+    private static final String DEFAULT_VALUE = "0";
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -158,34 +158,19 @@ public class RegistTreeStatusInfoActivity extends TMActivity implements MyCallba
     }
 
 
+    private String getInputText(AppCompatEditText editText) {
+        return TextUtils.isEmpty(editText.getText()) ? DEFAULT_VALUE : String.valueOf(editText.getText());
+    }
+
    public void setStatusInfoDTO(){
        LocalDate currentDate = LocalDate.now();
        Log.d(TAG, "** 현재 날짜 추출 **"+currentDate);
 
-       // 레이아웃 매핑
-       /*
-       AppCompatEditText editText1=findViewById(R.id.treeStatus_scarlet_diam);
-       String dbh= String.valueOf(editText1.getText());
-       AppCompatEditText editText2=findViewById(R.id.treeStatus_tr_height);
-       String rcc= String.valueOf(editText2.getText());
-       AppCompatEditText editText3=findViewById(R.id.treeStatus_crw_height);
-       String height= String.valueOf(editText3.getText());
-       AppCompatEditText editText4=findViewById(R.id.treeStatus_crw_diam);
-       String length= String.valueOf(editText4.getText());
-       AppCompatEditText editText5=findViewById(R.id.treeStatus_pest_dmg_state);
-       String width= String.valueOf(editText5.getText());
-        */
-
-       AppCompatEditText editText1=findViewById(R.id.treeStatus_scarlet_diam);
-       String dbh= TextUtils.isEmpty(editText1.getText()) ? "0" : String.valueOf(editText1.getText());
-       AppCompatEditText editText2=findViewById(R.id.treeStatus_tr_height);
-       String rcc= TextUtils.isEmpty(editText2.getText()) ? "0" : String.valueOf(editText2.getText());
-       AppCompatEditText editText3=findViewById(R.id.treeStatus_crw_height);
-       String height= TextUtils.isEmpty(editText3.getText()) ? "0" : String.valueOf(editText3.getText());
-       AppCompatEditText editText4=findViewById(R.id.treeStatus_crw_diam);
-       String length= TextUtils.isEmpty(editText4.getText()) ? "0" : String.valueOf(editText4.getText());
-       AppCompatEditText editText5=findViewById(R.id.treeStatus_pest_dmg_state);
-       String width= TextUtils.isEmpty(editText5.getText()) ? "0" : String.valueOf(editText5.getText());
+       String dbh = getInputText(findViewById(R.id.treeStatus_scarlet_diam));
+       String rcc = getInputText(findViewById(R.id.treeStatus_tr_height));
+       String height = getInputText(findViewById(R.id.treeStatus_crw_height));
+       String length = getInputText(findViewById(R.id.treeStatus_crw_diam));
+       String width = getInputText(findViewById(R.id.treeStatus_pest_dmg_state));
 
        statusInfoDTO.setDBH(Double.parseDouble(dbh));
        statusInfoDTO.setRCC(Double.parseDouble(rcc));
@@ -202,7 +187,6 @@ public class RegistTreeStatusInfoActivity extends TMActivity implements MyCallba
         spinner.setOnItemSelectedListener(this);
     }
 
-
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         //Log.d(TAG, "** 선택된 아이템의 결과 ! **" + position);
@@ -213,7 +197,6 @@ public class RegistTreeStatusInfoActivity extends TMActivity implements MyCallba
             flag=true;
         }
     }
-
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
