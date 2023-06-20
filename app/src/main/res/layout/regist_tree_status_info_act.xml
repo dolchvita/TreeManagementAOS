@@ -26,6 +26,7 @@
             android:id="@+id/treeStatus_back"
             style="@style/image_btn"
             android:layout_marginStart="10dp"
+            android:onClick="@{()->treeStatusInfoVM.setBack()}"
             app:layout_constraintBottom_toBottomOf="@id/treeStatus_header"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@id/treeStatus_header"
@@ -78,13 +79,21 @@
                     app:layout_constraintTop_toBottomOf="@id/treeStatus_rv_image" />
 
                 <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/treeStatus_sr_no"
+                    style="@style/tree_info_edt"
+                    android:text="@{treeStatusInfoVM.idHex}"
+                    app:layout_constraintEnd_toEndOf="@id/treeStatus_sr_no_tv"
+                    app:layout_constraintStart_toStartOf="@id/treeStatus_sr_no_tv"
+                    app:layout_constraintTop_toBottomOf="@id/treeStatus_sr_no_tv" />
+
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/treeStatus_scarlet_diam_tv"
                     style="@style/tree_info_label"
                     android:layout_marginTop="10dp"
                     android:text="흉고직경"
                     app:layout_constraintEnd_toStartOf="@id/treeStatus_tr_height_label"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/treeStatus_sr_no_tv" />
+                    app:layout_constraintTop_toBottomOf="@id/treeStatus_sr_no" />
 
                 <androidx.appcompat.widget.AppCompatEditText
                     android:id="@+id/treeStatus_scarlet_diam"
@@ -117,7 +126,7 @@
                     android:text="근원직경"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@id/treeStatus_scarlet_diam_tv"
-                    app:layout_constraintTop_toBottomOf="@id/treeStatus_sr_no_tv" />
+                    app:layout_constraintTop_toBottomOf="@id/treeStatus_sr_no" />
 
                 <androidx.appcompat.widget.AppCompatEditText
                     android:id="@+id/treeStatus_tr_height"
@@ -252,6 +261,7 @@
             android:id="@+id/treeStatus_map_layout"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:layout_marginTop="20dp"
             app:layout_constraintBottom_toTopOf="@id/treeStatus_save"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

@@ -3,29 +3,20 @@ package com.snd.app.ui.write;
 import android.util.Log;
 
 import androidx.databinding.ObservableField;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.snd.app.common.TMViewModel;
 import com.snd.app.domain.tree.TreeStatusInfoDTO;
 
 public class RegistTreeStatusInfoViewModel extends TMViewModel {
-
-    /*
-    public ObservableField<String> NFC=new ObservableField<>();
-    public ObservableField<Double> DBH=new ObservableField<>();
-    public ObservableField<Double> RCC=new ObservableField<>();
-    public ObservableField<Double> height=new ObservableField<>();
-    public ObservableField<Double> length=new ObservableField<>();
-    public ObservableField<Double> width=new ObservableField<>();
-    public ObservableField<Boolean> pest=new ObservableField<>();
-     */
-
     private MyCallback myCallback;
-
+    private MutableLiveData _back=new MutableLiveData<>();
+    public LiveData back=getBack();
+    public ObservableField<String> idHex=new ObservableField<>();
 
     // 등록 버튼
    public void regist(){
-       Log.d(TAG, "** (뷰모델) 등록 버튼 누름 !**");
        myCallback.onCustomCallback();
    }
 
@@ -35,5 +26,12 @@ public class RegistTreeStatusInfoViewModel extends TMViewModel {
         this.myCallback = myCallback;
     }
 
+
+    public void setBack(){
+        _back.setValue("click");
+    }
+    public LiveData getBack(){
+        return _back;
+    }
 
 }

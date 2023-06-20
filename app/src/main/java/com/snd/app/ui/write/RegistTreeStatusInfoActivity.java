@@ -16,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatEditText;
 import androidx.databinding.DataBindingUtil;
+import androidx.databinding.ObservableField;
 import androidx.lifecycle.Observer;
 
 import com.android.volley.AuthFailureError;
@@ -57,7 +58,6 @@ public class RegistTreeStatusInfoActivity extends TMActivity implements MyCallba
     Boolean flag;
     private static final String DEFAULT_VALUE = "0";
 
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,6 +74,35 @@ public class RegistTreeStatusInfoActivity extends TMActivity implements MyCallba
         spinner=findViewById(R.id.treeStatus_tr_state);
         ArrayAdapter adapter=ArrayAdapter.createFromResource(this, R.array.treeStatus_pest,  android.R.layout.simple_spinner_item);
         spinner.setAdapter(adapter);
+        // 번호 추출
+        treeStatusInfoVM.idHex.set(NFC);
+
+
+        // 뒤로 가기
+        treeStatusInfoVM.back.observe(this, new Observer() {
+            @Override
+            public void onChanged(Object o) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(RegistTreeStatusInfoActivity.this);
+                builder.setTitle("나가시겠습니까?");
+                builder.setMessage("입력 중인 내용은 저장되지 않습니다.");
+                builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // 확인 버튼을 눌렀을 때
+                        finish();
+                    }
+                });
+                builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // 취소 버튼을 눌렀을 때
+                    }
+                });
+                AlertDialog dialog = builder.create();
+                dialog.show();
+            }
+        });
+
     }
 
 
@@ -144,6 +173,8 @@ public class RegistTreeStatusInfoActivity extends TMActivity implements MyCallba
                 if (response.isSuccessful()){
                     String responseData = response.body().string();
                     Log.d(TAG,"** 상태 등록 성공 / 응답 **"+responseData);
+                    Toast.makeText(RegistTreeStatusInfoActivity.this, "등록되었습니다", Toast.LENGTH_SHORT).show();
+
                 }else{
                     String responseData = response.body().string();
                     Log.d(TAG,"** 상태 등록 실패 / 응답 **"+responseData);
