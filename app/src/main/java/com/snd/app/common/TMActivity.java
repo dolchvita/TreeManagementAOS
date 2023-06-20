@@ -9,12 +9,14 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatEditText;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
@@ -38,6 +40,8 @@ public class TMActivity extends AppCompatActivity {
    Boolean isGranted = false;
 
    TMViewModel tmVM;
+
+   protected static final String DEFAULT_VALUE = "0";
 
    @Override
    protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -151,6 +155,12 @@ public class TMActivity extends AppCompatActivity {
          // 위치 정보를 가져오지 못한 경우
       }
    }
+
+
+   public String getInputText(AppCompatEditText editText) {
+      return TextUtils.isEmpty(editText.getText()) ? DEFAULT_VALUE : String.valueOf(editText.getText());
+   }
+
 
 
    // 앱 종료 시 GPS 사용 해제

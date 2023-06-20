@@ -103,6 +103,7 @@
                     android:nextFocusDown="@id/tr_height"
                     android:paddingEnd="50dp"
                     app:layout_constraintEnd_toEndOf="@id/treeStatus_scarlet_diam_tv"
+                    app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="@id/treeStatus_scarlet_diam_tv"
                     app:layout_constraintTop_toBottomOf="@id/treeStatus_scarlet_diam_tv"
                     tools:text="100" />

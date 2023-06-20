@@ -20,13 +20,12 @@ public class RegistTreeStatusInfoViewModel extends TMViewModel {
        myCallback.onCustomCallback();
    }
 
-
    // 콜백 세팅
     public void setCallback(MyCallback myCallback) {
         this.myCallback = myCallback;
     }
 
-
+    // 뒤로 가기
     public void setBack(){
         _back.setValue("click");
     }

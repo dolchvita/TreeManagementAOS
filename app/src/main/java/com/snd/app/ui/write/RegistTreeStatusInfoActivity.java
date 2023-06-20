@@ -50,18 +50,17 @@ import okhttp3.RequestBody;
 
 // 수목 상태 정보 등록
 public class RegistTreeStatusInfoActivity extends TMActivity implements MyCallback, AdapterView.OnItemSelectedListener {
-    RegistTreeStatusInfoActBinding treeStatusInfoBinding;
     RegistTreeStatusInfoViewModel treeStatusInfoVM;
     TreeStatusInfoDTO statusInfoDTO;
     String NFC;
     Spinner spinner;
     Boolean flag;
-    private static final String DEFAULT_VALUE = "0";
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        treeStatusInfoBinding= DataBindingUtil.setContentView(this, R.layout.regist_tree_status_info_act);
+        RegistTreeStatusInfoActBinding treeStatusInfoBinding= DataBindingUtil.setContentView(this, R.layout.regist_tree_status_info_act);
         treeStatusInfoBinding.setLifecycleOwner(this);
         treeStatusInfoVM=new RegistTreeStatusInfoViewModel();
         treeStatusInfoBinding.setTreeStatusInfoVM(treeStatusInfoVM);
@@ -76,7 +75,6 @@ public class RegistTreeStatusInfoActivity extends TMActivity implements MyCallba
         spinner.setAdapter(adapter);
         // 번호 추출
         treeStatusInfoVM.idHex.set(NFC);
-
 
         // 뒤로 가기
         treeStatusInfoVM.back.observe(this, new Observer() {
@@ -115,9 +113,12 @@ public class RegistTreeStatusInfoActivity extends TMActivity implements MyCallba
         builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                registerTreeInfo();
+
                 // 확인 버튼을 눌렀을 때
-                //Intent intent=new Intent(RegistTreeStatusInfoActivity.this, null);
-                //startActivity(intent);
+                Intent intent=new Intent(RegistTreeStatusInfoActivity.this, RegistEnvironmentInfoActivity.class);
+                intent.putExtra("NFC",  NFC);
+                startActivity(intent);
             }
         });
         builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
@@ -173,7 +174,6 @@ public class RegistTreeStatusInfoActivity extends TMActivity implements MyCallba
                 if (response.isSuccessful()){
                     String responseData = response.body().string();
                     Log.d(TAG,"** 상태 등록 성공 / 응답 **"+responseData);
-                    Toast.makeText(RegistTreeStatusInfoActivity.this, "등록되었습니다", Toast.LENGTH_SHORT).show();
 
                 }else{
                     String responseData = response.body().string();
@@ -186,12 +186,10 @@ public class RegistTreeStatusInfoActivity extends TMActivity implements MyCallba
                 Log.d(TAG,"** 상태 등록 오류남 **");
             }
         });
+
+        Toast.makeText(this, "등록되었습니다", Toast.LENGTH_SHORT).show();
     }
 
-
-    private String getInputText(AppCompatEditText editText) {
-        return TextUtils.isEmpty(editText.getText()) ? DEFAULT_VALUE : String.valueOf(editText.getText());
-    }
 
    public void setStatusInfoDTO(){
        LocalDate currentDate = LocalDate.now();
