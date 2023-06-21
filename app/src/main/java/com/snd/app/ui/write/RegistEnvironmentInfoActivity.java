@@ -16,6 +16,9 @@ import com.snd.app.common.TMActivity;
 import com.snd.app.databinding.RegistEnvironmentInfoActBinding;
 import com.snd.app.domain.tree.TreeEnvironmentInfoDTO;
 
+import net.daum.mf.map.api.MapPoint;
+import net.daum.mf.map.api.MapView;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -29,15 +32,16 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 
 public class RegistEnvironmentInfoActivity extends TMActivity implements MyCallback{
+    RegistEnvironmentInfoActBinding environmentInfoActBinding;
     RegistEnvironmentInfoViewModel environmentInfoVM;
     TreeEnvironmentInfoDTO treeEnvironmentInfoDTO;
     String NFC;
-
+    private MapView mapView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        RegistEnvironmentInfoActBinding environmentInfoActBinding=DataBindingUtil.setContentView(this, R.layout.regist_environment_info_act);
+        environmentInfoActBinding=DataBindingUtil.setContentView(this, R.layout.regist_environment_info_act);
         environmentInfoActBinding.setLifecycleOwner(this);
         environmentInfoVM=new RegistEnvironmentInfoViewModel();
         environmentInfoActBinding.setEnvironmentVM(environmentInfoVM);
@@ -45,8 +49,22 @@ public class RegistEnvironmentInfoActivity extends TMActivity implements MyCallb
         // 콜백 연결
         environmentInfoVM.setCallback(this);
         NFC=getIntent().getStringExtra("NFC");
+        environmentInfoVM.idHex.set(NFC);
+
+        // 카카오맵
+        mapView=new MapView(this);
+        environmentInfoActBinding.environmentKakaoMap.addView(mapView);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if(mapView != null) {
+            mapView.onResume();
+            initMapView();
+        }
+    }
 
     @Override
     public void onCustomCallback() {
@@ -172,6 +190,30 @@ public class RegistEnvironmentInfoActivity extends TMActivity implements MyCallb
         treeEnvironmentInfoDTO.setPackingMaterial(packingMaterial);
         treeEnvironmentInfoDTO.setSoilPH(Double.parseDouble(soilPH));
         treeEnvironmentInfoDTO.setSoilDensity(Double.parseDouble(soilDensity));
+    }
+
+
+    public void initMapView(){
+        // 초기 세팅하기
+        mapView.setCurrentLocationEventListener(new MapView.CurrentLocationEventListener() {
+            @Override
+            public void onCurrentLocationUpdate(MapView mapView, MapPoint mapPoint, float v) {
+                mapView.setMapCenterPoint(mapPoint, true);
+            }
+            @Override
+            public void onCurrentLocationDeviceHeadingUpdate(MapView mapView, float v) {
+            }
+            @Override
+            public void onCurrentLocationUpdateFailed(MapView mapView) {
+            }
+            @Override
+            public void onCurrentLocationUpdateCancelled(MapView mapView) {
+            }
+        });
+
+        // 중심점 변경
+        mapView.setMapCenterPoint(MapPoint.mapPointWithGeoCoord(37.53737528, 127.00557633), true);
+
     }
 
 

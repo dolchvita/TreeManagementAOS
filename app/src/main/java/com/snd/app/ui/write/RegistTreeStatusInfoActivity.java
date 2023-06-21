@@ -27,6 +27,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.snd.app.MainActivity;
 import com.snd.app.R;
 import com.snd.app.common.TMActivity;
 import com.snd.app.data.AppModule;
@@ -55,7 +56,7 @@ public class RegistTreeStatusInfoActivity extends TMActivity implements MyCallba
     String NFC;
     Spinner spinner;
     Boolean flag;
-
+    int num;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -113,18 +114,14 @@ public class RegistTreeStatusInfoActivity extends TMActivity implements MyCallba
         builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                num=which;
                 registerTreeInfo();
-
-                // 확인 버튼을 눌렀을 때
-                Intent intent=new Intent(RegistTreeStatusInfoActivity.this, RegistEnvironmentInfoActivity.class);
-                intent.putExtra("NFC",  NFC);
-                startActivity(intent);
             }
         });
         builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                // 취소 버튼을 눌렀을 때
+                num=which;
                 registerTreeInfo();
             }
         });
@@ -174,6 +171,18 @@ public class RegistTreeStatusInfoActivity extends TMActivity implements MyCallba
                 if (response.isSuccessful()){
                     String responseData = response.body().string();
                     Log.d(TAG,"** 상태 등록 성공 / 응답 **"+responseData);
+
+                    if(num==-1){
+                        // 확인 버튼을 눌렀을 때
+                        Intent intent=new Intent(RegistTreeStatusInfoActivity.this, RegistEnvironmentInfoActivity.class);
+                        intent.putExtra("NFC",  NFC);
+                        startActivity(intent);
+                    }else {
+                        // 취소 버튼을 눌렀을 때
+                        Intent intent=new Intent(RegistTreeStatusInfoActivity.this, MainActivity.class);
+                        startActivity(intent);
+                    }
+
 
                 }else{
                     String responseData = response.body().string();
@@ -231,5 +240,6 @@ public class RegistTreeStatusInfoActivity extends TMActivity implements MyCallba
     public void onNothingSelected(AdapterView<?> parent) {
         Log.d(TAG, "** onNothingSelected 호출됨 **" );
     }
+
 
 }

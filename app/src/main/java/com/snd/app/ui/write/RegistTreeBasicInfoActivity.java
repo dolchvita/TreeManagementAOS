@@ -30,6 +30,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
+import com.snd.app.MainActivity;
 import com.snd.app.R;
 import com.snd.app.common.TMActivity;
 import com.snd.app.data.AppModule;
@@ -38,6 +39,9 @@ import com.snd.app.databinding.RegistTreeBasicInfoActBinding;
 import com.snd.app.domain.tree.TreeBasicInfoDTO;
 import com.snd.app.ui.tree.PhotoAdapter;
 import com.snd.app.ui.tree.SpaceItemDecoration;
+
+import net.daum.mf.map.api.MapPoint;
+import net.daum.mf.map.api.MapView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -77,10 +81,12 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
     public Boolean flag=true;
     List<File> currentList=new ArrayList<>();
     String species;
-
     // 위치 권한과 관련된 변수들!  (**지금 작업 중*)
-   Boolean isGranted;
-
+    Boolean isGranted;
+    // 팝업 버튼 확인
+    int num;
+    // 카카오 맵
+    private MapView mapView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -106,8 +112,6 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
         // 입력 문자열 추출
         AppCompatAutoCompleteTextView tree_name=(AppCompatAutoCompleteTextView) findViewById(R.id.tr_name);
 
-        // 위치 - 이게 호출되어야만 할까? / 권한 요청하는 메서드.. / 결국 getLocation() 가 호출되어야 했던 것!
-        //getLocation();
 
         tree_name.addTextChangedListener(new TextWatcher() {
             @Override
@@ -178,17 +182,14 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
             }
         });
 
-
         // 위성 개수 추출
         LocationRepository locationRepository=new LocationRepository(this);
         locationRepository.setPermissionGranted(true);
         locationRepository.startTracking();
-
         locationRepository.getSatellites().observe(this, new Observer<Integer>() {
             @Override
             public void onChanged(Integer satellitesCount) {
                 Log.d(TAG, "현재 위성 개수: " + satellitesCount);
-
                 if (satellitesCount>6){
                     // 위도 경도 가져오기
                     getLocation();
@@ -197,6 +198,43 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
                 }
             }
         });
+
+        // 카카오맵
+        mapView=new MapView(this);
+        treeBasicInfoActBinding.treeBasicMapLayout.addView(mapView);
+
+    }   //./onCreate
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(mapView != null) {
+            mapView.onResume();
+            initMapView();
+        }
+    }
+
+
+    public void initMapView(){
+        // 초기 세팅하기
+        mapView.setCurrentLocationEventListener(new MapView.CurrentLocationEventListener() {
+            @Override
+            public void onCurrentLocationUpdate(MapView mapView, MapPoint mapPoint, float v) {
+                mapView.setMapCenterPoint(mapPoint, true);
+            }
+            @Override
+            public void onCurrentLocationDeviceHeadingUpdate(MapView mapView, float v) {
+            }
+            @Override
+            public void onCurrentLocationUpdateFailed(MapView mapView) {
+            }
+            @Override
+            public void onCurrentLocationUpdateCancelled(MapView mapView) {
+            }
+        });
+        // 중심점 변경
+        mapView.setMapCenterPoint(MapPoint.mapPointWithGeoCoord(37.53737528, 127.00557633), true);
     }
 
 
@@ -255,13 +293,21 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 registerTreeInfo();
+                // 확인 버튼을 눌렀을 때
+                num=which;
+                Log.d(TAG, "** 확인 버튼 숫자 ** -1" + num);
+
             }
         });
         builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                // 취소 버튼을 눌렀을 때
                 registerTreeInfo();
+                num=which;
+                Log.d(TAG, "** 취소 버튼 숫자 ** -2" + num);
+                // 취소 버튼을 눌렀을 때
+               // Intent intent=new Intent(RegistTreeBasicInfoActivity.this, MainActivity.class);
+                //startActivity(intent);
             }
         });
         AlertDialog dialog = builder.create();
@@ -300,10 +346,17 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
                     public void onResponse(JSONObject response) {
                         Log.d(TAG, "** 기본정보 응답 ** "+response);
 
-                        // 확인 버튼을 눌렀을 때
-                        Intent intent=new Intent(RegistTreeBasicInfoActivity.this, RegistTreeStatusInfoActivity.class);
-                        intent.putExtra("NFC",  idHex);
-                        startActivity(intent);
+                        if(num==-1){
+                            // 확인 버튼을 눌렀을 때
+                            Intent intent=new Intent(RegistTreeBasicInfoActivity.this, RegistTreeStatusInfoActivity.class);
+                            intent.putExtra("NFC",  idHex);
+                            startActivity(intent);
+                        }else {
+                            Intent intent=new Intent(RegistTreeBasicInfoActivity.this, MainActivity.class);
+                            startActivity(intent);
+                        }
+
+
                     }
                 },
                 new Response.ErrorListener() {
