@@ -2,6 +2,7 @@ package com.snd.app.domain.tree;
 
 import java.time.LocalDate;
 
+// 수목 환경 정보
 public class TreeEnvironmentInfoDTO {
     private String NFC;
     private double frameHorizontal;

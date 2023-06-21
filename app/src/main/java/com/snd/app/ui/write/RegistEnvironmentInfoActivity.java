@@ -50,7 +50,6 @@ public class RegistEnvironmentInfoActivity extends TMActivity implements MyCallb
         environmentInfoVM.setCallback(this);
         NFC=getIntent().getStringExtra("NFC");
         environmentInfoVM.idHex.set(NFC);
-
         // 카카오맵
         mapView=new MapView(this);
         environmentInfoActBinding.environmentKakaoMap.addView(mapView);
@@ -59,7 +58,6 @@ public class RegistEnvironmentInfoActivity extends TMActivity implements MyCallb
     @Override
     protected void onResume() {
         super.onResume();
-
         if(mapView != null) {
             mapView.onResume();
             initMapView();

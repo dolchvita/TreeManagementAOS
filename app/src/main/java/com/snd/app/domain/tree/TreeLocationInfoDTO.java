@@ -3,6 +3,7 @@ package com.snd.app.domain.tree;
 
 import java.time.LocalDate;
 
+// 수목 위치 정보
 public class TreeLocationInfoDTO {
     private String NFC;
     private double latitude;

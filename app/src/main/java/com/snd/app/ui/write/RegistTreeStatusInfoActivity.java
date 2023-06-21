@@ -155,16 +155,13 @@ public class RegistTreeStatusInfoActivity extends TMActivity implements MyCallba
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
         RequestBody requestBody=RequestBody.create(MediaType.parse("application/json"), treeStatusData.toString());
         String url = sndUrl+"/app/tree/registerStatusInfo";
-
         Request request = new Request.Builder()
                 .url(url)
                 .addHeader("Authorization", sharedPreferences.getString("Authorization",null))
                 .post(requestBody)
                 .build();
-
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onResponse(@NonNull Call call, @NonNull okhttp3.Response response) throws IOException {
@@ -183,7 +180,6 @@ public class RegistTreeStatusInfoActivity extends TMActivity implements MyCallba
                         startActivity(intent);
                     }
 
-
                 }else{
                     String responseData = response.body().string();
                     Log.d(TAG,"** 상태 등록 실패 / 응답 **"+responseData);
@@ -195,14 +191,12 @@ public class RegistTreeStatusInfoActivity extends TMActivity implements MyCallba
                 Log.d(TAG,"** 상태 등록 오류남 **");
             }
         });
-
         Toast.makeText(this, "등록되었습니다", Toast.LENGTH_SHORT).show();
     }
 
 
    public void setStatusInfoDTO(){
        LocalDate currentDate = LocalDate.now();
-       Log.d(TAG, "** 현재 날짜 추출 **"+currentDate);
 
        String dbh = getInputText(findViewById(R.id.treeStatus_scarlet_diam));
        String rcc = getInputText(findViewById(R.id.treeStatus_tr_height));

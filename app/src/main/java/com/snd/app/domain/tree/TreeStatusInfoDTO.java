@@ -2,6 +2,7 @@ package com.snd.app.domain.tree;
 
 import java.time.LocalDate;
 
+// 수목 상태 정보
 public class TreeStatusInfoDTO {
     private String NFC;     // not Null
     private double DBH;

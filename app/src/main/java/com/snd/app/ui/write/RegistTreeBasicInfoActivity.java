@@ -18,6 +18,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatAutoCompleteTextView;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.core.content.FileProvider;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.Observer;
@@ -89,6 +90,8 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
     int num;
     // 카카오 맵
     private MapView mapView;
+    // 저장 버튼
+    AppCompatButton saveButton;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -113,6 +116,9 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
         recyclerView.setAdapter(photoAdapter);
         // 입력 문자열 추출
         AppCompatAutoCompleteTextView tree_name=(AppCompatAutoCompleteTextView) findViewById(R.id.tr_name);
+        // 버튼 비활성화
+        saveButton=findViewById(R.id.save);
+        //saveButton.setEnabled(false);
 
         tree_name.addTextChangedListener(new TextWatcher() {
             @Override
@@ -181,6 +187,9 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
             }
         });
 
+
+        Toast.makeText(getApplicationContext(), "위성 개수를 잡는 중입니다. 잠시만 기다려주세요.", Toast.LENGTH_LONG).show();
+
         // 위성 개수 추출
         LocationRepository locationRepository=new LocationRepository(this);
         locationRepository.setPermissionGranted(true);
@@ -201,6 +210,7 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
         // 카카오맵
         mapView=new MapView(this);
         treeBasicInfoActBinding.treeBasicMapLayout.addView(mapView);
+
     }   //./onCreate
 
 
@@ -270,6 +280,8 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
        // 중심점 변경
        mapView.setMapCenterPoint(MapPoint.mapPointWithGeoCoord(latitude, longitude), true);
        addMarkers();
+       // 버튼 활성화
+       saveButton.setEnabled(true);
    }
 
 
@@ -302,6 +314,8 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
     // 뷰모델에서 호출 - 저장 버튼 누를 시
     @Override
     public void onCustomCallback() {
+        Toast.makeText(getApplicationContext(), "위성 개수를 잡는 중입니다. 잠시만 기다려주세요.", Toast.LENGTH_LONG).show();
+
         //팝업 창 띄우기
         AlertDialog.Builder builder = new AlertDialog.Builder(RegistTreeBasicInfoActivity.this);
         builder.setTitle("수목 기본 정보 입력이 완료되었습니다.");
@@ -325,7 +339,6 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
         });
         AlertDialog dialog = builder.create();
         dialog.show();
-
     }
 
 
@@ -359,15 +372,17 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
                     public void onResponse(JSONObject response) {
                         Log.d(TAG, "** 기본정보 응답 ** "+response);
 
+
                         if(num==-1){
                             // 확인 버튼을 눌렀을 때
-                            Intent intent=new Intent(RegistTreeBasicInfoActivity.this, RegistTreeStatusInfoActivity.class);
+                            Intent intent=new Intent(RegistTreeBasicInfoActivity.this, RegistTreeSpecificLocationInfoActivity.class);
                             intent.putExtra("NFC",  idHex);
                             startActivity(intent);
                         }else {
-                            Intent intent=new Intent(RegistTreeBasicInfoActivity.this, MainActivity.class);
+                            Intent intent=new Intent(RegistTreeBasicInfoActivity.this, RegistTreeStatusInfoActivity.class);
                             startActivity(intent);
                         }
+
                     }
                 },
                 new Response.ErrorListener() {
@@ -423,7 +438,6 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
                if (response.isSuccessful()){
                    String responseData = response.body().string();
                    Log.d(TAG,"** 위치 성공 / 응답 **"+responseData);
-
                }else{
                    String responseData = response.body().string();
                    Log.d(TAG,"** 위치 실패 / 응답 **"+responseData);
@@ -443,7 +457,6 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
         OkHttpClient client = new OkHttpClient();
         MultipartBody.Builder builder = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM);
-
         if (files.size()>0){
             for (int i=0; i<files.size(); i++){
                 builder.addFormDataPart("image"+(i+1), files.get(i).getName(), RequestBody.create(MediaType.parse("multipart/form-data"), files.get(i)));

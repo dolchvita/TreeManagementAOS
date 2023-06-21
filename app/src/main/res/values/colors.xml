@@ -15,6 +15,7 @@
     <color name="cocoa_brown_70" tools:override="true">#B2321800</color>
     <color name="cocoa_brown_30" tools:override="true">#4D321800</color>
     <color name="cocoa_brown_15" tools:override="true">#25321800</color>
+    <color name="mustard_yellow" tools:override="true">#FFDB58</color>
     <color name="disable">#9A9A9A</color>
     <color name="ghost">#B4B4B4</color>
 
