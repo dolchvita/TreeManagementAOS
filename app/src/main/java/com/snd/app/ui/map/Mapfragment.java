@@ -36,11 +36,13 @@ public class Mapfragment extends Fragment implements MapView.POIItemEventListene
     private MapView mapView;
     public ArrayList<TreeTotalDTO> treeInfoList=new ArrayList<>();
     TMActivity tmActivity;
-    int clickCount=0;
 
+
+    // 생성자
     public Mapfragment(TMActivity tmActivity) {
         this.tmActivity = tmActivity;
     }
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {

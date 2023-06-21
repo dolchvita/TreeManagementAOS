@@ -37,9 +37,11 @@ import com.snd.app.data.AppModule;
 import com.snd.app.data.LocationRepository;
 import com.snd.app.databinding.RegistTreeBasicInfoActBinding;
 import com.snd.app.domain.tree.TreeBasicInfoDTO;
+import com.snd.app.domain.tree.TreeTotalDTO;
 import com.snd.app.ui.tree.PhotoAdapter;
 import com.snd.app.ui.tree.SpaceItemDecoration;
 
+import net.daum.mf.map.api.MapPOIItem;
 import net.daum.mf.map.api.MapPoint;
 import net.daum.mf.map.api.MapView;
 
@@ -63,7 +65,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 
 
-public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallback {
+public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallback, MapView.POIItemEventListener{
     RegistTreeBasicInfoActBinding treeBasicInfoActBinding;
     RegistTreeBasicInfoViewModel treeBasicInfoVM;
     // TreeActivity 로부터 전달 받은 문자 데이터
@@ -112,7 +114,6 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
         // 입력 문자열 추출
         AppCompatAutoCompleteTextView tree_name=(AppCompatAutoCompleteTextView) findViewById(R.id.tr_name);
 
-
         tree_name.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -155,8 +156,6 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
                 showAlertDialog();
             }
         });
-
-
         treeBasicInfoVM.back.observe(this, new Observer() {
             @Override
             public void onChanged(Object o) {
@@ -202,7 +201,6 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
         // 카카오맵
         mapView=new MapView(this);
         treeBasicInfoActBinding.treeBasicMapLayout.addView(mapView);
-
     }   //./onCreate
 
 
@@ -233,8 +231,8 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
             public void onCurrentLocationUpdateCancelled(MapView mapView) {
             }
         });
-        // 중심점 변경
-        mapView.setMapCenterPoint(MapPoint.mapPointWithGeoCoord(37.53737528, 127.00557633), true);
+        // 줌 레벨 변경
+        mapView.setZoomLevel(1, true);
     }
 
 
@@ -268,7 +266,26 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
    public void getTreeLocation(){
        treeBasicInfoVM.latitude.set(""+latitude);
        treeBasicInfoVM.longitude.set(""+longitude);
+
+       // 중심점 변경
+       mapView.setMapCenterPoint(MapPoint.mapPointWithGeoCoord(latitude, longitude), true);
+       addMarkers();
    }
+
+
+    public void addMarkers(){
+        // 기존 마커 모두 제거
+        mapView.removeAllPOIItems();
+
+        ArrayList<MapPOIItem> markerArr = new ArrayList<MapPOIItem>();
+        MapPOIItem marker = new MapPOIItem();
+        marker.setMapPoint(MapPoint.mapPointWithGeoCoord(latitude, longitude));
+        marker.setItemName(idHex);
+        markerArr.add(marker);
+        // 이벤트 리스너 등록
+        mapView.setPOIItemEventListener(this);
+        mapView.addPOIItems(markerArr.toArray(new MapPOIItem[markerArr.size()]));
+    }
 
 
     public void setTreeBasicInfoDTO() throws JsonProcessingException {
@@ -296,7 +313,6 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
                 // 확인 버튼을 눌렀을 때
                 num=which;
                 Log.d(TAG, "** 확인 버튼 숫자 ** -1" + num);
-
             }
         });
         builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
@@ -305,9 +321,6 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
                 registerTreeInfo();
                 num=which;
                 Log.d(TAG, "** 취소 버튼 숫자 ** -2" + num);
-                // 취소 버튼을 눌렀을 때
-               // Intent intent=new Intent(RegistTreeBasicInfoActivity.this, MainActivity.class);
-                //startActivity(intent);
             }
         });
         AlertDialog dialog = builder.create();
@@ -355,8 +368,6 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
                             Intent intent=new Intent(RegistTreeBasicInfoActivity.this, MainActivity.class);
                             startActivity(intent);
                         }
-
-
                     }
                 },
                 new Response.ErrorListener() {
@@ -586,6 +597,24 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
         mediaScanIntent.setData(contentUri);
         sendBroadcast(mediaScanIntent);
     }
+
+    @Override
+    public void onPOIItemSelected(MapView mapView, MapPOIItem mapPOIItem) {
+
+    }
+    @Override
+    public void onCalloutBalloonOfPOIItemTouched(MapView mapView, MapPOIItem mapPOIItem) {
+
+    }
+    @Override
+    public void onCalloutBalloonOfPOIItemTouched(MapView mapView, MapPOIItem mapPOIItem, MapPOIItem.CalloutBalloonButtonType calloutBalloonButtonType) {
+
+    }
+    @Override
+    public void onDraggablePOIItemMoved(MapView mapView, MapPOIItem mapPOIItem, MapPoint mapPoint) {
+    }
+
+
 
 
 }
