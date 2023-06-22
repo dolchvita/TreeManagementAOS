@@ -18,7 +18,6 @@ import com.google.gson.Gson;
 import com.snd.app.MainActivity;
 import com.snd.app.R;
 import com.snd.app.common.TMActivity;
-import com.snd.app.data.AppComponent;
 import com.snd.app.data.AppModule;
 import com.snd.app.domain.UserDTO;
 
@@ -26,8 +25,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.inject.Inject;
 
 
 public class LoginActivity extends TMActivity {
@@ -42,8 +39,6 @@ public class LoginActivity extends TMActivity {
 
     // 1 로그인 정보
     JSONObject loginData=new JSONObject();
-
-    UserDTO userDTO;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

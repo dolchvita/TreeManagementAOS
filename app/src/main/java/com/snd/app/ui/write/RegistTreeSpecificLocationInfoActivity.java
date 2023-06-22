@@ -14,13 +14,14 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.Observer;
 
-import com.snd.app.MainActivity;
 import com.snd.app.R;
 import com.snd.app.common.TMActivity;
 import com.snd.app.databinding.RegistTreeSpecificLocationActBinding;
 import com.snd.app.domain.tree.TreeSpecificLocationInfoDTO;
 
+import net.daum.mf.map.api.MapPOIItem;
 import net.daum.mf.map.api.MapPoint;
 import net.daum.mf.map.api.MapView;
 
@@ -28,6 +29,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -46,6 +48,9 @@ public class RegistTreeSpecificLocationInfoActivity extends TMActivity implement
     Spinner spinner;
     private MapView mapView;
 
+    // 위도와 경도를 어떻게 전달할까?
+    double latitude;
+    double longitude;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -56,6 +61,10 @@ public class RegistTreeSpecificLocationInfoActivity extends TMActivity implement
         registTreeSpecificLocationActBinding.setSpecificLocationVM(specificLocationInfoVM);
         treeSpecificLocationInfoDTO=new TreeSpecificLocationInfoDTO();
         NFC=getIntent().getStringExtra("NFC");
+        specificLocationInfoVM.idHex.set(NFC);
+        latitude=getIntent().getDoubleExtra("latitude", latitude);
+        longitude=getIntent().getDoubleExtra("longitude", longitude);
+        Log.d(TAG, "** 넘어온 좌표값 **"+latitude+longitude);
         // 콜백 연결
         specificLocationInfoVM.setCallback(this);
         // 스피너 설정
@@ -65,6 +74,31 @@ public class RegistTreeSpecificLocationInfoActivity extends TMActivity implement
         // 카카오맵
         mapView=new MapView(this);
         registTreeSpecificLocationActBinding.specificLocationKakaoMap.addView(mapView);
+
+        // 뒤로 가기
+        specificLocationInfoVM.back.observe(this, new Observer() {
+            @Override
+            public void onChanged(Object o) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(RegistTreeSpecificLocationInfoActivity.this);
+                builder.setTitle("나가시겠습니까?");
+                builder.setMessage("입력 중인 내용은 저장되지 않습니다.");
+                builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // 확인 버튼을 눌렀을 때
+                        finish();
+                    }
+                });
+                builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                });
+                AlertDialog dialog = builder.create();
+                dialog.show();
+            }
+        });
+
     }
 
 
@@ -87,7 +121,29 @@ public class RegistTreeSpecificLocationInfoActivity extends TMActivity implement
         });
         // 줌 레벨 변경
         mapView.setZoomLevel(1, true);
+        double thisLatitude=latitude;
+        double thisLongitude=longitude;
+
+        // 중심점 변경
+        mapView.setMapCenterPoint(MapPoint.mapPointWithGeoCoord(latitude, longitude), true);
+        addMarkers(thisLatitude, thisLongitude);
     }
+
+
+    public void addMarkers(Double thisLatitude, Double thisLongitude){
+        // 기존 마커 모두 제거
+        mapView.removeAllPOIItems();
+
+        ArrayList<MapPOIItem> markerArr = new ArrayList<MapPOIItem>();
+        MapPOIItem marker = new MapPOIItem();
+        marker.setMapPoint(MapPoint.mapPointWithGeoCoord(thisLatitude, thisLongitude));
+        marker.setItemName(NFC);
+        markerArr.add(marker);
+        // 이벤트 리스너 등록
+        // mapView.setPOIItemEventListener(this);
+        mapView.addPOIItems(markerArr.toArray(new MapPOIItem[markerArr.size()]));
+    }
+
 
 
     @Override
@@ -147,6 +203,8 @@ public class RegistTreeSpecificLocationInfoActivity extends TMActivity implement
                        // 확인 버튼을 눌렀을 때
                        Intent intent=new Intent(RegistTreeSpecificLocationInfoActivity.this, RegistTreeStatusInfoActivity.class);
                        intent.putExtra("NFC",  NFC);
+                       intent.putExtra("latitude",  latitude);
+                       intent.putExtra("longitude",  longitude);
                        startActivity(intent);
                    }else {
                        // 취소 버튼을 눌렀을 때
@@ -185,6 +243,7 @@ public class RegistTreeSpecificLocationInfoActivity extends TMActivity implement
             initMapView();
         }
     }
+
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         if(position==0){
@@ -193,6 +252,7 @@ public class RegistTreeSpecificLocationInfoActivity extends TMActivity implement
             sidewalk=true;
         }
     }
+
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
     }

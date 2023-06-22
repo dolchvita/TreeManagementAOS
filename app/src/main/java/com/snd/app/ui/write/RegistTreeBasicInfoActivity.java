@@ -1,6 +1,8 @@
 package com.snd.app.ui.write;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -13,6 +15,7 @@ import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -31,14 +34,12 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
-import com.snd.app.MainActivity;
 import com.snd.app.R;
 import com.snd.app.common.TMActivity;
 import com.snd.app.data.AppModule;
 import com.snd.app.data.LocationRepository;
 import com.snd.app.databinding.RegistTreeBasicInfoActBinding;
 import com.snd.app.domain.tree.TreeBasicInfoDTO;
-import com.snd.app.domain.tree.TreeTotalDTO;
 import com.snd.app.ui.tree.PhotoAdapter;
 import com.snd.app.ui.tree.SpaceItemDecoration;
 
@@ -92,6 +93,12 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
     private MapView mapView;
     // 저장 버튼
     AppCompatButton saveButton;
+    //로딩 박스
+    Boolean click=false;
+    Dialog loading;
+    double thisLatitude;
+    double thisLongitude;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -117,8 +124,7 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
         // 입력 문자열 추출
         AppCompatAutoCompleteTextView tree_name=(AppCompatAutoCompleteTextView) findViewById(R.id.tr_name);
         // 버튼 비활성화
-        saveButton=findViewById(R.id.save);
-        //saveButton.setEnabled(false);
+        //saveButton=findViewById(R.id.treeBasic_save);
 
         tree_name.addTextChangedListener(new TextWatcher() {
             @Override
@@ -188,8 +194,6 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
         });
 
 
-        Toast.makeText(getApplicationContext(), "위성 개수를 잡는 중입니다. 잠시만 기다려주세요.", Toast.LENGTH_LONG).show();
-
         // 위성 개수 추출
         LocationRepository locationRepository=new LocationRepository(this);
         locationRepository.setPermissionGranted(true);
@@ -199,10 +203,15 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
             public void onChanged(Integer satellitesCount) {
                 Log.d(TAG, "현재 위성 개수: " + satellitesCount);
                 if (satellitesCount>6){
+                    click=true;
                     // 위도 경도 가져오기
                     getLocation();
+
                     // 디자인 요소 반영
                     getTreeLocation();
+
+                    // 로딩 객체 해제
+                    findViewById(R.id.loading_layout_box).setVisibility(View.GONE);
                 }
             }
         });
@@ -210,8 +219,79 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
         // 카카오맵
         mapView=new MapView(this);
         treeBasicInfoActBinding.treeBasicMapLayout.addView(mapView);
-
     }   //./onCreate
+
+
+    // 디자인 요소에 세팅하기
+   public void getTreeLocation(){
+       treeBasicInfoVM.latitude.set(""+latitude);
+       treeBasicInfoVM.longitude.set(""+longitude);
+       // 중심점 변경
+       mapView.setMapCenterPoint(MapPoint.mapPointWithGeoCoord(latitude, longitude), true);
+       addMarkers();
+   }
+
+
+    public void addMarkers(){
+        // 기존 마커 모두 제거
+        mapView.removeAllPOIItems();
+
+        ArrayList<MapPOIItem> markerArr = new ArrayList<MapPOIItem>();
+        MapPOIItem marker = new MapPOIItem();
+        marker.setMapPoint(MapPoint.mapPointWithGeoCoord(latitude, longitude));
+        marker.setItemName(idHex);
+        markerArr.add(marker);
+
+        thisLatitude=latitude;
+        thisLongitude=longitude;
+
+        // 이벤트 리스너 등록
+        mapView.setPOIItemEventListener(this);
+        mapView.addPOIItems(markerArr.toArray(new MapPOIItem[markerArr.size()]));
+    }
+
+
+    public void setTreeBasicInfoDTO() throws JsonProcessingException {
+        treeBasicInfoDTO=new TreeBasicInfoDTO();
+        treeBasicInfoDTO.setNFC(idHex);
+        treeBasicInfoDTO.setSpecies(sharedPreferences.getString("species",null));
+        treeBasicInfoDTO.setSubmitter(sharedPreferences.getString("id",null));
+        treeBasicInfoDTO.setVendor(sharedPreferences.getString("company",null));
+        // 매핑된 DTO 넘겨줌
+        treeBasicInfoVM.setTextViewModel(treeBasicInfoDTO);
+    }
+
+
+    // 뷰모델에서 호출 - 저장 버튼 누를 시
+    @Override
+    public void onCustomCallback() {
+        if(!click){
+            // 거짓이라면..
+            Toast.makeText(getApplicationContext(), "위성 감지 중입니다. 잠시만 기다려주세요.", Toast.LENGTH_LONG).show();
+        }else {
+            //팝업 창 띄우기
+            AlertDialog.Builder builder = new AlertDialog.Builder(RegistTreeBasicInfoActivity.this);
+            builder.setTitle("입력하신 내용을 저장하시겠습니까?");
+            builder.setMessage("수목 기본 정보 등록");
+            builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    registerTreeInfo();
+                    // 확인 버튼을 눌렀을 때
+                    num=which;
+                }
+            });
+            builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    //registerTreeInfo();
+                    num=which;
+                }
+            });
+            AlertDialog dialog = builder.create();
+            dialog.show();
+        }
+    }
 
 
     @Override
@@ -221,6 +301,7 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
             mapView.onResume();
             initMapView();
         }
+        findViewById(R.id.loading_layout_box).setVisibility(View.VISIBLE);
     }
 
 
@@ -272,83 +353,37 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
     }
 
 
-    // 디자인 요소에 세팅하기
-   public void getTreeLocation(){
-       treeBasicInfoVM.latitude.set(""+latitude);
-       treeBasicInfoVM.longitude.set(""+longitude);
-
-       // 중심점 변경
-       mapView.setMapCenterPoint(MapPoint.mapPointWithGeoCoord(latitude, longitude), true);
-       addMarkers();
-       // 버튼 활성화
-       saveButton.setEnabled(true);
-   }
-
-
-    public void addMarkers(){
-        // 기존 마커 모두 제거
-        mapView.removeAllPOIItems();
-
-        ArrayList<MapPOIItem> markerArr = new ArrayList<MapPOIItem>();
-        MapPOIItem marker = new MapPOIItem();
-        marker.setMapPoint(MapPoint.mapPointWithGeoCoord(latitude, longitude));
-        marker.setItemName(idHex);
-        markerArr.add(marker);
-        // 이벤트 리스너 등록
-        mapView.setPOIItemEventListener(this);
-        mapView.addPOIItems(markerArr.toArray(new MapPOIItem[markerArr.size()]));
-    }
-
-
-    public void setTreeBasicInfoDTO() throws JsonProcessingException {
-        treeBasicInfoDTO=new TreeBasicInfoDTO();
-        treeBasicInfoDTO.setNFC(idHex);
-        treeBasicInfoDTO.setSpecies(sharedPreferences.getString("species",null));
-        treeBasicInfoDTO.setSubmitter(sharedPreferences.getString("id",null));
-        treeBasicInfoDTO.setVendor(sharedPreferences.getString("company",null));
-        // 매핑된 DTO 넘겨줌
-        treeBasicInfoVM.setTextViewModel(treeBasicInfoDTO);
-    }
-
-
-    // 뷰모델에서 호출 - 저장 버튼 누를 시
-    @Override
-    public void onCustomCallback() {
-        Toast.makeText(getApplicationContext(), "위성 개수를 잡는 중입니다. 잠시만 기다려주세요.", Toast.LENGTH_LONG).show();
-
-        //팝업 창 띄우기
-        AlertDialog.Builder builder = new AlertDialog.Builder(RegistTreeBasicInfoActivity.this);
-        builder.setTitle("수목 기본 정보 입력이 완료되었습니다.");
-        builder.setMessage("이어서 상태 정보를 등록하시겠습니까?");
-        builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                registerTreeInfo();
-                // 확인 버튼을 눌렀을 때
-                num=which;
-                Log.d(TAG, "** 확인 버튼 숫자 ** -1" + num);
-            }
-        });
-        builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                registerTreeInfo();
-                num=which;
-                Log.d(TAG, "** 취소 버튼 숫자 ** -2" + num);
-            }
-        });
-        AlertDialog dialog = builder.create();
-        dialog.show();
-    }
-
-
    public void registerTreeInfo(){
        registerTreeBasicInfo();
        if(currentList.size()>0){
            registerTreeImage(currentList);
        }
        registerTreeLocationInfo();
-       Toast.makeText(RegistTreeBasicInfoActivity.this, "등록되었습니다", Toast.LENGTH_SHORT).show();
+    }
+
+
+    public void intentActivity(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(RegistTreeBasicInfoActivity.this);
+        builder.setTitle("수목 기본 정보가 등록되었습니다");
+        builder.setMessage("이어서 위치 상세 정보를 등록하시겠습니까?");
+        builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent intent=new Intent(RegistTreeBasicInfoActivity.this, RegistTreeSpecificLocationInfoActivity.class);
+                intent.putExtra("NFC",  idHex);
+                Log.d(TAG, "** 넘어갈 좌표가 있니? **"+thisLatitude+", "+thisLongitude);
+                intent.putExtra("latitude",  thisLatitude);
+                intent.putExtra("longitude",  thisLongitude);
+                startActivity(intent);
+            }
+        });
+        builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
 
@@ -372,17 +407,8 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
                     public void onResponse(JSONObject response) {
                         Log.d(TAG, "** 기본정보 응답 ** "+response);
 
-
-                        if(num==-1){
-                            // 확인 버튼을 눌렀을 때
-                            Intent intent=new Intent(RegistTreeBasicInfoActivity.this, RegistTreeSpecificLocationInfoActivity.class);
-                            intent.putExtra("NFC",  idHex);
-                            startActivity(intent);
-                        }else {
-                            Intent intent=new Intent(RegistTreeBasicInfoActivity.this, RegistTreeStatusInfoActivity.class);
-                            startActivity(intent);
-                        }
-
+                        // 화면 전환
+                        intentActivity();
                     }
                 },
                 new Response.ErrorListener() {
@@ -438,6 +464,7 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
                if (response.isSuccessful()){
                    String responseData = response.body().string();
                    Log.d(TAG,"** 위치 성공 / 응답 **"+responseData);
+
                }else{
                    String responseData = response.body().string();
                    Log.d(TAG,"** 위치 실패 / 응답 **"+responseData);
@@ -577,7 +604,6 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
         }
     }
 
-
     // 4 갤러리 저장
     private void galleryAddPic() {
         Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
@@ -587,7 +613,6 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
         this.sendBroadcast(mediaScanIntent);
         Toast.makeText(this, "Saved to Gallery", Toast.LENGTH_SHORT).show();
     }
-
 
     // 갤러리 이미지 스캔
     private void scanImageFile(File imageFile) {
@@ -610,23 +635,18 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
         mediaScanIntent.setData(contentUri);
         sendBroadcast(mediaScanIntent);
     }
-
     @Override
     public void onPOIItemSelected(MapView mapView, MapPOIItem mapPOIItem) {
-
     }
     @Override
     public void onCalloutBalloonOfPOIItemTouched(MapView mapView, MapPOIItem mapPOIItem) {
-
     }
     @Override
     public void onCalloutBalloonOfPOIItemTouched(MapView mapView, MapPOIItem mapPOIItem, MapPOIItem.CalloutBalloonButtonType calloutBalloonButtonType) {
-
     }
     @Override
     public void onDraggablePOIItemMoved(MapView mapView, MapPOIItem mapPOIItem, MapPoint mapPoint) {
     }
-
 
 
 

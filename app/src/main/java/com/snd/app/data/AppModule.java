@@ -3,7 +3,6 @@ package com.snd.app.data;
 import android.content.Context;
 
 import com.android.volley.RequestQueue;
-import com.snd.app.domain.UserDTO;
 import com.snd.app.ui.home.HomeViewModel;
 
 import javax.inject.Singleton;
@@ -24,16 +23,8 @@ public class AppModule {
     // HomeFragment 와 연결되는 뷰모델 관리
    @Provides
    HomeViewModel provideHomeViewModel(){
-       //return new HomeViewModel(application,SharedPreferencesManager.getInstance(application));
        return new HomeViewModel(context);
    };
-
-
-    @Provides
-    @Singleton
-    UserDTO provideUserDTO(){
-        return new UserDTO();
-    }
 
 
 }

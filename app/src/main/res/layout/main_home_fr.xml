@@ -206,7 +206,6 @@
                 android:elevation="5dp"
                 android:padding="10dp">
 
-
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/diagnose"
                     android:layout_width="0dp"

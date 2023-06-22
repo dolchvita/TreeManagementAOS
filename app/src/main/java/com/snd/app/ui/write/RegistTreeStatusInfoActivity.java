@@ -34,11 +34,16 @@ import com.snd.app.data.AppModule;
 import com.snd.app.databinding.RegistTreeStatusInfoActBinding;
 import com.snd.app.domain.tree.TreeStatusInfoDTO;
 
+import net.daum.mf.map.api.MapPOIItem;
+import net.daum.mf.map.api.MapPoint;
+import net.daum.mf.map.api.MapView;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -57,6 +62,10 @@ public class RegistTreeStatusInfoActivity extends TMActivity implements MyCallba
     Spinner spinner;
     Boolean flag;
     int num;
+    private MapView mapView;
+
+    double latitude;
+    double longitude;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -69,6 +78,9 @@ public class RegistTreeStatusInfoActivity extends TMActivity implements MyCallba
         treeStatusInfoVM.setCallback(this);
         // NFC 코드 추출
         NFC=getIntent().getStringExtra("NFC");
+        latitude=getIntent().getDoubleExtra("latitude", latitude);
+        longitude=getIntent().getDoubleExtra("longitude", longitude);
+
         statusInfoDTO=new TreeStatusInfoDTO();
         // 스피너 설정
         spinner=findViewById(R.id.treeStatus_tr_state);
@@ -76,6 +88,9 @@ public class RegistTreeStatusInfoActivity extends TMActivity implements MyCallba
         spinner.setAdapter(adapter);
         // 번호 추출
         treeStatusInfoVM.idHex.set(NFC);
+        // 카카오맵
+        mapView=new MapView(this);
+        treeStatusInfoBinding.treeStatusMapLayout.addView(mapView);
 
         // 뒤로 가기
         treeStatusInfoVM.back.observe(this, new Observer() {
@@ -213,16 +228,58 @@ public class RegistTreeStatusInfoActivity extends TMActivity implements MyCallba
    }
 
 
+    public void initMapView(){
+        // 초기 세팅하기
+        mapView.setCurrentLocationEventListener(new MapView.CurrentLocationEventListener() {
+            @Override
+            public void onCurrentLocationUpdate(MapView mapView, MapPoint mapPoint, float v) {
+                mapView.setMapCenterPoint(mapPoint, true);
+            }
+            @Override
+            public void onCurrentLocationDeviceHeadingUpdate(MapView mapView, float v) {
+            }
+            @Override
+            public void onCurrentLocationUpdateFailed(MapView mapView) {
+            }
+            @Override
+            public void onCurrentLocationUpdateCancelled(MapView mapView) {
+            }
+        });
+        // 줌 레벨 변경
+        mapView.setZoomLevel(1, true);
+        // 중심점 변경
+        mapView.setMapCenterPoint(MapPoint.mapPointWithGeoCoord(latitude, longitude), true);
+        addMarkers(latitude, longitude);
+    }
+
+
+    public void addMarkers(Double thisLatitude, Double thisLongitude){
+        // 기존 마커 모두 제거
+        mapView.removeAllPOIItems();
+
+        ArrayList<MapPOIItem> markerArr = new ArrayList<MapPOIItem>();
+        MapPOIItem marker = new MapPOIItem();
+        marker.setMapPoint(MapPoint.mapPointWithGeoCoord(thisLatitude, thisLongitude));
+        marker.setItemName(NFC);
+        markerArr.add(marker);
+        // 이벤트 리스너 등록
+        // mapView.setPOIItemEventListener(this);
+        mapView.addPOIItems(markerArr.toArray(new MapPOIItem[markerArr.size()]));
+    }
+
+
     @Override
     protected void onResume() {
         super.onResume();
         spinner.setOnItemSelectedListener(this);
+        if(mapView != null) {
+            mapView.onResume();
+            initMapView();
+        }
     }
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        //Log.d(TAG, "** 선택된 아이템의 결과 ! **" + position);
-
         if(position==0){
             flag=false;
         } else {

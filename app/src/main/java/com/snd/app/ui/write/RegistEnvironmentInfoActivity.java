@@ -10,6 +10,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.Observer;
 
 import com.snd.app.R;
 import com.snd.app.common.TMActivity;
@@ -53,6 +54,30 @@ public class RegistEnvironmentInfoActivity extends TMActivity implements MyCallb
         // 카카오맵
         mapView=new MapView(this);
         environmentInfoActBinding.environmentKakaoMap.addView(mapView);
+
+        environmentInfoVM.back.observe(this, new Observer() {
+            @Override
+            public void onChanged(Object o) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(RegistEnvironmentInfoActivity.this);
+                builder.setTitle("나가시겠습니까?");
+                builder.setMessage("입력 중인 내용은 저장되지 않습니다.");
+                builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // 확인 버튼을 눌렀을 때
+                        finish();
+                    }
+                });
+                builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // 취소 버튼을 눌렀을 때
+                    }
+                });
+                AlertDialog dialog = builder.create();
+                dialog.show();
+            }
+        });
     }
 
     @Override
