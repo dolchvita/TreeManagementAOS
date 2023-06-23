@@ -63,9 +63,9 @@ public class RegistTreeStatusInfoActivity extends TMActivity implements MyCallba
     Boolean flag;
     int num;
     private MapView mapView;
-
-    double latitude;
-    double longitude;
+    private double latitude;
+    private double longitude;
+    RegistTreeSpecificLocationInfoActivity treeSpecificLocationInfoAct;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -88,9 +88,15 @@ public class RegistTreeStatusInfoActivity extends TMActivity implements MyCallba
         spinner.setAdapter(adapter);
         // 번호 추출
         treeStatusInfoVM.idHex.set(NFC);
-        // 카카오맵
-        mapView=new MapView(this);
-        treeStatusInfoBinding.treeStatusMapLayout.addView(mapView);
+
+
+        treeSpecificLocationInfoAct=new RegistTreeSpecificLocationInfoActivity();
+        // 카카오맵 ----
+        mapView=treeSpecificLocationInfoAct.getMapView();
+        // initMapView 메서드에서 위도와 경도 값을 사용
+        mapView.setMapCenterPoint(MapPoint.mapPointWithGeoCoord(latitude, longitude), true);
+        //addMarkers(latitude, longitude);
+
 
         // 뒤로 가기
         treeStatusInfoVM.back.observe(this, new Observer() {
@@ -166,7 +172,6 @@ public class RegistTreeStatusInfoActivity extends TMActivity implements MyCallba
             treeStatusData.put("inserted", null);
 
             Log.d(TAG, "** 보낼 데이터 모습 ! ** "+treeStatusData);
-
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -249,7 +254,7 @@ public class RegistTreeStatusInfoActivity extends TMActivity implements MyCallba
         mapView.setZoomLevel(1, true);
         // 중심점 변경
         mapView.setMapCenterPoint(MapPoint.mapPointWithGeoCoord(latitude, longitude), true);
-        addMarkers(latitude, longitude);
+        //addMarkers(latitude, longitude);
     }
 
 
@@ -272,10 +277,14 @@ public class RegistTreeStatusInfoActivity extends TMActivity implements MyCallba
     protected void onResume() {
         super.onResume();
         spinner.setOnItemSelectedListener(this);
+        /*
+
         if(mapView != null) {
             mapView.onResume();
             initMapView();
         }
+         */
+
     }
 
     @Override

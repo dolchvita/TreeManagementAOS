@@ -1,8 +1,6 @@
 package com.snd.app.ui.write;
 
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -24,6 +22,7 @@ import androidx.appcompat.widget.AppCompatAutoCompleteTextView;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.core.content.FileProvider;
 import androidx.databinding.DataBindingUtil;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -37,6 +36,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.snd.app.R;
 import com.snd.app.common.TMActivity;
 import com.snd.app.data.AppModule;
+import com.snd.app.data.KakaoMapFragment;
 import com.snd.app.data.LocationRepository;
 import com.snd.app.databinding.RegistTreeBasicInfoActBinding;
 import com.snd.app.domain.tree.TreeBasicInfoDTO;
@@ -57,7 +57,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.MediaType;
@@ -65,7 +64,6 @@ import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
-
 
 public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallback, MapView.POIItemEventListener{
     RegistTreeBasicInfoActBinding treeBasicInfoActBinding;
@@ -90,12 +88,12 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
     // 팝업 버튼 확인
     int num;
     // 카카오 맵
-    private MapView mapView;
+    //private MapView mapView;
+    private KakaoMapFragment kakaoMapFragment;
     // 저장 버튼
     AppCompatButton saveButton;
     //로딩 박스
     Boolean click=false;
-    Dialog loading;
     double thisLatitude;
     double thisLongitude;
 
@@ -178,7 +176,7 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         // 확인 버튼을 눌렀을 때
-                       finish();
+                        finish();
                     }
                 });
                 builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
@@ -192,7 +190,6 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
                 dialog.show();
             }
         });
-
 
         // 위성 개수 추출
         LocationRepository locationRepository=new LocationRepository(this);
@@ -217,24 +214,33 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
         });
 
         // 카카오맵
-        mapView=new MapView(this);
-        treeBasicInfoActBinding.treeBasicMapLayout.addView(mapView);
+        kakaoMapFragment = new KakaoMapFragment();
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.treeBasic_kakao_map, kakaoMapFragment)
+                .commit();
+
+        Log.d(TAG, "휴우...");
+
+        FragmentTransaction transaction=getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.treeBasic_kakao_map, kakaoMapFragment);
+        transaction.commit();
     }   //./onCreate
 
 
     // 디자인 요소에 세팅하기
-   public void getTreeLocation(){
-       treeBasicInfoVM.latitude.set(""+latitude);
-       treeBasicInfoVM.longitude.set(""+longitude);
-       // 중심점 변경
-       mapView.setMapCenterPoint(MapPoint.mapPointWithGeoCoord(latitude, longitude), true);
-       addMarkers();
-   }
+    public void getTreeLocation(){
+        treeBasicInfoVM.latitude.set(""+latitude);
+        treeBasicInfoVM.longitude.set(""+longitude);
+        // 중심점 변경
+        //mapView.setMapCenterPoint(MapPoint.mapPointWithGeoCoord(latitude, longitude), true);
+        kakaoMapFragment.addMarkers(latitude,longitude);
+
+    }
 
 
     public void addMarkers(){
         // 기존 마커 모두 제거
-        mapView.removeAllPOIItems();
+        //mapView.removeAllPOIItems();
 
         ArrayList<MapPOIItem> markerArr = new ArrayList<MapPOIItem>();
         MapPOIItem marker = new MapPOIItem();
@@ -246,8 +252,8 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
         thisLongitude=longitude;
 
         // 이벤트 리스너 등록
-        mapView.setPOIItemEventListener(this);
-        mapView.addPOIItems(markerArr.toArray(new MapPOIItem[markerArr.size()]));
+        //mapView.setPOIItemEventListener(this);
+        //mapView.addPOIItems(markerArr.toArray(new MapPOIItem[markerArr.size()]));
     }
 
 
@@ -297,16 +303,21 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
     @Override
     protected void onResume() {
         super.onResume();
+        /*
         if(mapView != null) {
             mapView.onResume();
             initMapView();
         }
+
+         */
         findViewById(R.id.loading_layout_box).setVisibility(View.VISIBLE);
     }
 
 
     public void initMapView(){
         // 초기 세팅하기
+        /*
+
         mapView.setCurrentLocationEventListener(new MapView.CurrentLocationEventListener() {
             @Override
             public void onCurrentLocationUpdate(MapView mapView, MapPoint mapPoint, float v) {
@@ -324,6 +335,8 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
         });
         // 줌 레벨 변경
         mapView.setZoomLevel(1, true);
+                 */
+
     }
 
 
@@ -353,12 +366,12 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
     }
 
 
-   public void registerTreeInfo(){
-       registerTreeBasicInfo();
-       if(currentList.size()>0){
-           registerTreeImage(currentList);
-       }
-       registerTreeLocationInfo();
+    public void registerTreeInfo(){
+        registerTreeBasicInfo();
+        if(currentList.size()>0){
+            registerTreeImage(currentList);
+        }
+        registerTreeLocationInfo();
     }
 
 
@@ -461,14 +474,14 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onResponse(@NonNull Call call, @NonNull okhttp3.Response response) throws IOException {
-               if (response.isSuccessful()){
-                   String responseData = response.body().string();
-                   Log.d(TAG,"** 위치 성공 / 응답 **"+responseData);
+                if (response.isSuccessful()){
+                    String responseData = response.body().string();
+                    Log.d(TAG,"** 위치 성공 / 응답 **"+responseData);
 
-               }else{
-                   String responseData = response.body().string();
-                   Log.d(TAG,"** 위치 실패 / 응답 **"+responseData);
-               }
+                }else{
+                    String responseData = response.body().string();
+                    Log.d(TAG,"** 위치 실패 / 응답 **"+responseData);
+                }
             }
             @Override
             public void onFailure(Call call, IOException e) {
@@ -585,22 +598,22 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
         super.onActivityResult(requestCode, resultCode, data);
         // 매개변수로 날라오는 data의 의미 --> 카메라 앱에서 설정한 결과 데이터 (사진의 섬네일 등)
         // 그러나 사진을 파일로 저장하는 경우 일반적으로 null
-       boolean isCameraPermissionGranted=sharedPreferences.getBoolean("camera_permission_granted", false);
-       if (isCameraPermissionGranted) {
-           photoPaths = new ArrayList<>(); // 사진 파일 경로 리스트
-           // 사진 파일 저장
-           String uri=currentPhotoFile.getAbsolutePath();
-           photoPaths.add(uri);      // 사진 경로
-           // 4 갤러리 저장
-           scanImageFile(currentPhotoFile);
-           galleryAddPic();
-           // 5-1) 경로에 있는 사진 꺼냄
-           Bitmap bitmap = BitmapFactory.decodeFile(uri);
-           // 5-2) 실제 사진을 리스트에 담기
-           treeBasicInfoVM.setImageList(bitmap);
-           // 6-1 보낼 파일 리스트
-           File file=new File(uri);
-           currentList.add(file);
+        boolean isCameraPermissionGranted=sharedPreferences.getBoolean("camera_permission_granted", false);
+        if (isCameraPermissionGranted) {
+            photoPaths = new ArrayList<>(); // 사진 파일 경로 리스트
+            // 사진 파일 저장
+            String uri=currentPhotoFile.getAbsolutePath();
+            photoPaths.add(uri);      // 사진 경로
+            // 4 갤러리 저장
+            scanImageFile(currentPhotoFile);
+            galleryAddPic();
+            // 5-1) 경로에 있는 사진 꺼냄
+            Bitmap bitmap = BitmapFactory.decodeFile(uri);
+            // 5-2) 실제 사진을 리스트에 담기
+            treeBasicInfoVM.setImageList(bitmap);
+            // 6-1 보낼 파일 리스트
+            File file=new File(uri);
+            currentList.add(file);
         }
     }
 

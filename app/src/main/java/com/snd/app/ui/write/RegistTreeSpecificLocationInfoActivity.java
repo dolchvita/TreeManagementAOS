@@ -14,6 +14,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 
 import com.snd.app.R;
@@ -47,6 +49,7 @@ public class RegistTreeSpecificLocationInfoActivity extends TMActivity implement
     Boolean sidewalk;
     Spinner spinner;
     private MapView mapView;
+    private Bundle mapViewSavedState;
 
     // 위도와 경도를 어떻게 전달할까?
     double latitude;
@@ -71,9 +74,14 @@ public class RegistTreeSpecificLocationInfoActivity extends TMActivity implement
         spinner=findViewById(R.id.specificLocation_tr_state);
         ArrayAdapter adapter=ArrayAdapter.createFromResource(this, R.array.treeStatus_pest,  android.R.layout.simple_spinner_item);
         spinner.setAdapter(adapter);
-        // 카카오맵
-        mapView=new MapView(this);
-        registTreeSpecificLocationActBinding.specificLocationKakaoMap.addView(mapView);
+
+        // 다른 방법 적용할 예정 !
+        //MapViewEventListenerImpl mapViewEventListener=new MapViewEventListenerImpl();
+        mapView = new MapView(this);
+        //mapView.setMapViewEventListener(mapViewEventListener);
+        //registTreeSpecificLocationActBinding.specificLocationKakaoMap.addView(mapView);
+        Log.d(TAG, "** 있는지 먼저 확인 **"+mapView);
+
 
         // 뒤로 가기
         specificLocationInfoVM.back.observe(this, new Observer() {
@@ -98,6 +106,14 @@ public class RegistTreeSpecificLocationInfoActivity extends TMActivity implement
                 dialog.show();
             }
         });
+
+        //mapFragment=new KakaoMapFagment();
+        // MapFragment를 추가하는 방법 예시
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        //fragmentTransaction.add(R.id.specificLocation_kakao_map, new KakaoMapFagment());
+        fragmentTransaction.commit();
+
 
     }
 
@@ -145,6 +161,11 @@ public class RegistTreeSpecificLocationInfoActivity extends TMActivity implement
     }
 
 
+    // 맵뷰 전달하기
+    public MapView getMapView() {
+        return mapView;
+    }
+
 
     @Override
     public void onCustomCallback() {
@@ -169,6 +190,8 @@ public class RegistTreeSpecificLocationInfoActivity extends TMActivity implement
         AlertDialog dialog = builder.create();
         dialog.show();
     }
+
+
 
 
    public void registerSpecificLocationInfo() {
@@ -243,7 +266,6 @@ public class RegistTreeSpecificLocationInfoActivity extends TMActivity implement
             initMapView();
         }
     }
-
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         if(position==0){
@@ -252,7 +274,6 @@ public class RegistTreeSpecificLocationInfoActivity extends TMActivity implement
             sidewalk=true;
         }
     }
-
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
     }

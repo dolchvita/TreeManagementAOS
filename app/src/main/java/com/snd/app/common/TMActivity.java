@@ -38,9 +38,7 @@ public class TMActivity extends AppCompatActivity {
    public double latitude;
    public double longitude;
    Boolean isGranted = false;
-
    TMViewModel tmVM;
-
    protected static final String DEFAULT_VALUE = "0";
 
    @Override

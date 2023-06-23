@@ -71,13 +71,13 @@ public class Mapfragment extends Fragment implements MapView.POIItemEventListene
 
     public void initMapView(){
         mapView=new MapView(getContext());
-        mapFrBinding.kakaoMap.addView(mapView);
+        mapFrBinding.mainKakaoMap.addView(mapView);
 
         // 초기 세팅하기
         mapView.setCurrentLocationEventListener(new MapView.CurrentLocationEventListener() {
             @Override
             public void onCurrentLocationUpdate(MapView mapView, MapPoint mapPoint, float v) {
-               mapView.setMapCenterPoint(mapPoint, true);
+                mapView.setMapCenterPoint(mapPoint, true);
             }
             @Override
             public void onCurrentLocationDeviceHeadingUpdate(MapView mapView, float v) {

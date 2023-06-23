@@ -111,8 +111,13 @@ public class MainActivity extends TMActivity {
                             JSONObject treeInfo=data.getJSONObject(i);
                             TreeTotalDTO dto = new TreeTotalDTO();
                             dto.setNFC(treeInfo.getString("nfc"));
-                            dto.setLatitude(Double.parseDouble(treeInfo.getString("latitude")));
-                            dto.setLongitude(Double.parseDouble(treeInfo.getString("longitude")));
+
+                            String lat=treeInfo.getString("latitude");
+                            String log=treeInfo.getString("longitude");
+                            if(lat!=null && log!=null){
+                                dto.setLatitude(Double.parseDouble(treeInfo.getString("latitude")));
+                                dto.setLongitude(Double.parseDouble(treeInfo.getString("longitude")));
+                            }
                             dto.setSpecies(treeInfo.getString("species"));
 
                             treeInfoList.add(dto);
