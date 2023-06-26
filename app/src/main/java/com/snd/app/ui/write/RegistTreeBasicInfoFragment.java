@@ -34,7 +34,6 @@ public class RegistTreeBasicInfoFragment extends TMFragment {
     public Boolean flag=true;   // 사진 지울시 확인 버튼 감지용
 
 
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -42,7 +41,6 @@ public class RegistTreeBasicInfoFragment extends TMFragment {
         treeBasicInfoActBinding.setLifecycleOwner(this);
         // 뷰모델 연결
         treeBasicInfoVM=new ViewModelProvider(getActivity()).get(RegistTreeBasicInfoViewModel.class);
-
         treeBasicInfoActBinding.setTreeBasicInfoVM(treeBasicInfoVM);
 
         recyclerView = treeBasicInfoActBinding.basicRvImage;

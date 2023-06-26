@@ -84,6 +84,7 @@
                 android:layout_marginStart="4dp"
                 android:layout_weight="1"
                 android:text="저 장"
+                android:onClick="@{()->treeInfoVM.regist()}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/write_save"
                 app:layout_constraintTop_toTopOf="parent" />

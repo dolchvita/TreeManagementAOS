@@ -15,6 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/basic_layout"
         android:layout_width="match_parent"
@@ -22,14 +23,13 @@
         layout_constraintHeight_default="percent"
         app:layout_constraintHeight_percent="0.6"
         app:layout_constraintBottom_toTopOf="@id/treeBasic_map_layout"
-
         >
 
         <!--스크롤뷰-->
         <androidx.core.widget.NestedScrollView
             android:id="@+id/scroll_view1"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="match_parent"
             android:fillViewport="true"
             android:overScrollMode="never"
             app:layout_constraintEnd_toEndOf="parent"
@@ -266,7 +266,7 @@
             android:layout_height="0dp"
             android:layout_marginTop="7dp"
             app:layout_constraintHeight_default="percent"
-            app:layout_constraintHeight_percent="0.35"
+            app:layout_constraintHeight_percent="0.5"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/basic_layout">

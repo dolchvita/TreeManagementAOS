@@ -14,9 +14,11 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 import androidx.databinding.DataBindingUtil;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -37,10 +39,21 @@ import net.daum.mf.map.api.MapPOIItem;
 import net.daum.mf.map.api.MapPoint;
 import net.daum.mf.map.api.MapView;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
 
 public class RegistTreeInfoActivity extends TMActivity implements MyCallback, MapView.POIItemEventListener{
     WriteActBinding writeActBinding;
@@ -58,14 +71,17 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
     // 사진 지울시 확인 버튼 감지용
     public Boolean flag=true;
     List<File> currentList=new ArrayList<>();
-
     // 수목 기본 정보
     RegistTreeBasicInfoViewModel treeBasicInfoVM;
     TreeBasicInfoDTO treeBasicInfoDTO;
-
     Boolean click=false;
     // 카카오 맵
     private KakaoMapFragment kakaoMapFragment;
+    // 팝업버튼 확인
+    int num;
+    //String species;
+
+    RegistTreeSpecificLocationInfoFragment registTreeSpecificLocationInfoFr;
 
 
     @Override
@@ -75,18 +91,21 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
         writeActBinding.setLifecycleOwner(this);
         treeInfoVM=new RegistTreeInfoViewModel();
         writeActBinding.setTreeInfoVM(treeInfoVM);
+
         // 화면에 보일 프레그먼트
         registTreeBasicInfoFr=new RegistTreeBasicInfoFragment();
         // NFC 코드 추출
         idHex=getIntent().getStringExtra("IDHEX");
         Log.d(TAG,"** 아이디 확인 **"+idHex);
-
         // 수목 기본 정보
         treeBasicInfoVM=new ViewModelProvider(this).get(RegistTreeBasicInfoViewModel.class);
-        getSupportFragmentManager().beginTransaction().replace(R.id.write_content, new RegistTreeBasicInfoFragment()).commit();
+        // 콜백 연결
+        treeInfoVM.setCallback(this);
 
-        //photoAdapter=new PhotoAdapter();
-        //Log.d(TAG,"** 액티비티에서 어댑터 확인 **"+photoAdapter);
+
+        registTreeSpecificLocationInfoFr=new RegistTreeSpecificLocationInfoFragment();
+
+        getSupportFragmentManager().beginTransaction().replace(R.id.write_content, new RegistTreeBasicInfoFragment()).commit();
 
         try {
             setTreeBasicInfoDTO();
@@ -102,32 +121,6 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
                 treeBasicInfoVM.cnt+=1;
             }
         });
-        //ㄷ
-        treeBasicInfoVM.back.observe(this, new Observer() {
-            @Override
-            public void onChanged(Object o) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(RegistTreeInfoActivity.this);
-                builder.setTitle("나가시겠습니까?");
-                builder.setMessage("입력 중인 내용은 저장되지 않습니다.");
-                builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // 확인 버튼을 눌렀을 때
-                        finish();
-                    }
-                });
-                builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // 취소 버튼을 눌렀을 때
-                        flag=false;
-                    }
-                });
-                AlertDialog dialog = builder.create();
-                dialog.show();
-            }
-        });
-
 
         // 위성 개수 추출
         LocationRepository locationRepository=new LocationRepository(this);
@@ -146,18 +139,184 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
                     getTreeLocation();
 
                     // 로딩 객체 해제
-                    findViewById(R.id.loading_layout_box).setVisibility(View.GONE);
+                    //findViewById(R.id.loading_layout_box).setVisibility(View.GONE);
                 }
             }
         });
-
 
         // 카카오맵
         kakaoMapFragment = new KakaoMapFragment();
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.treeBasic_kakao_map, kakaoMapFragment)
                 .commit();
+    }
 
+
+    public void mappingDTO(){
+        registerTreeBasicInfo();
+        if(currentList.size()>0){
+            registerTreeImage(currentList);
+        }
+        registerTreeLocationInfo();
+    }
+
+
+
+    // 화면 전환
+    public void switchFragment(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(RegistTreeInfoActivity.this);
+        builder.setTitle("수목 기본 정보가 등록되었습니다");
+        builder.setMessage("이어서 위치 상세 정보를 등록하시겠습니까?");
+        builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // 프레그먼트 변경 예정
+                FragmentTransaction transaction=getSupportFragmentManager().beginTransaction();
+                transaction.replace(R.id.write_content, registTreeSpecificLocationInfoFr);
+                transaction.commit();
+            }
+        });
+        builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+
+
+    // 1-1) 수목 기본정보 등록
+    public void registerTreeBasicInfo(){
+        JSONObject treeBasicData=new JSONObject();
+        try {
+            // 입력 데이터 보내기
+            treeBasicData.put("nfc", idHex);
+            treeBasicData.put("species", "산사나무");
+            treeBasicData.put("submitter", sharedPreferences.getString("id",null));
+            treeBasicData.put("vendor", sharedPreferences.getString("company",null));
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+        registerTreeInfo(treeBasicData, "/app/tree/registerBasicInfo");
+    }
+
+
+    // 1-2) 수목 위치(기본)정보 등록
+    public void registerTreeLocationInfo(){
+        JSONObject treeLocationData=new JSONObject();
+        try {
+            // 입력 데이터 보내기
+            String latitudeValue = String.format("%.7f", latitude);     // 자릿수 맞추기
+            treeLocationData.put("latitude", latitudeValue);
+            String longitudeValue = String.format("%.7f", longitude);
+            treeLocationData.put("longitude", longitudeValue);
+            treeLocationData.put("nfc",treeBasicInfoDTO.getNFC().toUpperCase());
+            treeLocationData.put("submitter",treeBasicInfoDTO.getSubmitter());
+            treeLocationData.put("vendor",treeBasicInfoDTO.getVendor());
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+        registerTreeInfo(treeLocationData, "/app/tree/registerLocationInfo");
+    }
+
+
+    // 1-3) 사진 리스트 등록
+    public void registerTreeImage(List<File> files){
+        OkHttpClient client = new OkHttpClient();
+        MultipartBody.Builder builder = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM);
+        if (files.size()>0){
+            for (int i=0; i<files.size(); i++){
+                builder.addFormDataPart("image"+(i+1), files.get(i).getName(), RequestBody.create(MediaType.parse("multipart/form-data"), files.get(i)));
+            }
+        }
+        builder.addFormDataPart("tagId", idHex );
+
+        // 업로드할 URL을 생성합니다.
+        String url = sndUrl+"/app/tree/registerTreeImage"; // 실제 업로드할 서버의 URL로 변경해야 합니다.
+
+        // 요청 생성
+        Request request = new Request.Builder()
+                .url(url)
+                .addHeader("Authorization", sharedPreferences.getString("Authorization", null))
+                .post(builder.build())
+                .build();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull okhttp3.Response response) throws IOException {
+                Log.d(TAG,"** 업로드 성공? **"+response);
+            }
+            @Override
+            public void onFailure(Call call, IOException e) {
+                // 여기에 요청이 실패했을 때 실행될 코드를 작성하세요.
+                Log.d(TAG,"** 사진 오류남 **");
+            }
+        });
+    }
+
+
+    // PostMethod
+    public void registerTreeInfo(JSONObject postData, String postUrl){
+        OkHttpClient client = new OkHttpClient();
+        Log.d(TAG,"** 보낼 데이터 모습 **"+postData);
+
+        RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), postData.toString());
+        String url = sndUrl+postUrl;
+        // 요청 생성
+        Request request = new Request.Builder()
+                .url(url)
+                .addHeader("Authorization", sharedPreferences.getString("Authorization", null))
+                .post(requestBody)
+                .build();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull okhttp3.Response response) throws IOException {
+                if (response.isSuccessful()){
+                    String responseData = response.body().string();
+                    Log.d(TAG,"** 성공 / 응답 **"+responseData);
+
+                   // switchFragment();
+                }else{
+                    String responseData = response.body().string();
+                    Log.d(TAG,"** 실패 / 응답 **"+responseData);
+                }
+            }
+            @Override
+            public void onFailure(Call call, IOException e) {
+                // 여기에 요청이 실패했을 때 실행될 코드를 작성하세요.
+                Log.d(TAG,"** 오류남 **");
+            }
+        });
+    }
+
+
+    // 뷰모델에서 호출 - 저장 버튼 누를 시
+    @Override
+    public void onCustomCallback() {
+        Log.d(TAG, "** 반응 하는지부터 확인 **");
+        //팝업 창 띄우기
+        AlertDialog.Builder builder = new AlertDialog.Builder(RegistTreeInfoActivity.this);
+        builder.setTitle("입력하신 내용을 저장하시겠습니까?");
+        builder.setMessage("수목 기본 정보 등록");
+        builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                mappingDTO();
+                // 확인 버튼을 눌렀을 때
+                num=which;
+            }
+        });
+        builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                //registerTreeInfo();
+                num=which;
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
 
@@ -313,9 +472,6 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
     }
 
     // 리스너 메소드들
-    @Override
-    public void onCustomCallback() {
-    }
     @Override
     public void onPOIItemSelected(MapView mapView, MapPOIItem mapPOIItem) {
     }

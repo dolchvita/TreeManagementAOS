@@ -23,7 +23,6 @@ import androidx.appcompat.widget.AppCompatButton;
 import androidx.core.content.FileProvider;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.Observer;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.AuthFailureError;
@@ -40,7 +39,6 @@ import com.snd.app.data.LocationRepository;
 import com.snd.app.databinding.RegistTreeBasicInfoActBinding;
 import com.snd.app.domain.tree.TreeBasicInfoDTO;
 import com.snd.app.ui.tree.PhotoAdapter;
-import com.snd.app.ui.tree.SpaceItemDecoration;
 
 import net.daum.mf.map.api.MapPOIItem;
 import net.daum.mf.map.api.MapPoint;
@@ -88,7 +86,6 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
 
     // 위치 권한과 관련된 변수들!  (**지금 작업 중*)
     Boolean isGranted;
-    // 팝업 버튼 확인
     int num;
 
     // 카카오 맵
@@ -117,13 +114,6 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
         Log.d(TAG,"** 아이디 확인 **"+idHex);
         // 콜백 인터페이스 연결
         treeBasicInfoVM.setCallback(this);
-        // 이미지 저장
-        //recyclerView=findViewById(R.id.rv_image);
-        //recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));      // 가로 정렬
-        //recyclerView.addItemDecoration(new SpaceItemDecoration(20));
-        // 어댑터 연결
-        //photoAdapter=new PhotoAdapter();
-        //recyclerView.setAdapter(photoAdapter);
         // 입력 문자열 추출
         AppCompatAutoCompleteTextView tree_name=(AppCompatAutoCompleteTextView) findViewById(R.id.tr_name);
         // 버튼 비활성화
@@ -410,7 +400,6 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
             treeLocationData.put("vendor",treeBasicInfoDTO.getVendor());
 
             Log.d(TAG,"** 보낼 데이터 모습 **"+treeLocationData);
-
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -483,7 +472,6 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
     /*--------------------------------------
             카메라 관련 로직 start
        -------------------------------------*/
-
     public void onCamera (){
         treeBasicInfoVM.camera.observe(this, new Observer() {
             @Override
