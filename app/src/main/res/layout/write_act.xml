@@ -44,6 +44,7 @@
             app:layout_constraintTop_toTopOf="@id/write_header"/>
         <!--./Topbar-->
 
+        <!--버튼박스-->
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/write_content"
             android:layout_width="match_parent"
@@ -51,9 +52,8 @@
             app:layout_constraintBottom_toTopOf="@id/write_button_layout"
             app:layout_constraintTop_toBottomOf="@id/write_header"
             app:layout_constraintVertical_bias="0.0"
-            tools:layout_editor_absoluteX="1dp" />
+            tools:layout_editor_absoluteX="0dp" />
 
-        <!--버튼박스-->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/write_button_layout"
             android:layout_width="match_parent"

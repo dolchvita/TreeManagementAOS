@@ -22,7 +22,6 @@ import androidx.appcompat.widget.AppCompatAutoCompleteTextView;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.core.content.FileProvider;
 import androidx.databinding.DataBindingUtil;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -68,10 +67,12 @@ import okhttp3.RequestBody;
 public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallback, MapView.POIItemEventListener{
     RegistTreeBasicInfoActBinding treeBasicInfoActBinding;
     RegistTreeBasicInfoViewModel treeBasicInfoVM;
+
     // TreeActivity 로부터 전달 받은 문자 데이터
     private static final String IDHEX="IDHEX";
     String idHex;
     TreeBasicInfoDTO treeBasicInfoDTO;
+
     // 이미지 권한
     private static final int REQUEST_PERMISSION = 1;
     // 이미지 리스트
@@ -82,16 +83,20 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
     // 사진 지울시 확인 버튼 감지용
     public Boolean flag=true;
     List<File> currentList=new ArrayList<>();
+
     String species;
+
     // 위치 권한과 관련된 변수들!  (**지금 작업 중*)
     Boolean isGranted;
     // 팝업 버튼 확인
     int num;
+
     // 카카오 맵
-    //private MapView mapView;
     private KakaoMapFragment kakaoMapFragment;
+
     // 저장 버튼
     AppCompatButton saveButton;
+
     //로딩 박스
     Boolean click=false;
     double thisLatitude;
@@ -106,19 +111,19 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
         treeBasicInfoActBinding.setLifecycleOwner(this);
         // 뷰모델 연결
         treeBasicInfoVM=new RegistTreeBasicInfoViewModel();
-        treeBasicInfoActBinding.setTreeBasicInfoVM(treeBasicInfoVM);
+        //treeBasicInfoActBinding.setTreeBasicInfoVM(treeBasicInfoVM);
         // NFC 코드 추출
         idHex=getIntent().getStringExtra(IDHEX);
         Log.d(TAG,"** 아이디 확인 **"+idHex);
         // 콜백 인터페이스 연결
         treeBasicInfoVM.setCallback(this);
         // 이미지 저장
-        recyclerView=findViewById(R.id.rv_image);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));      // 가로 정렬
-        recyclerView.addItemDecoration(new SpaceItemDecoration(20));
+        //recyclerView=findViewById(R.id.rv_image);
+        //recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));      // 가로 정렬
+        //recyclerView.addItemDecoration(new SpaceItemDecoration(20));
         // 어댑터 연결
-        photoAdapter=new PhotoAdapter();
-        recyclerView.setAdapter(photoAdapter);
+        //photoAdapter=new PhotoAdapter();
+        //recyclerView.setAdapter(photoAdapter);
         // 입력 문자열 추출
         AppCompatAutoCompleteTextView tree_name=(AppCompatAutoCompleteTextView) findViewById(R.id.tr_name);
         // 버튼 비활성화
@@ -138,6 +143,7 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
                 Log.d(TAG,"** 이게 몰까 **"+species);
             }
         });
+
         try {
             setTreeBasicInfoDTO();
         } catch (JsonProcessingException e) {
@@ -160,12 +166,14 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
                 treeBasicInfoVM.cnt+=1;
             }
         });
+
         photoAdapter.tabClick.observe(this, new Observer() {
             @Override
             public void onChanged(Object o) {
                 showAlertDialog();
             }
         });
+
         treeBasicInfoVM.back.observe(this, new Observer() {
             @Override
             public void onChanged(Object o) {
@@ -221,7 +229,6 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
 
         Log.d(TAG, "휴우...");
 
-
     }   //./onCreate
 
 
@@ -233,7 +240,6 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
         //mapView.setMapCenterPoint(MapPoint.mapPointWithGeoCoord(latitude, longitude), true);
         kakaoMapFragment.addMarkers(latitude,longitude, idHex);
     }
-
 
 
     public void setTreeBasicInfoDTO() throws JsonProcessingException {
@@ -282,7 +288,6 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
     @Override
     protected void onResume() {
         super.onResume();
-
         findViewById(R.id.loading_layout_box).setVisibility(View.VISIBLE);
     }
 

@@ -1,0 +1,344 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <import type="androidx.databinding.ObservableField" />
+
+        <variable
+            name="treeBasicInfoVM"
+            type="com.snd.app.ui.write.RegistTreeBasicInfoViewModel"/>
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/basic_layout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        layout_constraintHeight_default="percent"
+        app:layout_constraintHeight_percent="0.6"
+        app:layout_constraintBottom_toTopOf="@id/treeBasic_map_layout"
+
+        >
+
+        <!--스크롤뷰-->
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/scroll_view1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:fillViewport="true"
+            android:overScrollMode="never"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintVertical_weight="3"
+            tools:ignore="MissingConstraints">
+
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/info_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:elevation="10dp"
+                android:padding="10dp">
+
+                <View
+                    android:id="@+id/add_camera_view"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/rectangle_outline_10"
+                    android:onClick="@{()->treeBasicInfoVM.setCamera()}"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/add_image"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    app:layout_constraintBottom_toTopOf="@id/image_cnt"
+                    app:layout_constraintEnd_toEndOf="@id/add_camera_view"
+                    app:layout_constraintStart_toStartOf="@id/add_camera_view"
+                    app:layout_constraintTop_toTopOf="@id/add_camera_view"
+                    app:srcCompat="@drawable/ic_add_photo" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/image_cnt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{treeBasicInfoVM.getImgCount}"
+                    android:textColor="@color/cocoa_brown"
+                    app:layout_constraintBottom_toBottomOf="@id/add_camera_view"
+                    app:layout_constraintEnd_toEndOf="@id/add_camera_view"
+                    app:layout_constraintStart_toStartOf="@id/add_camera_view"
+                    app:layout_constraintTop_toBottomOf="@id/add_image" />
+
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/basic_rv_image"
+                    android:layout_width="0dp"
+                    android:layout_height="100dp"
+                    android:orientation="horizontal"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:layout_constraintBottom_toBottomOf="@id/add_camera_view"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toEndOf="@id/add_camera_view"
+                    app:layout_constraintTop_toTopOf="@id/add_camera_view"
+                    app:layout_constraintVertical_bias="0.0"
+                    tools:listitem="@layout/image_item" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tree_nfc_tv"
+                    style="@style/tree_info_label"
+                    android:layout_marginTop="10dp"
+                    android:text="NFC 번호"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.551"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/add_camera_view"
+                    />
+
+                <androidx.appcompat.widget.AppCompatAutoCompleteTextView
+                    android:id="@+id/tree_name"
+                    style="@style/tree_info_edt"
+                    android:completionThreshold="0"
+                    android:nextFocusDown="@id/tree_nfc_tv"
+                    android:text="@{treeBasicInfoVM.NFC}"
+                    app:layout_constraintEnd_toEndOf="@id/tree_nfc_tv"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="@id/tree_nfc_tv"
+
+                    app:layout_constraintTop_toBottomOf="@id/tree_nfc_tv"
+                    tools:text="0485cc0a635a80"
+                    />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tr_name_tv"
+                    style="@style/tree_info_label"
+                    android:layout_marginTop="10dp"
+                    android:text="수목명"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tree_name" />
+
+                <androidx.appcompat.widget.AppCompatAutoCompleteTextView
+                    android:id="@+id/tr_name"
+                    style="@style/tree_info_edt"
+                    android:completionThreshold="0"
+                    android:longClickable="false"
+                    android:text="@{treeBasicInfoVM.species}"
+                    app:layout_constraintEnd_toEndOf="@id/tr_name_tv"
+                    app:layout_constraintStart_toStartOf="@id/tr_name_tv"
+                    app:layout_constraintTop_toBottomOf="@id/tr_name_tv"
+
+                    tools:hint="소유주를 입력해주세요." />
+
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tr_submitter_tv"
+                    style="@style/tree_info_label"
+                    android:layout_marginTop="10dp"
+                    android:text="조사자"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tr_name" />
+
+                <androidx.appcompat.widget.AppCompatAutoCompleteTextView
+                    android:id="@+id/tr_submitter"
+                    style="@style/tree_info_edt"
+                    android:completionThreshold="0"
+                    android:longClickable="false"
+                    android:text="@{treeBasicInfoVM.submitter}"
+                    app:layout_constraintEnd_toEndOf="@id/tr_submitter_tv"
+                    app:layout_constraintStart_toStartOf="@id/tr_submitter_tv"
+                    app:layout_constraintTop_toBottomOf="@id/tr_submitter_tv"
+                    tools:text="Bread" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tr_vendor_tv"
+                    style="@style/tree_info_label"
+                    android:layout_marginTop="10dp"
+                    android:text="조사업체"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tr_submitter" />
+
+                <androidx.appcompat.widget.AppCompatAutoCompleteTextView
+                    android:id="@+id/tr_vendor"
+                    style="@style/tree_info_edt"
+                    android:completionThreshold="0"
+                    android:longClickable="false"
+                    android:text="@{treeBasicInfoVM.vendor}"
+                    app:layout_constraintEnd_toEndOf="@id/tr_vendor_tv"
+                    app:layout_constraintStart_toStartOf="@id/tr_vendor_tv"
+                    app:layout_constraintTop_toBottomOf="@id/tr_vendor_tv"
+                    tools:text="snd" />
+
+
+                <!--위치정보-->
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/location_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:background="@drawable/rectangle_white_5"
+                    android:elevation="2dp"
+                    android:padding="5dp"
+                    app:layout_constraintTop_toBottomOf="@id/tr_vendor"
+                    tools:layout_editor_absoluteX="15dp">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/location_tv"
+                        style="@style/sr_no_label"
+                        android:gravity="center"
+                        android:text="위치 정보"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/lati_tv"
+                        style="@style/sr_no_label"
+                        android:layout_width="0dp"
+                        android:gravity="center"
+                        android:text="위도"
+                        app:layout_constraintEnd_toStartOf="@id/longi_tv"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/location_tv" />
+
+                    <androidx.appcompat.widget.AppCompatAutoCompleteTextView
+                        android:id="@+id/lati"
+                        style="@style/sr_no_edt"
+                        android:completionThreshold="0"
+                        android:text="@{treeBasicInfoVM.getLatitude}"
+                        app:layout_constraintEnd_toStartOf="@id/mid_area"
+                        app:layout_constraintStart_toStartOf="@id/lati_tv"
+                        app:layout_constraintTop_toBottomOf="@id/lati_tv"
+                        app:layout_constraintWidth_percent="0.5" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/mid_area"
+                        style="@style/sr_no_label"
+                        android:gravity="center"
+                        app:layout_constraintBottom_toBottomOf="@id/location_tv"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/lati"
+                        app:layout_constraintTop_toTopOf="@id/location_layout" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/longi_tv"
+                        style="@style/sr_no_label"
+                        android:layout_width="0dp"
+                        android:layout_marginTop="4dp"
+                        android:gravity="center"
+                        android:text="경도"
+                        app:layout_constraintEnd_toEndOf="@id/mid_area"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toEndOf="@id/lati"
+                        app:layout_constraintTop_toBottomOf="@id/location_tv" />
+
+                    <androidx.appcompat.widget.AppCompatAutoCompleteTextView
+                        android:id="@+id/longi"
+                        style="@style/sr_no_edt"
+                        android:text="@{treeBasicInfoVM.getLongitude}"
+                        app:layout_constraintEnd_toEndOf="@id/mid_area"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toStartOf="@id/longi_tv"
+                        app:layout_constraintTop_toBottomOf="@id/longi_tv" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+                <!--./위치정보-->
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.core.widget.NestedScrollView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <!--카카오맵-->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/treeBasic_map_layout"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="7dp"
+            app:layout_constraintHeight_default="percent"
+            app:layout_constraintHeight_percent="0.35"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/basic_layout">
+
+            <RelativeLayout
+                android:id="@+id/treeBasic_kakao_map"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:background="#9C9C9C"
+                android:gravity="center"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/treeBasic_address"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@color/mustard_yellow"
+                android:gravity="center"
+                android:textColor="@color/white"
+                app:layout_constraintEnd_toEndOf="@id/treeBasic_kakao_map"
+                app:layout_constraintStart_toStartOf="@id/treeBasic_kakao_map"
+                app:layout_constraintTop_toTopOf="@id/treeBasic_kakao_map"
+                tools:text="서울시 송파구 오금동" />
+
+            <com.google.android.material.button.MaterialButtonToggleGroup
+                android:id="@+id/treeBasic_toggle_group"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                app:checkedButton="@id/normal"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/treeBasic_address"
+                app:selectionRequired="true"
+                app:singleSelection="true">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/treeBasic_normal"
+                    style="@style/toggleStyle"
+                    android:layout_width="70dp"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@drawable/selector_toggle"
+                    android:text="일반"
+                    android:textColor="@drawable/selector_toggle_text"
+                    app:autoSizeMaxTextSize="14dp"
+                    app:autoSizeMinTextSize="10dp"
+                    app:autoSizeStepGranularity="2sp"
+                    app:autoSizeTextType="uniform"
+                    app:strokeColor="@color/cocoa_brown_70" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/treeBasic_satellite"
+                    style="@style/toggleStyle"
+                    android:layout_width="70dp"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@drawable/selector_toggle"
+                    android:text="위성"
+                    android:textColor="@drawable/selector_toggle_text"
+                    app:autoSizeMaxTextSize="14dp"
+                    app:autoSizeMinTextSize="8dp"
+                    app:autoSizeStepGranularity="2sp"
+                    app:autoSizeTextType="uniform"
+                    app:strokeColor="@color/cocoa_brown_70"
+                    tools:checkable="false" />
+            </com.google.android.material.button.MaterialButtonToggleGroup>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        <!--./카카오맵-->
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

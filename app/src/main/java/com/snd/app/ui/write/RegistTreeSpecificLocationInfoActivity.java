@@ -114,7 +114,6 @@ public class RegistTreeSpecificLocationInfoActivity extends TMActivity implement
         //fragmentTransaction.add(R.id.specificLocation_kakao_map, new KakaoMapFagment());
         fragmentTransaction.commit();
 
-
     }
 
 
@@ -190,7 +189,6 @@ public class RegistTreeSpecificLocationInfoActivity extends TMActivity implement
         AlertDialog dialog = builder.create();
         dialog.show();
     }
-
 
 
 

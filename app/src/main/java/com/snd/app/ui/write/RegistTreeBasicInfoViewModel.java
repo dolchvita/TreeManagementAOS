@@ -5,7 +5,6 @@ import android.util.Log;
 
 import androidx.databinding.ObservableField;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.snd.app.common.TMViewModel;
@@ -92,17 +91,24 @@ public class RegistTreeBasicInfoViewModel extends TMViewModel {
 
     // 데이터바인딩시 참조할 변수 매핑
     public void setTextViewModel(TreeBasicInfoDTO treeBasicInfoDTO){
+        Log.d(TAG, "** 뷰모델에서 확인 ** "+treeBasicInfoDTO.getNFC());
+        Log.d(TAG, "** 뷰모델에서 확인 ** "+treeBasicInfoDTO.getSpecies());
+        Log.d(TAG, "** 뷰모델에서 확인 ** "+treeBasicInfoDTO.getSubmitter());
+        Log.d(TAG, "** 뷰모델에서 확인 ** "+treeBasicInfoDTO.getVendor());
+
         NFC.set(treeBasicInfoDTO.getNFC());
-        species.set(treeBasicInfoDTO.getSpecies());
+       // species.set(treeBasicInfoDTO.getSpecies());
         submitter.set(treeBasicInfoDTO.getSubmitter());
         vendor.set(treeBasicInfoDTO.getVendor());
     }
+
 
     public void regist(){
         // xml에서 바로 호출
         // RegistTreeBasicInfoActivity 메서드 호출
         myCallback.onCustomCallback();
     }
+
 
     // 콜백 객체를 받아서 액티비티로부터 호출 가능하게 함
     public void setCallback(MyCallback myCallback) {
@@ -115,10 +121,12 @@ public class RegistTreeBasicInfoViewModel extends TMViewModel {
         }
     }
 
+
     // 카메라 실행시키는 메서드
     public void setCamera(){
         _camera.setValue("test");
     }
+
 
     public LiveData getCamera(){
         if(_camera==null){

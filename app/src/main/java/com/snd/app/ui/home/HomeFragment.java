@@ -26,6 +26,8 @@ public class HomeFragment extends Fragment {
     HomeViewModel homeVM;
     SharedPreferences sharedPreferences;
 
+
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -37,6 +39,5 @@ public class HomeFragment extends Fragment {
         homeFrBinding.setHomeVM(homeVM);    //홈뷰모델 연동
         return homeFrBinding.getRoot();
     }
-
 
 }
