@@ -221,9 +221,7 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
 
         Log.d(TAG, "휴우...");
 
-        FragmentTransaction transaction=getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.treeBasic_kakao_map, kakaoMapFragment);
-        transaction.commit();
+
     }   //./onCreate
 
 
@@ -233,28 +231,9 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
         treeBasicInfoVM.longitude.set(""+longitude);
         // 중심점 변경
         //mapView.setMapCenterPoint(MapPoint.mapPointWithGeoCoord(latitude, longitude), true);
-        kakaoMapFragment.addMarkers(latitude,longitude);
-
+        kakaoMapFragment.addMarkers(latitude,longitude, idHex);
     }
 
-
-    public void addMarkers(){
-        // 기존 마커 모두 제거
-        //mapView.removeAllPOIItems();
-
-        ArrayList<MapPOIItem> markerArr = new ArrayList<MapPOIItem>();
-        MapPOIItem marker = new MapPOIItem();
-        marker.setMapPoint(MapPoint.mapPointWithGeoCoord(latitude, longitude));
-        marker.setItemName(idHex);
-        markerArr.add(marker);
-
-        thisLatitude=latitude;
-        thisLongitude=longitude;
-
-        // 이벤트 리스너 등록
-        //mapView.setPOIItemEventListener(this);
-        //mapView.addPOIItems(markerArr.toArray(new MapPOIItem[markerArr.size()]));
-    }
 
 
     public void setTreeBasicInfoDTO() throws JsonProcessingException {
@@ -303,40 +282,8 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
     @Override
     protected void onResume() {
         super.onResume();
-        /*
-        if(mapView != null) {
-            mapView.onResume();
-            initMapView();
-        }
 
-         */
         findViewById(R.id.loading_layout_box).setVisibility(View.VISIBLE);
-    }
-
-
-    public void initMapView(){
-        // 초기 세팅하기
-        /*
-
-        mapView.setCurrentLocationEventListener(new MapView.CurrentLocationEventListener() {
-            @Override
-            public void onCurrentLocationUpdate(MapView mapView, MapPoint mapPoint, float v) {
-                mapView.setMapCenterPoint(mapPoint, true);
-            }
-            @Override
-            public void onCurrentLocationDeviceHeadingUpdate(MapView mapView, float v) {
-            }
-            @Override
-            public void onCurrentLocationUpdateFailed(MapView mapView) {
-            }
-            @Override
-            public void onCurrentLocationUpdateCancelled(MapView mapView) {
-            }
-        });
-        // 줌 레벨 변경
-        mapView.setZoomLevel(1, true);
-                 */
-
     }
 
 

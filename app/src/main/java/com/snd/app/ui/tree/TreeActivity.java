@@ -19,6 +19,7 @@ import com.snd.app.common.TMActivity;
 import com.snd.app.databinding.TreeActBinding;
 import com.snd.app.ui.read.GetTreeInfoActivity;
 import com.snd.app.ui.write.RegistTreeBasicInfoActivity;
+import com.snd.app.ui.write.RegistTreeInfoActivity;
 
 
 public class TreeActivity extends TMActivity implements NfcAdapter.ReaderCallback {
@@ -32,7 +33,6 @@ public class TreeActivity extends TMActivity implements NfcAdapter.ReaderCallbac
     // 전달할 NFC 코드
     private static final String IDHEX="IDHEX";
     String idHex;
-
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -65,8 +65,9 @@ public class TreeActivity extends TMActivity implements NfcAdapter.ReaderCallbac
         Log.d(TAG, "** NFC 아이디 가공 ** "+idHex);
 
         // 화면 전환하기
-        Log.d(TAG, "** actName 확인 ** "+getIntent().getStringExtra("actName"));
-        switchActivity(getIntent().getStringExtra("actName"));
+        // 이 근거는 뭘까..
+        switchActivity("RegistTreeInfoActivity");
+        Log.d(TAG, "** actName 확인dddd ** "+getIntent().getStringExtra("actName"));
 
 
         runOnUiThread(new Runnable() {
@@ -78,19 +79,22 @@ public class TreeActivity extends TMActivity implements NfcAdapter.ReaderCallbac
     }
 
 
+    // 이미 액티비티의 이름을 받아서 처리하는 메소드
     public void switchActivity(String actName){
         Intent intent = null;
         switch (actName){
-            case "RegistTreeBasicInfoActivity":
-                intent = new Intent(this, RegistTreeBasicInfoActivity.class); break;
+            case "RegistTreeInfoActivity":
+                intent = new Intent(this, RegistTreeInfoActivity.class); break;
             case "GetTreeInfoActivity":
                 intent = new Intent(this, GetTreeInfoActivity.class); break;
         }
-        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
-        enableNfcForegroundDispatch(pendingIntent);
-        intent.putExtra(IDHEX, idHex);
-        startActivity(intent);
+        if (intent != null) {
+            intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+            enableNfcForegroundDispatch(pendingIntent);
+            intent.putExtra(IDHEX, idHex);
+            startActivity(intent);
+        }
     }
 
 

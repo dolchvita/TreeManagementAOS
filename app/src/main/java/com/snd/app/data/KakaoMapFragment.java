@@ -44,9 +44,9 @@ public class KakaoMapFragment extends Fragment implements MapView.POIItemEventLi
     }
 
 
-    public void addMarkers(Double latitude, Double longitude){
-        Log.d(TAG, "** 카카오맵 프레그먼트에서 호출 **");
-        mapView.setCurrentLocationTrackingMode(MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeading);
+    public void addMarkers(Double latitude, Double longitude, String idHex){
+        Log.d(TAG, "** 카카오맵 프레그먼트에서 호출 -**"+latitude+", "+longitude);
+        //mapView.setCurrentLocationTrackingMode(MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeading);
 
         // 중심점 변경
         mapView.setMapCenterPoint(MapPoint.mapPointWithGeoCoord(latitude, longitude), true);
@@ -57,7 +57,7 @@ public class KakaoMapFragment extends Fragment implements MapView.POIItemEventLi
         ArrayList<MapPOIItem> markerArr = new ArrayList<MapPOIItem>();
         MapPOIItem marker = new MapPOIItem();
         marker.setMapPoint(MapPoint.mapPointWithGeoCoord(latitude, longitude));
-        //marker.setItemName(idHex);
+        marker.setItemName(idHex);
         markerArr.add(marker);
 
         // 이벤트 리스너 등록
@@ -70,9 +70,33 @@ public class KakaoMapFragment extends Fragment implements MapView.POIItemEventLi
     @Override
     public void onResume() {
         super.onResume();
-        //initMapView();
+        initMapView();
         mapView.onResume();
     }
+
+
+    public void initMapView(){
+       // mapView=new MapView(getContext());
+        // 초기 세팅하기
+        mapView.setCurrentLocationEventListener(new MapView.CurrentLocationEventListener() {
+            @Override
+            public void onCurrentLocationUpdate(MapView mapView, MapPoint mapPoint, float v) {
+                mapView.setMapCenterPoint(mapPoint, true);
+            }
+            @Override
+            public void onCurrentLocationDeviceHeadingUpdate(MapView mapView, float v) {
+            }
+            @Override
+            public void onCurrentLocationUpdateFailed(MapView mapView) {
+            }
+            @Override
+            public void onCurrentLocationUpdateCancelled(MapView mapView) {
+            }
+        });
+        // 현재 위치 표시 활성화 - 트래킹 모드 !
+        mapView.setCurrentLocationTrackingMode(MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeading);
+    }
+
 
 
 

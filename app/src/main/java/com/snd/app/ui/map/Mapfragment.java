@@ -95,7 +95,7 @@ public class Mapfragment extends Fragment implements MapView.POIItemEventListene
     }
 
 
-    // 위성 개수 추출 및 좌표값 실시간 렌더링
+    // 위성 개수 추출 및 좌표값 실시간 렌더링 
     public void getLocationRepository(){
         LocationRepository locationRepository=new LocationRepository(getContext());
         locationRepository.setPermissionGranted(true);

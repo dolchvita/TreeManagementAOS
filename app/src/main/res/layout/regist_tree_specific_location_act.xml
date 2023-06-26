@@ -51,7 +51,7 @@
             app:layout_constraintTop_toBottomOf="@id/specificLocation_header"
             app:layout_constraintVertical_weight="2">
 
-            <FrameLayout
+            <RelativeLayout
                 android:id="@+id/specificLocation_kakao_map"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
