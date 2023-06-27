@@ -14,7 +14,6 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.snd.app.R;
-import com.snd.app.ui.write.RegistTreeBasicInfoActivity;
 
 import java.util.ArrayList;
 import java.util.List;

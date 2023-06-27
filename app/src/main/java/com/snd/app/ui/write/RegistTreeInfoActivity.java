@@ -11,9 +11,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
-import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -24,8 +21,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.snd.app.R;
@@ -33,11 +28,9 @@ import com.snd.app.common.TMActivity;
 import com.snd.app.data.KakaoMapFragment;
 import com.snd.app.data.LocationRepository;
 import com.snd.app.data.SpinnerValueListener;
-import com.snd.app.databinding.RegistTreeBasicInfoFrBinding;
 import com.snd.app.databinding.WriteActBinding;
 import com.snd.app.domain.tree.TreeBasicInfoDTO;
 import com.snd.app.ui.tree.PhotoAdapter;
-import com.snd.app.ui.tree.SpaceItemDecoration;
 
 import net.daum.mf.map.api.MapPOIItem;
 import net.daum.mf.map.api.MapPoint;
@@ -48,6 +41,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -84,11 +78,14 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
     // 팝업버튼 확인
     int num;
 
+    // 수목 위치상세 정보
     RegistTreeSpecificLocationInfoFragment registTreeSpecificLocationInfoFr;
     RegistTreeSpecificLocationInfoViewModel registTreeSpecificLocationInfoVM;
-
     Boolean sidewalk;
     Boolean locationFalse=true;
+
+    // 수목 상태 정보
+    RegistTreeStatusInfoFragment registTreeStatusInfoFr;
 
 
     @Override
@@ -110,6 +107,7 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
         treeInfoVM.setCallback(this);
         // 수목 위치상세 정보
         registTreeSpecificLocationInfoFr=new RegistTreeSpecificLocationInfoFragment();
+        registTreeStatusInfoFr=new RegistTreeStatusInfoFragment();
 
         getSupportFragmentManager().beginTransaction().replace(R.id.write_content, new RegistTreeBasicInfoFragment()).commit();
 
@@ -140,7 +138,6 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
                     click=true;
                     // 위도 경도 가져오기
                     getLocation();
-
                     // 디자인 요소 반영
                     getTreeLocation();
 
@@ -153,7 +150,6 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
         // 카카오맵
         setKakaoMapFragment(R.id.treeBasic_kakao_map);
         registTreeSpecificLocationInfoVM=new ViewModelProvider(this).get(RegistTreeSpecificLocationInfoViewModel.class);
-
     }//./onCreate
 
 
@@ -178,12 +174,41 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
             registerTreeLocationInfo();
 
         } else if (num == 2) {
-            Log.d(TAG, "** 상세등록 올 예정**");
+            Log.d(TAG, "** 위치상세 올 예정**");
             registerSpecificLocationInfo();
-        }
 
+        } else if (num == 3) {
+            Log.d(TAG, "** 상세등록 올 예정**");
+            registerTreeStatusInfo();
+        }
     }
 
+
+    // 3) 수목 상태정보 등록
+   public void registerTreeStatusInfo(){
+       JSONObject treeStatusData=new JSONObject();
+       try {
+           // 입력 데이터 보내기
+           treeStatusData.put("creation", LocalDate.now());
+           treeStatusData.put("nfc", idHex);
+           treeStatusData.put("dbh", getInputText(findViewById(R.id.treeStatus_scarlet_diam)));
+           treeStatusData.put("rcc", getInputText(findViewById(R.id.treeStatus_tr_height)));
+           treeStatusData.put("height", getInputText(findViewById(R.id.treeStatus_crw_height)));
+           treeStatusData.put("length", getInputText(findViewById(R.id.treeStatus_crw_diam)));
+           treeStatusData.put("width", getInputText(findViewById(R.id.treeStatus_pest_dmg_state)));
+           treeStatusData.put("pest", flag);
+           treeStatusData.put("submitter", sharedPreferences.getString("id", null));
+           treeStatusData.put("vendor", sharedPreferences.getString("company", null));
+           treeStatusData.put("modified", null);
+           treeStatusData.put("inserted", null);
+
+       } catch (JSONException e) {
+           e.printStackTrace();
+       }
+        locationFalse=true;
+       Log.d(TAG, "** 상태정보 확인 **"+treeStatusData);
+       registerTreeInfo(treeStatusData, "/app/tree/registerStatusInfo");
+   }
 
 
     // 2) 위치상세 정보 등록
@@ -212,12 +237,18 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 // 프레그먼트 변경 예정
-                if(num==1) {
+                if(num ==1) {
                     switchFragment(registTreeSpecificLocationInfoFr);
-                } else if (num == 2) {
-                    Log.d(TAG, "** 다음 프레그먼트 등장 예정** ");
-                }
+                    // 위치 상세정보 출력
+                    initSpecificLocationFr();
 
+                } else if (num == 2) {
+                    switchFragment(registTreeStatusInfoFr);
+                    initStatusInfoFr();
+
+                } else if (num == 3) {
+
+                }
             }
         });
         builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
@@ -232,17 +263,24 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
 
 
     public void switchFragment(Fragment frName){
+        Log.d(TAG, "**프레그먼트 이름 확인 ** "+frName);
         FragmentTransaction transaction=getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.write_content, frName);
         transaction.commit();
-
-        // 위치 상세정보 출력
-        setSpecificLocationFr();
     }
 
 
 
-    public void setSpecificLocationFr(){
+    public void initStatusInfoFr(){
+        setKakaoMapFragment(R.id.treeStatus_map_layout);
+        RegistTreeStatusInfoViewModel registTreeStatusInfoVM=new ViewModelProvider(this).get(RegistTreeStatusInfoViewModel.class);
+        registTreeStatusInfoVM.setCallback(this);
+        registTreeStatusInfoVM.idHex.set(idHex);
+    }
+
+
+
+    public void initSpecificLocationFr(){
         setKakaoMapFragment(R.id.specificLocation_map_layout);
         registTreeSpecificLocationInfoVM.setCallback(this);
         registTreeSpecificLocationInfoVM.idHex.set(idHex);
@@ -275,9 +313,9 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
             treeLocationData.put("latitude", latitudeValue);
             String longitudeValue = String.format("%.7f", longitude);
             treeLocationData.put("longitude", longitudeValue);
-            treeLocationData.put("nfc",treeBasicInfoDTO.getNFC().toUpperCase());
-            treeLocationData.put("submitter",treeBasicInfoDTO.getSubmitter());
-            treeLocationData.put("vendor",treeBasicInfoDTO.getVendor());
+            treeLocationData.put("nfc", treeBasicInfoDTO.getNFC().toUpperCase());
+            treeLocationData.put("submitter", treeBasicInfoDTO.getSubmitter());
+            treeLocationData.put("vendor", treeBasicInfoDTO.getVendor());
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
@@ -318,6 +356,33 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
             }
         });
     }
+
+
+    // 뷰모델에서 호출 - 저장 버튼 누를 시
+    @Override
+    public void onCustomCallback() {
+        Log.d(TAG, "** 반응 하는지부터 확인 **");
+        //팝업 창 띄우기
+        AlertDialog.Builder builder = new AlertDialog.Builder(RegistTreeInfoActivity.this);
+        builder.setTitle("입력하신 내용을 저장하시겠습니까?");
+        builder.setMessage("수목 기본 정보 등록");
+        builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                mappingDTO();
+                // 확인 버튼을 눌렀을 때
+            }
+        });
+        builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                //registerTreeInfo();
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
 
 
     // PostMethod (공통)
@@ -406,32 +471,6 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
         Toast.makeText(this, "등록되었습니다", Toast.LENGTH_SHORT).show();
     }
 
-
-
-    // 뷰모델에서 호출 - 저장 버튼 누를 시
-    @Override
-    public void onCustomCallback() {
-        Log.d(TAG, "** 반응 하는지부터 확인 **");
-        //팝업 창 띄우기
-        AlertDialog.Builder builder = new AlertDialog.Builder(RegistTreeInfoActivity.this);
-        builder.setTitle("입력하신 내용을 저장하시겠습니까?");
-        builder.setMessage("수목 기본 정보 등록");
-        builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                mappingDTO();
-                // 확인 버튼을 눌렀을 때
-            }
-        });
-        builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                //registerTreeInfo();
-            }
-        });
-        AlertDialog dialog = builder.create();
-        dialog.show();
-    }
 
 
     // 디자인 요소에 세팅하기

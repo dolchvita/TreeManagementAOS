@@ -22,6 +22,7 @@
             android:layout_height="0dp"
             android:fillViewport="true"
             android:overScrollMode="never"
+            android:layout_marginTop="10dp"
             app:layout_constraintBottom_toTopOf="@id/treeStatus_map_layout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -31,17 +32,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/treeStatus_rv_image"
-                    android:layout_width="0dp"
-                    android:layout_height="90dp"
-                    android:orientation="horizontal"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintVertical_bias="1.0"
-                    tools:listitem="@layout/image_item"
-                    tools:ignore="MissingConstraints" />
-
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/treeStatus_sr_no_tv"
                     style="@style/tree_info_label"
@@ -50,7 +40,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/treeStatus_rv_image" />
+                    tools:ignore="MissingConstraints" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/treeStatus_sr_no"

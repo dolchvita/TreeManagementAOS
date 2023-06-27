@@ -18,7 +18,6 @@ import com.snd.app.R;
 import com.snd.app.common.TMActivity;
 import com.snd.app.databinding.TreeActBinding;
 import com.snd.app.ui.read.GetTreeInfoActivity;
-import com.snd.app.ui.write.RegistTreeBasicInfoActivity;
 import com.snd.app.ui.write.RegistTreeInfoActivity;
 
 
