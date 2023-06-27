@@ -127,7 +127,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/tree_name" />
 
-                <androidx.appcompat.widget.AppCompatAutoCompleteTextView
+                <androidx.appcompat.widget.AppCompatEditText
                     android:id="@+id/tr_name"
                     style="@style/tree_info_edt"
                     android:completionThreshold="0"
@@ -136,9 +136,7 @@
                     app:layout_constraintEnd_toEndOf="@id/tr_name_tv"
                     app:layout_constraintStart_toStartOf="@id/tr_name_tv"
                     app:layout_constraintTop_toBottomOf="@id/tr_name_tv"
-
                     tools:hint="소유주를 입력해주세요." />
-
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tr_submitter_tv"

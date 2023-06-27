@@ -101,11 +101,12 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
         treeBasicInfoVM=new ViewModelProvider(this).get(RegistTreeBasicInfoViewModel.class);
         // 콜백 연결
         treeInfoVM.setCallback(this);
-
-
+        // 수몯 위치상세 정보
         registTreeSpecificLocationInfoFr=new RegistTreeSpecificLocationInfoFragment();
 
+
         getSupportFragmentManager().beginTransaction().replace(R.id.write_content, new RegistTreeBasicInfoFragment()).commit();
+
 
         try {
             setTreeBasicInfoDTO();
@@ -149,7 +150,9 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.treeBasic_kakao_map, kakaoMapFragment)
                 .commit();
-    }
+    }//./onCreate
+
+
 
 
     public void mappingDTO(){
@@ -163,17 +166,17 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
 
 
     // 화면 전환
-    public void switchFragment(){
+    public void AlertDialog(){
         AlertDialog.Builder builder = new AlertDialog.Builder(RegistTreeInfoActivity.this);
         builder.setTitle("수목 기본 정보가 등록되었습니다");
         builder.setMessage("이어서 위치 상세 정보를 등록하시겠습니까?");
         builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+               Log.d(TAG, "** 확인 버튼 누름**");
                 // 프레그먼트 변경 예정
-                FragmentTransaction transaction=getSupportFragmentManager().beginTransaction();
-                transaction.replace(R.id.write_content, registTreeSpecificLocationInfoFr);
-                transaction.commit();
+                switchFragment();
+
             }
         });
         builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
@@ -187,13 +190,21 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
 
 
 
+    public void switchFragment(){
+        FragmentTransaction transaction=getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.write_content, registTreeSpecificLocationInfoFr);
+        transaction.commit();
+    }
+
+
+
     // 1-1) 수목 기본정보 등록
     public void registerTreeBasicInfo(){
         JSONObject treeBasicData=new JSONObject();
         try {
             // 입력 데이터 보내기
             treeBasicData.put("nfc", idHex);
-            treeBasicData.put("species", "산사나무");
+            treeBasicData.put("species", getInputText(findViewById(R.id.tr_name)));
             treeBasicData.put("submitter", sharedPreferences.getString("id",null));
             treeBasicData.put("vendor", sharedPreferences.getString("company",null));
         } catch (JSONException e) {
@@ -201,6 +212,7 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
         }
         registerTreeInfo(treeBasicData, "/app/tree/registerBasicInfo");
     }
+
 
 
     // 1-2) 수목 위치(기본)정보 등록
@@ -257,7 +269,7 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
     }
 
 
-    // PostMethod
+    // PostMethod (공통)
     public void registerTreeInfo(JSONObject postData, String postUrl){
         OkHttpClient client = new OkHttpClient();
         Log.d(TAG,"** 보낼 데이터 모습 **"+postData);
@@ -277,7 +289,13 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
                     String responseData = response.body().string();
                     Log.d(TAG,"** 성공 / 응답 **"+responseData);
 
-                   // switchFragment();
+                    RegistTreeInfoActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            AlertDialog(); // UI 작업 수행
+                        }
+                    });
+
                 }else{
                     String responseData = response.body().string();
                     Log.d(TAG,"** 실패 / 응답 **"+responseData);
@@ -290,6 +308,7 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
             }
         });
     }
+
 
 
     // 뷰모델에서 호출 - 저장 버튼 누를 시

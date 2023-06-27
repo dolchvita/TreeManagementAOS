@@ -117,8 +117,6 @@ public class RegistTreeBasicInfoActivity extends TMActivity implements MyCallbac
         // 입력 문자열 추출
         AppCompatAutoCompleteTextView tree_name=(AppCompatAutoCompleteTextView) findViewById(R.id.tr_name);
         // 버튼 비활성화
-        //saveButton=findViewById(R.id.treeBasic_save);
-
         tree_name.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {

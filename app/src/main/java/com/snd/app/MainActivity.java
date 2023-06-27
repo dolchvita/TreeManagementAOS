@@ -75,9 +75,9 @@ public class MainActivity extends TMActivity {
                 transaction.commit();
             }
         });
-
         getLocation();
     }
+
 
 
     // 등록한 모든 수목정보 가져오기
@@ -119,7 +119,6 @@ public class MainActivity extends TMActivity {
                                 dto.setLongitude(Double.parseDouble(treeInfo.getString("longitude")));
                             }
                             dto.setSpecies(treeInfo.getString("species"));
-
                             treeInfoList.add(dto);
                         }
                         mapFragment.setLocationList(treeInfoList);
@@ -127,14 +126,12 @@ public class MainActivity extends TMActivity {
                     } catch (JSONException e) {
                         throw new RuntimeException(e);
                     }
-
                 }else {
                     String responseData = response.body().string();
                     Log.d(TAG,"** 조회 실패 / 원인 **"+responseData);
                 }
             }
         });
-
     }
 
 

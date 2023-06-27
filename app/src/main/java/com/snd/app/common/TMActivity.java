@@ -155,6 +155,8 @@ public class TMActivity extends AppCompatActivity {
    }
 
 
+
+   // editText 에서 텍스트만 출력하는 메서드 !
    public String getInputText(AppCompatEditText editText) {
       return TextUtils.isEmpty(editText.getText()) ? DEFAULT_VALUE : String.valueOf(editText.getText());
    }
