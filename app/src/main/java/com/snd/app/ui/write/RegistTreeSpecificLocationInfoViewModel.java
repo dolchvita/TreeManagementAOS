@@ -1,5 +1,6 @@
 package com.snd.app.ui.write;
 
+
 import androidx.databinding.ObservableField;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -11,6 +12,7 @@ public class RegistTreeSpecificLocationInfoViewModel extends TMViewModel {
     private MutableLiveData _back=new MutableLiveData<>();
     public LiveData back=getBack();
     public ObservableField<String> idHex=new ObservableField<>();
+
 
     public void setBack(){
         _back.setValue("click");
@@ -28,4 +30,5 @@ public class RegistTreeSpecificLocationInfoViewModel extends TMViewModel {
     public void setCallback(MyCallback myCallback) {
         this.myCallback = myCallback;
     }
+
 }

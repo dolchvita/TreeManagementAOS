@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="HardcodedText" >
+
+    <data>
+        <variable
+            name="treeStatusInfoVM"
+            type="com.snd.app.ui.write.RegistTreeStatusInfoViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <!--스크롤뷰-->
+        <androidx.core.widget.NestedScrollView
+           android:id="@+id/treeStatus_scroll_view"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:fillViewport="true"
+            android:overScrollMode="never"
+            app:layout_constraintBottom_toTopOf="@id/treeStatus_map_layout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintVertical_weight="3">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/treeStatus_rv_image"
+                    android:layout_width="0dp"
+                    android:layout_height="90dp"
+                    android:orientation="horizontal"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintVertical_bias="1.0"
+                    tools:listitem="@layout/image_item"
+                    tools:ignore="MissingConstraints" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/treeStatus_sr_no_tv"
+                    style="@style/tree_info_label"
+                    android:layout_marginTop="12dp"
+                    android:text="일련번호"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/treeStatus_rv_image" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/treeStatus_sr_no"
+                    style="@style/tree_info_edt"
+                    android:text="@{treeStatusInfoVM.idHex}"
+                    app:layout_constraintEnd_toEndOf="@id/treeStatus_sr_no_tv"
+                    app:layout_constraintStart_toStartOf="@id/treeStatus_sr_no_tv"
+                    app:layout_constraintTop_toBottomOf="@id/treeStatus_sr_no_tv" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/treeStatus_scarlet_diam_tv"
+                    style="@style/tree_info_label"
+                    android:layout_marginTop="10dp"
+                    android:text="흉고직경"
+                    app:layout_constraintEnd_toStartOf="@id/treeStatus_tr_height_label"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/treeStatus_sr_no" />
+
+                <androidx.appcompat.widget.AppCompatEditText
+                    android:id="@+id/treeStatus_scarlet_diam"
+                    style="@style/tree_info_edt"
+                    android:inputType="numberDecimal"
+                    android:longClickable="false"
+                    android:nextFocusDown="@id/tr_height"
+                    android:paddingEnd="50dp"
+                    app:layout_constraintEnd_toEndOf="@id/treeStatus_scarlet_diam_tv"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="@id/treeStatus_scarlet_diam_tv"
+                    app:layout_constraintTop_toBottomOf="@id/treeStatus_scarlet_diam_tv"
+                    tools:text="100" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/treeStatus_scarlet_diam_suffix"
+                    style="@style/tree_info_edt"
+                    android:layout_marginEnd="10dp"
+                    android:elevation="11dp"
+                    android:text="cm"
+                    android:textColor="@color/cocoa_brown_70"
+                    app:layout_constraintBottom_toBottomOf="@id/treeStatus_scarlet_diam"
+                    app:layout_constraintEnd_toEndOf="@id/treeStatus_scarlet_diam"
+                    app:layout_constraintTop_toTopOf="@id/treeStatus_scarlet_diam"
+                    tools:text="cm" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/treeStatus_tr_height_label"
+                    style="@style/tree_info_label"
+                    android:layout_marginTop="10dp"
+                    android:text="근원직경"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/treeStatus_scarlet_diam_tv"
+                    app:layout_constraintTop_toBottomOf="@id/treeStatus_sr_no" />
+
+                <androidx.appcompat.widget.AppCompatEditText
+                    android:id="@+id/treeStatus_tr_height"
+                    style="@style/tree_info_edt"
+                    android:inputType="numberDecimal"
+                    android:longClickable="false"
+                    android:nextFocusDown="@id/crw_height"
+                    android:paddingEnd="50dp"
+                    app:layout_constraintEnd_toEndOf="@id/treeStatus_tr_height_label"
+                    app:layout_constraintStart_toStartOf="@id/treeStatus_tr_height_label"
+                    app:layout_constraintTop_toBottomOf="@id/treeStatus_tr_height_label"
+                    tools:text="10" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tr_height_suffix"
+                    style="@style/tree_info_edt"
+                    android:layout_marginEnd="10dp"
+                    android:text="m"
+                    android:textColor="@color/cocoa_brown_70"
+                    app:layout_constraintBottom_toBottomOf="@id/treeStatus_tr_height"
+                    app:layout_constraintEnd_toEndOf="@id/treeStatus_tr_height"
+                    app:layout_constraintTop_toTopOf="@id/treeStatus_tr_height"
+                    tools:text="m" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/treeStatus_crw_height_label"
+                    style="@style/tree_info_label"
+                    android:layout_marginTop="10dp"
+                    android:text="수고"
+                    app:layout_constraintEnd_toStartOf="@id/treeStatus_crw_diam_tv"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/treeStatus_scarlet_diam" />
+
+                <androidx.appcompat.widget.AppCompatEditText
+                    android:id="@+id/treeStatus_crw_height"
+                    style="@style/tree_info_edt"
+                    android:inputType="numberDecimal"
+                    android:longClickable="false"
+                    android:nextFocusDown="@id/treeStatus_crw_diam"
+                    android:paddingEnd="50dp"
+                    app:layout_constraintEnd_toEndOf="@id/treeStatus_crw_height_label"
+                    app:layout_constraintStart_toStartOf="@id/treeStatus_crw_height_label"
+                    app:layout_constraintTop_toBottomOf="@id/treeStatus_crw_height_label"
+                    tools:text="1" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/treeStatus_crw_height_suffix"
+                    style="@style/tree_info_edt"
+                    android:layout_marginEnd="10dp"
+                    android:text="m"
+                    android:textColor="@color/cocoa_brown_70"
+                    app:layout_constraintBottom_toBottomOf="@id/treeStatus_crw_height"
+                    app:layout_constraintEnd_toEndOf="@id/treeStatus_crw_height"
+                    app:layout_constraintTop_toTopOf="@id/treeStatus_crw_height"
+                    tools:text="m" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/treeStatus_crw_diam_tv"
+                    style="@style/tree_info_label"
+                    android:layout_marginTop="10dp"
+                    android:text="지하고"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/treeStatus_crw_height_label"
+                    app:layout_constraintTop_toBottomOf="@id/treeStatus_tr_height" />
+
+                <androidx.appcompat.widget.AppCompatEditText
+                    android:id="@+id/treeStatus_crw_diam"
+                    style="@style/tree_info_edt"
+                    android:inputType="numberDecimal"
+                    android:longClickable="false"
+                    android:nextFocusDown="@id/pest_dmg_state"
+                    android:paddingEnd="50dp"
+                    app:layout_constraintEnd_toEndOf="@id/treeStatus_crw_diam_tv"
+                    app:layout_constraintStart_toStartOf="@id/treeStatus_crw_diam_tv"
+                    app:layout_constraintTop_toBottomOf="@id/treeStatus_crw_diam_tv"
+                    tools:text="1" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/treeStatus_crw_diam_suffix"
+                    style="@style/tree_info_edt"
+                    android:layout_marginEnd="10dp"
+                    android:text="m"
+                    android:textColor="@color/cocoa_brown_70"
+                    app:layout_constraintBottom_toBottomOf="@id/treeStatus_crw_diam"
+                    app:layout_constraintEnd_toEndOf="@id/treeStatus_crw_diam"
+                    app:layout_constraintTop_toTopOf="@id/treeStatus_crw_diam"
+                    tools:text="m" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/treeStatus_pest_dmg_state_tv"
+                    style="@style/tree_info_label"
+                    android:layout_marginTop="10dp"
+                    android:text="수관폭"
+                    app:layout_constraintEnd_toStartOf="@id/treeStatus_tr_state_tv"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/treeStatus_crw_height" />
+
+                <androidx.appcompat.widget.AppCompatEditText
+                    android:id="@+id/treeStatus_pest_dmg_state"
+                    style="@style/tree_info_edt"
+                    android:inputType="numberDecimal"
+                    android:nextFocusDown="@id/treeStatus_tr_state"
+                    android:paddingEnd="50dp"
+                    app:layout_constraintEnd_toEndOf="@id/treeStatus_pest_dmg_state_tv"
+                    app:layout_constraintStart_toStartOf="@id/treeStatus_pest_dmg_state_tv"
+                    app:layout_constraintTop_toBottomOf="@id/treeStatus_pest_dmg_state_tv" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/treeStatus_tr_state_tv"
+                    style="@style/tree_info_label"
+                    android:layout_marginTop="10dp"
+                    android:text="병충해 유무"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/treeStatus_pest_dmg_state_tv"
+                    app:layout_constraintTop_toBottomOf="@id/treeStatus_crw_diam" />
+
+                <Spinner
+                    android:id="@+id/treeStatus_tr_state"
+                    style="@style/tree_info_edt"
+                    android:inputType="text"
+                    android:paddingEnd="50dp"
+                    app:layout_constraintEnd_toEndOf="@id/treeStatus_tr_state_tv"
+                    app:layout_constraintStart_toStartOf="@id/treeStatus_tr_state_tv"
+                    app:layout_constraintTop_toBottomOf="@id/treeStatus_tr_state_tv" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.core.widget.NestedScrollView>
+        <!--./스크롤뷰-->
+
+        <!--카카오맵-->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/treeStatus_map_layout"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="20dp"
+            app:layout_constraintHeight_default="percent"
+            app:layout_constraintHeight_percent="0.5"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/treeStatus_scroll_view"
+            app:layout_constraintVertical_weight="2">
+
+            <RelativeLayout
+                android:id="@+id/treeStatus_kakao_map"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:background="#9C9C9C"
+                android:gravity="center"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/treeStatus_address"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@color/mustard_yellow"
+                android:gravity="center"
+                android:textColor="@color/white"
+                app:layout_constraintEnd_toEndOf="@id/treeStatus_kakao_map"
+                app:layout_constraintStart_toStartOf="@id/treeStatus_kakao_map"
+                app:layout_constraintTop_toTopOf="@id/treeStatus_kakao_map"
+                tools:text="서울시 송파구 오금동" />
+
+            <com.google.android.material.button.MaterialButtonToggleGroup
+                android:id="@+id/treeStatus_toggle_group"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                app:checkedButton="@id/normal"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/treeStatus_address"
+                app:selectionRequired="true"
+                app:singleSelection="true">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/treeStatus_normal"
+                    style="@style/toggleStyle"
+                    android:layout_width="70dp"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@drawable/selector_toggle"
+                    android:text="일반"
+                    android:textColor="@drawable/selector_toggle_text"
+                    app:autoSizeMaxTextSize="14dp"
+                    app:autoSizeMinTextSize="10dp"
+                    app:autoSizeStepGranularity="2sp"
+                    app:autoSizeTextType="uniform"
+                    app:strokeColor="@color/cocoa_brown_70" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/treeStatus_satellite"
+                    style="@style/toggleStyle"
+                    android:layout_width="70dp"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@drawable/selector_toggle"
+                    android:text="위성"
+                    android:textColor="@drawable/selector_toggle_text"
+                    app:autoSizeMaxTextSize="14dp"
+                    app:autoSizeMinTextSize="8dp"
+                    app:autoSizeStepGranularity="2sp"
+                    app:autoSizeTextType="uniform"
+                    app:strokeColor="@color/cocoa_brown_70"
+                    tools:checkable="false" />
+
+            </com.google.android.material.button.MaterialButtonToggleGroup>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        <!--./카카오맵-->
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
