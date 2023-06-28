@@ -24,7 +24,6 @@ import com.snd.app.databinding.RegistTreeStatusInfoFrBinding;
 public class RegistTreeStatusInfoFragment extends TMFragment {
     private SpinnerValueListener spinnerValueListener;
 
-
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);

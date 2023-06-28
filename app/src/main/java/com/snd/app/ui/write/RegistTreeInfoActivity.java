@@ -23,6 +23,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.snd.app.MainActivity;
 import com.snd.app.R;
 import com.snd.app.common.TMActivity;
 import com.snd.app.data.KakaoMapFragment;
@@ -59,6 +60,8 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
     private RegistTreeBasicInfoFragment registTreeBasicInfoFr;
 
     String idHex;
+    String submitter;
+    String vendor;
 
     // 이미지 권한
     private static final int REQUEST_PERMISSION = 1;
@@ -83,9 +86,10 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
     RegistTreeSpecificLocationInfoViewModel registTreeSpecificLocationInfoVM;
     Boolean sidewalk;
     Boolean locationFalse=true;
-
     // 수목 상태 정보
     RegistTreeStatusInfoFragment registTreeStatusInfoFr;
+    // 환경 정보
+    RegistEnvironmentInfoFragment registEnvironmentInfoFr;
 
 
     @Override
@@ -95,6 +99,9 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
         writeActBinding.setLifecycleOwner(this);
         treeInfoVM=new RegistTreeInfoViewModel();
         writeActBinding.setTreeInfoVM(treeInfoVM);
+
+        submitter=sharedPreferences.getString("id", null);
+        vendor=sharedPreferences.getString("company", null);
 
         // 화면에 보일 프레그먼트
         registTreeBasicInfoFr=new RegistTreeBasicInfoFragment();
@@ -108,6 +115,8 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
         // 수목 위치상세 정보
         registTreeSpecificLocationInfoFr=new RegistTreeSpecificLocationInfoFragment();
         registTreeStatusInfoFr=new RegistTreeStatusInfoFragment();
+        // 환경 정보
+        registEnvironmentInfoFr=new RegistEnvironmentInfoFragment();
 
         getSupportFragmentManager().beginTransaction().replace(R.id.write_content, new RegistTreeBasicInfoFragment()).commit();
 
@@ -154,18 +163,36 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
 
 
 
-    public void setKakaoMapFragment(int viewId){
-        kakaoMapFragment = new KakaoMapFragment();
-        getSupportFragmentManager().beginTransaction()
-                .replace(viewId, kakaoMapFragment)
-                .commit();
+
+    // 등록 호출 1
+    @Override
+    public void onCustomCallback() {
+        Log.d(TAG, "** 반응 하는지부터 확인 **");
+
+        //팝업 창 띄우기
+        AlertDialog.Builder builder = new AlertDialog.Builder(RegistTreeInfoActivity.this);
+        builder.setTitle("입력하신 내용을 저장하시겠습니까?");
+        builder.setMessage("");
+        builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                mappingDTO();
+                // 확인 버튼을 눌렀을 때
+            }
+        });
+        builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                //registerTreeInfo();
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
-
-
+    // 등록 호출 2
     public void mappingDTO(){
         num++;
-
         if(num==1){
             registerTreeBasicInfo();
             if(currentList.size()>0){
@@ -180,55 +207,112 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
         } else if (num == 3) {
             Log.d(TAG, "** 상세등록 올 예정**");
             registerTreeStatusInfo();
+
+        } else if (num == 4) {
+            registerTreeEnvironmentInfo();
+            Log.d(TAG, "** 환경등록 올 예정**");
         }
     }
 
 
-    // 3) 수목 상태정보 등록
-   public void registerTreeStatusInfo(){
-       JSONObject treeStatusData=new JSONObject();
-       try {
-           // 입력 데이터 보내기
-           treeStatusData.put("creation", LocalDate.now());
-           treeStatusData.put("nfc", idHex);
-           treeStatusData.put("dbh", getInputText(findViewById(R.id.treeStatus_scarlet_diam)));
-           treeStatusData.put("rcc", getInputText(findViewById(R.id.treeStatus_tr_height)));
-           treeStatusData.put("height", getInputText(findViewById(R.id.treeStatus_crw_height)));
-           treeStatusData.put("length", getInputText(findViewById(R.id.treeStatus_crw_diam)));
-           treeStatusData.put("width", getInputText(findViewById(R.id.treeStatus_pest_dmg_state)));
-           treeStatusData.put("pest", flag);
-           treeStatusData.put("submitter", sharedPreferences.getString("id", null));
-           treeStatusData.put("vendor", sharedPreferences.getString("company", null));
-           treeStatusData.put("modified", null);
-           treeStatusData.put("inserted", null);
+    // 등록 호출 3
+    // PostMethod (공통)
+    public void registerTreeInfo(JSONObject postData, String postUrl){
+        OkHttpClient client = new OkHttpClient();
+        Log.d(TAG,"** 보낼 데이터 모습 **"+postData);
 
-       } catch (JSONException e) {
-           e.printStackTrace();
-       }
-        locationFalse=true;
-       Log.d(TAG, "** 상태정보 확인 **"+treeStatusData);
-       registerTreeInfo(treeStatusData, "/app/tree/registerStatusInfo");
-   }
+        RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), postData.toString());
+        String url = sndUrl+postUrl;
+        // 요청 생성
+        Request request = new Request.Builder()
+                .url(url)
+                .addHeader("Authorization", sharedPreferences.getString("Authorization", null))
+                .post(requestBody)
+                .build();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull okhttp3.Response response) throws IOException {
+                if (response.isSuccessful()){
+                    String responseData = response.body().string();
+                    Log.d(TAG,"** 성공 / 응답 **"+responseData);
+
+                    // 말풍선과 그 후의 처리를 여러 케이스에 담아서 해야 하기 때문에 !! -
+
+                    if(locationFalse){
+                        RegistTreeInfoActivity.this.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if(num==1){
+                                    AlertDialog("수목 기본 정보가 등록되었습니다", "이어서 위치 상세 정보를 등록하시겠습니까?"); // UI 작업 수행
+                                    locationFalse=false;
+                                } else if (num == 3) {
+                                    AlertDialog("수목 상태 정보가 등록되었습니다", "이어서 환경 정보를 등록하시겠습니까?"); // UI 작업 수행
+                                } else if (num == 4) {
+                                    AlertDialog("수목 환경 정보가 등록되었습니다", ""); // UI 작업 수행
+                                }
+
+                            }
+                        });
+                    }
+
+                }else{
+                    String responseData = response.body().string();
+                    Log.d(TAG,"** 실패 / 응답 **"+responseData);
+                }
+            }
+            @Override
+            public void onFailure(Call call, IOException e) {
+                // 여기에 요청이 실패했을 때 실행될 코드를 작성하세요.
+                Log.d(TAG,"** 오류남 **");
+            }
+        });
+        Toast.makeText(this, "등록되었습니다", Toast.LENGTH_SHORT).show();
+    }
 
 
-    // 2) 위치상세 정보 등록
-   public void  registerSpecificLocationInfo(){
-       JSONObject treeSpecificLocationData=new JSONObject();
-       try {
-           treeSpecificLocationData.put("nfc", idHex);
-           treeSpecificLocationData.put("sidewalk", sidewalk);
-           treeSpecificLocationData.put("distance", getInputText(findViewById(R.id.specificLocation_distance)));
-           treeSpecificLocationData.put("carriageway", getInputText(findViewById(R.id.specificLocation_carriageway)));
+    // PatchMethod (수목 위치 상세 정보)
+    public void patchTreeInfo(JSONObject postData, String postUrl){
+        OkHttpClient client = new OkHttpClient();
+        Log.d(TAG,"** 보낼 데이터 모습 **"+postData);
 
-       } catch (JSONException e){
-           e.printStackTrace();
-       }
-       patchTreeInfo(treeSpecificLocationData, "/app/tree/registerSpecificLocationInfo");
-   }
+        RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), postData.toString());
+        String url = sndUrl+postUrl;
+        // 요청 생성
+        Request request = new Request.Builder()
+                .url(url)
+                .addHeader("Authorization", sharedPreferences.getString("Authorization", null))
+                .patch(requestBody)
+                .build();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull okhttp3.Response response) throws IOException {
+                if (response.isSuccessful()){
+                    String responseData = response.body().string();
+                    Log.d(TAG,"** 성공 / 응답 **"+responseData);
+
+                    RegistTreeInfoActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            AlertDialog("수목의 위치 상세 정보가 등록되었습니다", "이어서 수목 상태 정보를 등록하시겠습니까?"); // UI 작업 수행
+                        }
+                    });
+
+                }else{
+                    String responseData = response.body().string();
+                    Log.d(TAG,"** 실패 / 응답 **"+responseData);
+                }
+            }
+            @Override
+            public void onFailure(Call call, IOException e) {
+                // 여기에 요청이 실패했을 때 실행될 코드를 작성하세요.
+                Log.d(TAG,"** 오류남 **");
+            }
+        });
+        Toast.makeText(this, "등록되었습니다", Toast.LENGTH_SHORT).show();
+    }
 
 
-
-    // 화면 전환 - 저장 후
+    // 등록 호출 4
     public void AlertDialog(String title, String message){
         AlertDialog.Builder builder = new AlertDialog.Builder(RegistTreeInfoActivity.this);
         builder.setTitle(title);
@@ -247,7 +331,12 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
                     initStatusInfoFr();
 
                 } else if (num == 3) {
-
+                    switchFragment(registEnvironmentInfoFr);
+                    initEnvironmentInfoFr();
+                } else if (num == 4) {
+                    // 메인화면으로 인텐트 전환!!
+                    Intent intent=new Intent(RegistTreeInfoActivity.this, MainActivity.class);
+                    startActivity(intent);
                 }
             }
         });
@@ -261,32 +350,9 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
     }
 
 
-
-    public void switchFragment(Fragment frName){
-        Log.d(TAG, "**프레그먼트 이름 확인 ** "+frName);
-        FragmentTransaction transaction=getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.write_content, frName);
-        transaction.commit();
-    }
-
-
-
-    public void initStatusInfoFr(){
-        setKakaoMapFragment(R.id.treeStatus_map_layout);
-        RegistTreeStatusInfoViewModel registTreeStatusInfoVM=new ViewModelProvider(this).get(RegistTreeStatusInfoViewModel.class);
-        registTreeStatusInfoVM.setCallback(this);
-        registTreeStatusInfoVM.idHex.set(idHex);
-    }
-
-
-
-    public void initSpecificLocationFr(){
-        setKakaoMapFragment(R.id.specificLocation_map_layout);
-        registTreeSpecificLocationInfoVM.setCallback(this);
-        registTreeSpecificLocationInfoVM.idHex.set(idHex);
-    }
-
-
+    /* --------------------------------------------------------
+            매핑 메서드들
+         -------------------------------------------------------- */
 
     // 1-1) 수목 기본정보 등록
     public void registerTreeBasicInfo(){
@@ -295,8 +361,8 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
             // 입력 데이터 보내기
             treeBasicData.put("nfc", idHex);
             treeBasicData.put("species", getInputText(findViewById(R.id.tr_name)));
-            treeBasicData.put("submitter", sharedPreferences.getString("id",null));
-            treeBasicData.put("vendor", sharedPreferences.getString("company",null));
+            treeBasicData.put("submitter", submitter);
+            treeBasicData.put("vendor", vendor);
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
@@ -313,9 +379,9 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
             treeLocationData.put("latitude", latitudeValue);
             String longitudeValue = String.format("%.7f", longitude);
             treeLocationData.put("longitude", longitudeValue);
-            treeLocationData.put("nfc", treeBasicInfoDTO.getNFC().toUpperCase());
-            treeLocationData.put("submitter", treeBasicInfoDTO.getSubmitter());
-            treeLocationData.put("vendor", treeBasicInfoDTO.getVendor());
+            treeLocationData.put("nfc", idHex);
+            treeLocationData.put("submitter",submitter);
+            treeLocationData.put("vendor", vendor);
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
@@ -358,119 +424,116 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
     }
 
 
-    // 뷰모델에서 호출 - 저장 버튼 누를 시
-    @Override
-    public void onCustomCallback() {
-        Log.d(TAG, "** 반응 하는지부터 확인 **");
-        //팝업 창 띄우기
-        AlertDialog.Builder builder = new AlertDialog.Builder(RegistTreeInfoActivity.this);
-        builder.setTitle("입력하신 내용을 저장하시겠습니까?");
-        builder.setMessage("수목 기본 정보 등록");
-        builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                mappingDTO();
-                // 확인 버튼을 눌렀을 때
-            }
-        });
-        builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                //registerTreeInfo();
-            }
-        });
-        AlertDialog dialog = builder.create();
-        dialog.show();
+    // 2) 위치상세 정보 등록
+    public void  registerSpecificLocationInfo(){
+        JSONObject treeSpecificLocationData=new JSONObject();
+        try {
+            treeSpecificLocationData.put("nfc", idHex);
+            treeSpecificLocationData.put("sidewalk", sidewalk);
+            treeSpecificLocationData.put("distance", getInputText(findViewById(R.id.specificLocation_distance)));
+            treeSpecificLocationData.put("carriageway", getInputText(findViewById(R.id.specificLocation_carriageway)));
+
+        } catch (JSONException e){
+            e.printStackTrace();
+        }
+        patchTreeInfo(treeSpecificLocationData, "/app/tree/registerSpecificLocationInfo");
+    }
+
+
+    // 3) 수목 상태정보 등록
+    public void registerTreeStatusInfo(){
+        JSONObject treeStatusData=new JSONObject();
+        try {
+            // 입력 데이터 보내기
+            treeStatusData.put("creation", LocalDate.now());
+            treeStatusData.put("nfc", idHex);
+            treeStatusData.put("dbh", getInputText(findViewById(R.id.treeStatus_scarlet_diam)));
+            treeStatusData.put("rcc", getInputText(findViewById(R.id.treeStatus_tr_height)));
+            treeStatusData.put("height", getInputText(findViewById(R.id.treeStatus_crw_height)));
+            treeStatusData.put("length", getInputText(findViewById(R.id.treeStatus_crw_diam)));
+            treeStatusData.put("width", getInputText(findViewById(R.id.treeStatus_pest_dmg_state)));
+            treeStatusData.put("pest", flag);
+            treeStatusData.put("submitter", submitter);
+            treeStatusData.put("vendor", vendor);
+            treeStatusData.put("modified", null);
+            treeStatusData.put("inserted", null);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        locationFalse=true;
+        Log.d(TAG, "** 상태정보 확인 **"+treeStatusData);
+        registerTreeInfo(treeStatusData, "/app/tree/registerStatusInfo");
+    }
+
+
+    // 4) 환경 정보 등록
+    public void registerTreeEnvironmentInfo(){
+        JSONObject environmentData=new JSONObject();
+        try {
+            // 입력 데이터 보내기
+            environmentData.put("nfc", idHex);
+            environmentData.put("frameHorizontal",  getInputText(findViewById(R.id.grd_fr_width)));
+            environmentData.put("frameVertical",  getInputText(findViewById(R.id.grd_fr_height)));
+            environmentData.put("frameMaterial",  getInputText(findViewById(R.id.environment_material)));
+            environmentData.put("boundaryStone", getInputText(findViewById(R.id.boundary_stone)));
+            environmentData.put("roadWidth", getInputText(findViewById(R.id.road_width)));
+            environmentData.put("sidewalkWidth", getInputText(findViewById(R.id.sidewalk_width)));
+            environmentData.put("packingMaterial",  getInputText(findViewById(R.id.packing_material)));
+            environmentData.put("soilPH",  getInputText(findViewById(R.id.soil_ph)));
+            environmentData.put("soilDensity",  getInputText(findViewById(R.id.soil_density)));
+            environmentData.put("submitter",   submitter);
+            environmentData.put("vendor", vendor);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        registerTreeInfo(environmentData, "/app/tree/registerEnvironmentInfo");
     }
 
 
 
-    // PostMethod (공통)
-    public void registerTreeInfo(JSONObject postData, String postUrl){
-        OkHttpClient client = new OkHttpClient();
-        Log.d(TAG,"** 보낼 데이터 모습 **"+postData);
-
-        RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), postData.toString());
-        String url = sndUrl+postUrl;
-        // 요청 생성
-        Request request = new Request.Builder()
-                .url(url)
-                .addHeader("Authorization", sharedPreferences.getString("Authorization", null))
-                .post(requestBody)
-                .build();
-        client.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onResponse(@NonNull Call call, @NonNull okhttp3.Response response) throws IOException {
-                if (response.isSuccessful()){
-                    String responseData = response.body().string();
-                    Log.d(TAG,"** 성공 / 응답 **"+responseData);
-
-                    if(locationFalse){
-                        RegistTreeInfoActivity.this.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                AlertDialog("수목 기본 정보가 등록되었습니다", "이어서 위치 상세 정보를 등록하시겠습니까?"); // UI 작업 수행
-                                locationFalse=false;
-                            }
-                        });
-                    }
-
-                }else{
-                    String responseData = response.body().string();
-                    Log.d(TAG,"** 실패 / 응답 **"+responseData);
-                }
-            }
-            @Override
-            public void onFailure(Call call, IOException e) {
-                // 여기에 요청이 실패했을 때 실행될 코드를 작성하세요.
-                Log.d(TAG,"** 오류남 **");
-            }
-        });
-        Toast.makeText(this, "등록되었습니다", Toast.LENGTH_SHORT).show();
+    /* --------------------------------------------------------
+            프레그먼트 설정 관련
+        -------------------------------------------------------- */
+    public void switchFragment(Fragment frName){
+        Log.d(TAG, "**프레그먼트 이름 확인 ** "+frName);
+        FragmentTransaction transaction=getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.write_content, frName);
+        transaction.commit();
     }
 
 
-    // PatchMethod (공통)
-    public void patchTreeInfo(JSONObject postData, String postUrl){
-        OkHttpClient client = new OkHttpClient();
-        Log.d(TAG,"** 보낼 데이터 모습 **"+postData);
-
-        RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), postData.toString());
-        String url = sndUrl+postUrl;
-        // 요청 생성
-        Request request = new Request.Builder()
-                .url(url)
-                .addHeader("Authorization", sharedPreferences.getString("Authorization", null))
-                .patch(requestBody)
-                .build();
-        client.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onResponse(@NonNull Call call, @NonNull okhttp3.Response response) throws IOException {
-                if (response.isSuccessful()){
-                    String responseData = response.body().string();
-                    Log.d(TAG,"** 성공 / 응답 **"+responseData);
-
-                    RegistTreeInfoActivity.this.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            AlertDialog("수목 기본 정보가 등록되었습니다", "이어서 위치 상세 정보를 등록하시겠습니까?"); // UI 작업 수행
-                        }
-                    });
-
-                }else{
-                    String responseData = response.body().string();
-                    Log.d(TAG,"** 실패 / 응답 **"+responseData);
-                }
-            }
-            @Override
-            public void onFailure(Call call, IOException e) {
-                // 여기에 요청이 실패했을 때 실행될 코드를 작성하세요.
-                Log.d(TAG,"** 오류남 **");
-            }
-        });
-        Toast.makeText(this, "등록되었습니다", Toast.LENGTH_SHORT).show();
+    // 카카오맵 전환
+    public void setKakaoMapFragment(int viewId){
+        kakaoMapFragment = new KakaoMapFragment();
+        getSupportFragmentManager().beginTransaction()
+                .replace(viewId, kakaoMapFragment)
+                .commit();
     }
 
+
+    public void initEnvironmentInfoFr(){
+        setKakaoMapFragment(R.id.environment_map_layout);
+        RegistEnvironmentInfoViewModel registEnvironmentInfoVM=new ViewModelProvider(this).get(RegistEnvironmentInfoViewModel.class);
+        registEnvironmentInfoVM.setCallback(this);
+        registEnvironmentInfoVM.idHex.set(idHex);
+    }
+
+
+    public void initStatusInfoFr(){
+        setKakaoMapFragment(R.id.treeStatus_map_layout);
+        RegistTreeStatusInfoViewModel registTreeStatusInfoVM=new ViewModelProvider(this).get(RegistTreeStatusInfoViewModel.class);
+        registTreeStatusInfoVM.setCallback(this);
+        registTreeStatusInfoVM.idHex.set(idHex);
+    }
+
+
+    public void initSpecificLocationFr(){
+        setKakaoMapFragment(R.id.specificLocation_map_layout);
+        registTreeSpecificLocationInfoVM.setCallback(this);
+        registTreeSpecificLocationInfoVM.idHex.set(idHex);
+    }
 
 
     // 디자인 요소에 세팅하기

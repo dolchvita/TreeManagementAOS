@@ -105,6 +105,8 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/specificLocation_map_layout"
+            android:padding="10dp"
+
             app:layout_constraintVertical_weight="3">
 
             <androidx.constraintlayout.widget.ConstraintLayout
