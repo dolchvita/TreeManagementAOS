@@ -6,8 +6,8 @@
 
     <data>
         <variable
-            name="getTreeInfoVM"
-            type="com.snd.app.ui.read.GetTreeInfoViewModel" />
+            name="getTreeBasicInfoVM"
+            type="com.snd.app.ui.read.GetTreeBasicInfoViewModel" />
     </data>
 
 
@@ -16,33 +16,15 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <View
-            android:id="@+id/get_tree_info_header"
-            style="@style/headerStyle"
-            android:layout_marginTop="24dp"
-            android:background="@color/white"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
 
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/get_tree_info_back"
-            style="@style/image_btn"
-            android:layout_marginStart="10dp"
-            app:layout_constraintBottom_toBottomOf="@id/get_tree_info_header"
-            app:layout_constraintStart_toStartOf="parent"
-            android:onClick="@{()->getTreeInfoVM.setBack()}"
-            app:layout_constraintTop_toTopOf="@id/get_tree_info_header"
-            app:srcCompat="@drawable/ic_back_24" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/treeInfo_layout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        layout_constraintHeight_default="percent"
+        app:layout_constraintHeight_percent="0.6"
+        app:layout_constraintBottom_toTopOf="@id/readTreeBasic_map_layout">
 
-        <androidx.appcompat.widget.AppCompatTextView
-            style="@style/headerTextStyle"
-            android:text="상세 정보 조회"
-            app:layout_constraintBottom_toBottomOf="@id/get_tree_info_header"
-            app:layout_constraintEnd_toEndOf="@id/get_tree_info_header"
-            app:layout_constraintStart_toStartOf="@id/get_tree_info_header"
-            app:layout_constraintTop_toTopOf="@id/get_tree_info_header"/>
 
         <androidx.core.widget.NestedScrollView
             android:id="@+id/get_tree_info_scroll_view1"
@@ -53,16 +35,15 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/get_tree_info_header"
-            app:layout_constraintVertical_weight="3">
+            app:layout_constraintVertical_weight="3"
+            tools:ignore="MissingConstraints">
 
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/get_tree_info_info_layout"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:elevation="10dp"
-                app:layout_constraintTop_toBottomOf="@id/get_tree_info_header">
+                app:layout_constraintTop_toBottomOf="@id/get_tree_info_layout">
 
 
                 <androidx.recyclerview.widget.RecyclerView
@@ -88,9 +69,9 @@
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/get_tree_info_info_nfc"
                     style="@style/tree_info_edt"
+                    android:text="@{getTreeBasicInfoVM.NFC}"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@{getTreeInfoVM.NFC}"
                     app:layout_constraintStart_toStartOf="@id/get_tree_info_info_nfc_tv"
                     app:layout_constraintTop_toBottomOf="@+id/get_tree_info_info_nfc_tv" />
 
@@ -102,6 +83,7 @@
                     app:layout_constraintEnd_toStartOf="@id/tr_height_label"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/get_tree_info_info_nfc" />
+
                 <androidx.appcompat.widget.AppCompatEditText
                     android:id="@+id/scarlet_diam"
                     style="@style/tree_info_edt"
@@ -109,12 +91,11 @@
                     android:longClickable="false"
                     android:nextFocusDown="@id/tr_height"
                     android:paddingEnd="50dp"
-                    android:text="@{getTreeInfoVM.species}"
+                    android:text="@{getTreeBasicInfoVM.species}"
                     android:hint="산사나무"
                     app:layout_constraintEnd_toEndOf="@id/scarlet_diam_tv"
                     app:layout_constraintStart_toStartOf="@id/scarlet_diam_tv"
-                    app:layout_constraintTop_toBottomOf="@id/scarlet_diam_tv"
-                    />
+                    app:layout_constraintTop_toBottomOf="@id/scarlet_diam_tv" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tr_height_label"
@@ -131,8 +112,8 @@
                     android:longClickable="false"
                     android:nextFocusDown="@id/tr_height"
                     android:paddingEnd="50dp"
-                    android:text="@{getTreeInfoVM.submitter}"
-                   android:hint="yeseo0502"
+                    android:text="@{getTreeBasicInfoVM.submitter}"
+                    android:hint="yeseo0502"
                     app:layout_constraintEnd_toEndOf="@id/tr_height_label"
                     app:layout_constraintStart_toStartOf="@id/tr_height_label"
                     app:layout_constraintTop_toBottomOf="@id/tr_height_label"
@@ -146,6 +127,7 @@
                     app:layout_constraintEnd_toStartOf="@id/crw_diam_tv"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/scarlet_diam" />
+
                 <androidx.appcompat.widget.AppCompatEditText
                     android:id="@+id/crw_height"
                     style="@style/tree_info_edt"
@@ -153,8 +135,8 @@
                     android:longClickable="false"
                     android:nextFocusDown="@id/crw_diam"
                     android:paddingEnd="50dp"
-                    android:text="@{getTreeInfoVM.vendor}"
                     android:hint="snd"
+                    android:text="@{getTreeBasicInfoVM.vendor}"
                     app:layout_constraintEnd_toEndOf="@id/crw_height_label"
                     app:layout_constraintStart_toStartOf="@id/crw_height_label"
                     app:layout_constraintTop_toBottomOf="@id/crw_height_label"
@@ -197,7 +179,7 @@
                     android:inputType="text"
                     android:nextFocusDown="@id/tr_state"
                     android:paddingEnd="50dp"
-                    android:text="@{getTreeInfoVM.latitude}"
+                    android:text="@{getTreeBasicInfoVM.latitude}"
                     app:layout_constraintEnd_toEndOf="@id/pest_dmg_state_tv"
                     app:layout_constraintStart_toStartOf="@id/pest_dmg_state_tv"
                     app:layout_constraintTop_toBottomOf="@id/pest_dmg_state_tv"
@@ -217,15 +199,95 @@
                     style="@style/tree_info_edt"
                     android:inputType="text"
                     android:paddingEnd="50dp"
-                    android:text="@{getTreeInfoVM.longitude}"
+                    android:text="@{getTreeBasicInfoVM.longitude}"
                     app:layout_constraintEnd_toEndOf="@id/tr_state_tv"
                     app:layout_constraintStart_toStartOf="@id/tr_state_tv"
-                    app:layout_constraintTop_toBottomOf="@id/tr_state_tv"
-                    />
+                    app:layout_constraintTop_toBottomOf="@id/tr_state_tv" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.core.widget.NestedScrollView>
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+
+        <!--카카오맵-->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/readTreeBasic_map_layout"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="7dp"
+            app:layout_constraintHeight_default="percent"
+            app:layout_constraintHeight_percent="0.5"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/treeInfo_layout">
+
+            <RelativeLayout
+                android:id="@+id/readTreeBasic_kakao_map"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:background="#9C9C9C"
+                android:gravity="center"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/readTreeBasic_address"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@color/mustard_yellow"
+                android:gravity="center"
+                android:textColor="@color/white"
+                app:layout_constraintEnd_toEndOf="@id/readTreeBasic_kakao_map"
+                app:layout_constraintStart_toStartOf="@id/readTreeBasic_kakao_map"
+                app:layout_constraintTop_toTopOf="@id/readTreeBasic_kakao_map"
+                tools:text="서울시 송파구 오금동" />
+
+            <com.google.android.material.button.MaterialButtonToggleGroup
+                android:id="@+id/readTreeBasic_toggle_group"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                app:checkedButton="@id/normal"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/readTreeBasic_address"
+                app:selectionRequired="true"
+                app:singleSelection="true">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/readTreeBasic_normal"
+                    style="@style/toggleStyle"
+                    android:layout_width="70dp"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@drawable/selector_toggle"
+                    android:text="일반"
+                    android:textColor="@drawable/selector_toggle_text"
+                    app:autoSizeMaxTextSize="14dp"
+                    app:autoSizeMinTextSize="10dp"
+                    app:autoSizeStepGranularity="2sp"
+                    app:autoSizeTextType="uniform"
+                    app:strokeColor="@color/cocoa_brown_70" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/readTreeBasic_satellite"
+                    style="@style/toggleStyle"
+                    android:layout_width="70dp"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@drawable/selector_toggle"
+                    android:text="위성"
+                    android:textColor="@drawable/selector_toggle_text"
+                    app:autoSizeMaxTextSize="14dp"
+                    app:autoSizeMinTextSize="8dp"
+                    app:autoSizeStepGranularity="2sp"
+                    app:autoSizeTextType="uniform"
+                    app:strokeColor="@color/cocoa_brown_70"
+                    tools:checkable="false" />
+            </com.google.android.material.button.MaterialButtonToggleGroup>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        <!--./카카오맵-->
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

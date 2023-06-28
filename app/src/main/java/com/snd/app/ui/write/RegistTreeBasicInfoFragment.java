@@ -67,9 +67,14 @@ public class RegistTreeBasicInfoFragment extends TMFragment {
                 showAlertDialog();
             }
         });
-
         return treeBasicInfoActBinding.getRoot();
     }
+
+
+    public void test(){
+        getView().findViewById(R.id.loading_layout_box).setVisibility(View.GONE);
+    }
+
 
 
     private void showAlertDialog() {

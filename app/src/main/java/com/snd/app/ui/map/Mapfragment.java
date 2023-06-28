@@ -138,6 +138,7 @@ public class Mapfragment extends Fragment implements MapView.POIItemEventListene
         ArrayList<MapPOIItem> markerArr = new ArrayList<MapPOIItem>();
         for (TreeTotalDTO data : treeInfoList) {
             MapPOIItem marker = new MapPOIItem();
+            Log.d(TAG, "** 맵프레그먼트 - 받은 리스트의 위도 **"+data.getLatitude());
             marker.setMapPoint(MapPoint.mapPointWithGeoCoord(data.getLatitude(), data.getLongitude()));
             marker.setItemName((data.getNFC()));
             markerArr.add(marker);

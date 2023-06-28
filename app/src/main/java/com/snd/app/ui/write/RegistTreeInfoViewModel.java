@@ -12,6 +12,9 @@ public class RegistTreeInfoViewModel extends TMViewModel {
     private MutableLiveData _back=new MutableLiveData<>();
     public LiveData back=getBack();
 
+    public  ObservableField<String> registTitle=new ObservableField<>();
+
+
     // 등록 버튼
     public void regist(){
         myCallback.onCustomCallback();
@@ -29,5 +32,6 @@ public class RegistTreeInfoViewModel extends TMViewModel {
     public LiveData getBack(){
         return _back;
     }
+
 
 }

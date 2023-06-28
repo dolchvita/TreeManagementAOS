@@ -1,8 +1,6 @@
 package com.snd.app.ui.tree;
 
-import android.app.AlertDialog;
 import android.app.PendingIntent;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
@@ -64,10 +62,8 @@ public class TreeActivity extends TMActivity implements NfcAdapter.ReaderCallbac
         Log.d(TAG, "** NFC 아이디 가공 ** "+idHex);
 
         // 화면 전환하기
-        // 이 근거는 뭘까..
-        switchActivity("RegistTreeInfoActivity");
+        switchActivity(getIntent().getStringExtra("actName"));
         Log.d(TAG, "** actName 확인dddd ** "+getIntent().getStringExtra("actName"));
-
 
         runOnUiThread(new Runnable() {
             @Override

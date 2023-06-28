@@ -1,16 +1,18 @@
 package com.snd.app.ui.read;
 
-import androidx.annotation.NonNull;
-import androidx.databinding.DataBindingUtil;
-import androidx.lifecycle.Observer;
-
 import android.os.Bundle;
 import android.util.Log;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.snd.app.R;
 import com.snd.app.common.TMActivity;
-import com.snd.app.databinding.GetTreeInfoActBinding;
+import com.snd.app.data.KakaoMapFragment;
+import com.snd.app.databinding.ReadActBinding;
 import com.snd.app.domain.tree.TreeBasicInfoDTO;
 import com.snd.app.domain.tree.TreeLocationInfoDTO;
 
@@ -26,30 +28,32 @@ import okhttp3.Request;
 
 public class GetTreeInfoActivity extends TMActivity {
     private String idHex;
-    TreeBasicInfoDTO treeBasicInfoDTO;
-    GetTreeInfoViewModel getTreeInfoVM;
-    GetTreeInfoActBinding getTreeInfoActBinding;
+    private KakaoMapFragment kakaoMapFragment;
+    GetTreeBasicInfoViewModel getTreeBasicInfoVM;
+
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.get_tree_info_act);
         idHex=getIntent().getStringExtra("IDHEX");
-        getTreeInfoActBinding= DataBindingUtil.setContentView(this, R.layout.get_tree_info_act);
-        getTreeInfoActBinding.setLifecycleOwner(this);
-        getTreeInfoVM=new GetTreeInfoViewModel();
-        getTreeInfoActBinding.setGetTreeInfoVM(getTreeInfoVM);
+        ReadActBinding readActBinding= DataBindingUtil.setContentView(this, R.layout.read_act);
+        readActBinding.setLifecycleOwner(this);
+        GetTreeInfoViewModel getTreeInfoVM=new GetTreeInfoViewModel();
+        readActBinding.setGetTreeInfoVM(getTreeInfoVM);
 
+        getTreeBasicInfoVM=new ViewModelProvider(this).get(GetTreeBasicInfoViewModel.class);
+
+        getSupportFragmentManager().beginTransaction().replace(R.id.read_content, new GetTreeBasicInfoFragment()).commit();
+        setKakaoMapFragment(R.id.readTreeBasic_map_layout);
         getTreeInfoByNFCtagId();
+    }
 
-        // 사진 이미지 담기
 
-        getTreeInfoVM.back.observe(this, new Observer() {
-            @Override
-            public void onChanged(Object o) {
-                finish();
-            }
-        });
+    public void setKakaoMapFragment(int viewId){
+        kakaoMapFragment = new KakaoMapFragment();
+        getSupportFragmentManager().beginTransaction()
+                .replace(viewId, kakaoMapFragment)
+                .commit();
     }
 
 
@@ -105,13 +109,13 @@ public class GetTreeInfoActivity extends TMActivity {
                 Log.d(TAG,"** 위치 등록 오류남 **");
             }
         });
-
     }
+
 
 
     public void setTreeBasicInfoDTO() throws JsonProcessingException {
         // 기본 정보 세팅하기
-        treeBasicInfoDTO=new TreeBasicInfoDTO();
+        TreeBasicInfoDTO treeBasicInfoDTO=new TreeBasicInfoDTO();
         treeBasicInfoDTO.setNFC(idHex);
         treeBasicInfoDTO.setSpecies(sharedPreferences.getString("species",null));
         treeBasicInfoDTO.setSubmitter(sharedPreferences.getString("id",null));
@@ -126,8 +130,10 @@ public class GetTreeInfoActivity extends TMActivity {
         treeLocationInfoDTO.setLatitude(latitude);
         treeLocationInfoDTO.setLongitude(longitude);
 
+        Log.d(TAG, "** 확인요 ** "+sharedPreferences.getString("species", null));
+        Log.d(TAG, "** 확인2 ** "+sharedPreferences.getString("latitude", null));
         // 매핑된 DTO 넘겨줌
-        getTreeInfoVM.setTextViewModel(treeBasicInfoDTO, treeLocationInfoDTO);
+        getTreeBasicInfoVM.setTextViewModel(treeBasicInfoDTO, treeLocationInfoDTO);
     }
 
 

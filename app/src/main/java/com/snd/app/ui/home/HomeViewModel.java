@@ -56,7 +56,7 @@ public class HomeViewModel extends ViewModel {
         // 액티비티 변경을 위한 Intent 생성
         Intent intent = new Intent(view.getContext(), TreeActivity.class);
         // 액티비티 변경 로직
-        intent.putExtra("actName", "RegistTreeBasicInfoActivity");
+        intent.putExtra("actName", "RegistTreeInfoActivity");
         view.getContext().startActivity(intent);
     }
     public void onCheckViewClicked(View view) {

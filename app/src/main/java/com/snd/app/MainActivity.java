@@ -39,7 +39,6 @@ public class MainActivity extends TMActivity {
     private HomeFragment homeFragment;
     private Mapfragment mapFragment;
 
-    MapViewModel mapVM;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,15 +108,17 @@ public class MainActivity extends TMActivity {
 
                         for(int i=0; i<data.length(); i++){
                             JSONObject treeInfo=data.getJSONObject(i);
+
                             TreeTotalDTO dto = new TreeTotalDTO();
                             dto.setNFC(treeInfo.getString("nfc"));
 
-                            String lat=treeInfo.getString("latitude");
-                            String log=treeInfo.getString("longitude");
-                            if(lat!=null && log!=null){
-                                dto.setLatitude(Double.parseDouble(treeInfo.getString("latitude")));
-                                dto.setLongitude(Double.parseDouble(treeInfo.getString("longitude")));
-                            }
+                            //String lat=treeInfo.getString("latitude");
+                            //String log=treeInfo.getString("longitude");
+                            // 어차피 위도 경도 필수 입력 사항이기 때문에 null 체크 안함
+
+                            dto.setLatitude(Double.parseDouble(treeInfo.getString("latitude")));
+                            dto.setLongitude(Double.parseDouble(treeInfo.getString("longitude")));
+
                             dto.setSpecies(treeInfo.getString("species"));
                             treeInfoList.add(dto);
                         }
