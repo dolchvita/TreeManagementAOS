@@ -9,6 +9,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.snd.app.common.TMViewModel;
 import com.snd.app.domain.tree.TreeBasicInfoDTO;
+import com.snd.app.domain.tree.TreeLocationInfoDTO;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -101,14 +102,6 @@ public class RegistTreeBasicInfoViewModel extends TMViewModel {
         submitter.set(treeBasicInfoDTO.getSubmitter());
         vendor.set(treeBasicInfoDTO.getVendor());
     }
-
-
-    public void regist(){
-        // xml에서 바로 호출
-        // RegistTreeBasicInfoActivity 메서드 호출
-        myCallback.onCustomCallback();
-    }
-
 
     // 콜백 객체를 받아서 액티비티로부터 호출 가능하게 함
     public void setCallback(MyCallback myCallback) {

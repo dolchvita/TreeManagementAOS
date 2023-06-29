@@ -278,9 +278,8 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
             }
         });
         Toast.makeText(this, "등록되었습니다", Toast.LENGTH_SHORT).show();
-        Log.d(TAG, "** 메서드에서 호출될 불리언 값 3 ** "+insert);
-
     }
+
 
 
     // PatchMethod (수목 위치 상세 정보)
@@ -367,9 +366,8 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
     }
 
 
-    /* -----------------------------------------------
-            매핑 메서드들
-         ---------------------------------------------- */
+    /* ---------------------------- CREATE METHODS ---------------------------- */
+
     // 1-1) 수목 기본정보 등록
     public void registerTreeBasicInfo(){
         JSONObject treeBasicData=new JSONObject();
@@ -510,9 +508,8 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
 
 
 
-    /* --------------------------------------------------------
-            프레그먼트 설정 관련
-        -------------------------------------------------------- */
+    /* ------------------------------ Fragment 관련 ------------------------------ */
+
     public void switchFragment(Fragment frName){
         Log.d(TAG, "**프레그먼트 이름 확인 ** "+frName);
         FragmentTransaction transaction=getSupportFragmentManager().beginTransaction();
@@ -585,9 +582,8 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
 
 
 
-    /*--------------------------------------
-            카메라 관련 로직 start
-       -------------------------------------*/
+    /* ------------------------------ Camera ------------------------------ */
+
     public void onCamera (){
         treeBasicInfoVM.camera.observe(this, new Observer() {
             @Override

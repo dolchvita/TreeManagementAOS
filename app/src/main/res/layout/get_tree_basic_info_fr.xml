@@ -87,7 +87,6 @@
                 <androidx.appcompat.widget.AppCompatEditText
                     android:id="@+id/scarlet_diam"
                     style="@style/tree_info_edt"
-                    android:inputType="numberDecimal"
                     android:longClickable="false"
                     android:nextFocusDown="@id/tr_height"
                     android:paddingEnd="50dp"
@@ -159,6 +158,7 @@
                     android:nextFocusDown="@id/pest_dmg_state"
                     android:paddingEnd="50dp"
                     android:hint="2023.06.02"
+                    android:text="@{getTreeBasicInfoVM.basicInserted}"
                     app:layout_constraintEnd_toEndOf="@id/crw_diam_tv"
                     app:layout_constraintStart_toStartOf="@id/crw_diam_tv"
                     app:layout_constraintTop_toBottomOf="@id/crw_diam_tv"
