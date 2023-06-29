@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="read_act_menu">
+        <item>메뉴</item>
+        <item>수목 기본 정보</item>
+        <item>위치 상세 정보</item>
+        <item>수목 상태 정보</item>
+        <item>수목 환경 정보</item>
+    </string-array>
+</resources>

@@ -1,11 +1,18 @@
 package com.snd.app.ui.read;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -26,10 +33,15 @@ import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 
-public class GetTreeInfoActivity extends TMActivity {
+public class GetTreeInfoActivity extends TMActivity implements AdapterView.OnItemSelectedListener{
     private String idHex;
     private KakaoMapFragment kakaoMapFragment;
     GetTreeBasicInfoViewModel getTreeBasicInfoVM;
+    // 프레그먼트들
+    GetTreeBasicInfoFragment getTreeBasicInfoFr;
+    GetTreeSpecificLocationFragment getTreeSpecificLocationFr;
+    GetTreeStatusFragment getTreeStatusFr;
+    GetEnvironmentFragment getEnvironmentFr;
 
 
     @Override
@@ -40,12 +52,26 @@ public class GetTreeInfoActivity extends TMActivity {
         readActBinding.setLifecycleOwner(this);
         GetTreeInfoViewModel getTreeInfoVM=new GetTreeInfoViewModel();
         readActBinding.setGetTreeInfoVM(getTreeInfoVM);
-
         getTreeBasicInfoVM=new ViewModelProvider(this).get(GetTreeBasicInfoViewModel.class);
 
-        getSupportFragmentManager().beginTransaction().replace(R.id.read_content, new GetTreeBasicInfoFragment()).commit();
+        getTreeBasicInfoFr=new GetTreeBasicInfoFragment();
+        getTreeSpecificLocationFr=new GetTreeSpecificLocationFragment();
+        getTreeStatusFr=new GetTreeStatusFragment();
+        getEnvironmentFr=new GetEnvironmentFragment();
+
+        getSupportFragmentManager().beginTransaction().replace(R.id.read_content, getTreeBasicInfoFr).commit();
         setKakaoMapFragment(R.id.readTreeBasic_map_layout);
         getTreeInfoByNFCtagId();
+
+
+        // 스피너 설정
+        Spinner spinner = findViewById(R.id.read_sipnner);
+        //String[] menuItems = getResources().getStringArray(R.array.read_act_menu);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.read_act_menu, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+        spinner.setOnItemSelectedListener(this);
+
     }
 
 
@@ -112,6 +138,16 @@ public class GetTreeInfoActivity extends TMActivity {
     }
 
 
+    /* --------------------------------------------------------
+        프레그먼트 설정 관련
+    -------------------------------------------------------- */
+    public void switchFragment(Fragment frName){
+        FragmentTransaction transaction=getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.read_content, frName);
+        transaction.commit();
+    }
+
+
 
     public void setTreeBasicInfoDTO() throws JsonProcessingException {
         // 기본 정보 세팅하기
@@ -134,6 +170,33 @@ public class GetTreeInfoActivity extends TMActivity {
         Log.d(TAG, "** 확인2 ** "+sharedPreferences.getString("latitude", null));
         // 매핑된 DTO 넘겨줌
         getTreeBasicInfoVM.setTextViewModel(treeBasicInfoDTO, treeLocationInfoDTO);
+    }
+
+
+
+    /* --------------------------------------------------------
+            스피너 설정 관련
+        -------------------------------------------------------- */
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        Log.d(TAG, "** 선택된 메뉴 값 ** "+position);
+
+       if (position==1){
+           switchFragment(getTreeBasicInfoFr);
+       } else if (position == 2) {
+           switchFragment(getTreeSpecificLocationFr);
+       } else if (position == 3) {
+           switchFragment(getTreeStatusFr);
+       } else if (position == 4) {
+           switchFragment(getEnvironmentFr);
+
+       }
+    }
+
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+        Log.d(TAG, "** 언제 호출되나요 ** ");
     }
 
 

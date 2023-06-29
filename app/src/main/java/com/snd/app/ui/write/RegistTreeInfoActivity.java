@@ -70,8 +70,6 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
     private final int STATUS=3;
     private final int ENVIRONMENT=4;
 
-    // 이미지 권한
-    private static final int REQUEST_PERMISSION = 1;
     // 이미지 리스트
     private File currentPhotoFile;
     List<String> photoPaths;
@@ -86,8 +84,10 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
     // 카카오 맵
     private KakaoMapFragment kakaoMapFragment;
     // 팝업버튼 확인
-    int num;
-    int result;
+    int num=0;
+
+    // 불리언
+    Boolean insert;
 
     // 수목 위치상세 정보
     RegistTreeSpecificLocationInfoFragment registTreeSpecificLocationInfoFr;
@@ -229,7 +229,6 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
     // PostMethod (공통)
     public void registerTreeInfo(JSONObject postData, String postUrl){
         OkHttpClient client = new OkHttpClient();
-        Log.d(TAG,"** 보낼 데이터 모습 **"+postData);
 
         RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), postData.toString());
         String url = sndUrl+postUrl;
@@ -239,7 +238,6 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
                 .addHeader("Authorization", sharedPreferences.getString("Authorization", null))
                 .post(requestBody)
                 .build();
-        final boolean[] runCalled = {false}; // 플래그 변수
 
         client.newCall(request).enqueue(new Callback() {
             @Override
@@ -248,11 +246,12 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
                     String responseData = response.body().string();
                     Log.d(TAG,"** 성공 / 응답 **"+responseData);
 
+
                     RegistTreeInfoActivity.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-
                             if (response.isSuccessful()) {
+
                                 if(num==BASIC){
                                     AlertDialog("수목 기본 정보가 등록되었습니다", "이어서 위치 상세 정보를 등록하시겠습니까?"); // UI 작업 수행
 
@@ -263,9 +262,9 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
                                     AlertDialog("수목 환경 정보가 등록되었습니다", ""); // UI 작업 수행
                                 }
                             }
-
                         }
                     });
+
 
                 }else{
                     String responseData = response.body().string();
@@ -279,6 +278,8 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
             }
         });
         Toast.makeText(this, "등록되었습니다", Toast.LENGTH_SHORT).show();
+        Log.d(TAG, "** 메서드에서 호출될 불리언 값 3 ** "+insert);
+
     }
 
 
@@ -330,9 +331,12 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
         builder.setTitle(title);
         builder.setMessage(message);
         builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 // 프레그먼트 변경 예정
+                Log.d(TAG, "** 니들이 뭘 하겠냐 ㅉㅉ **"+num);
+
                 if(num ==BASIC) {
                     switchFragment(registTreeSpecificLocationInfoFr);
                     // 위치 상세정보 출력
@@ -378,6 +382,7 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
+        insert=false;
         registerTreeInfo(treeBasicData, "/app/tree/registerBasicInfo");
     }
 
@@ -397,6 +402,7 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
+        insert=true;
         registerTreeInfo(treeLocationData, "/app/tree/registerLocationInfo");
     }
 
@@ -515,6 +521,7 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
     }
 
 
+
     // 카카오맵 전환
     public void setKakaoMapFragment(int viewId){
         kakaoMapFragment = new KakaoMapFragment();
@@ -561,7 +568,6 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
     public void setTreeBasicInfoDTO() throws JsonProcessingException {
         treeBasicInfoDTO=new TreeBasicInfoDTO();
         treeBasicInfoDTO.setNFC(idHex);
-        //treeBasicInfoDTO.setSpecies(sharedPreferences.getString("species",null));
         treeBasicInfoDTO.setSubmitter(sharedPreferences.getString("id",null));
         treeBasicInfoDTO.setVendor(sharedPreferences.getString("company",null));
         Log.d(TAG, "** 디티오 확인 ** "+treeBasicInfoDTO.getSubmitter());

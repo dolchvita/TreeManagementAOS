@@ -1,4 +1,4 @@
-package com.snd.app.ui.write;
+package com.snd.app.ui.read;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -13,8 +13,9 @@ import androidx.lifecycle.ViewModelProvider;
 import com.snd.app.R;
 import com.snd.app.common.TMFragment;
 import com.snd.app.databinding.RegistEnvironmentInfoFrBinding;
+import com.snd.app.ui.write.RegistEnvironmentInfoViewModel;
 
-public class RegistEnvironmentInfoFragment extends TMFragment {
+public class GetEnvironmentFragment extends TMFragment {
 
     @Nullable
     @Override
@@ -25,6 +26,5 @@ public class RegistEnvironmentInfoFragment extends TMFragment {
         registEnvironmentInfoFrBinding.setEnvironmentVM(registEnvironmentInfoVM);
         return registEnvironmentInfoFrBinding.getRoot();
     }
-
 
 }

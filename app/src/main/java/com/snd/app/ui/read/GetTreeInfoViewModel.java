@@ -19,7 +19,6 @@ public class GetTreeInfoViewModel extends TMViewModel {
 
 
 
-
     public void setBack(){
         _back.setValue("click");
     }

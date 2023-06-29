@@ -26,17 +26,14 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/modify"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:gravity="center"
-            android:text="메뉴"
-            android:textSize="14dp"
+
+        <Spinner
+            android:id="@+id/read_sipnner"
+            style="@style/tree_info_edt"
             android:paddingStart="20dp"
             android:paddingEnd="20dp"
-            android:textColor="@color/cocoa_brown"
-            android:textStyle="bold"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
             app:layout_constraintBottom_toBottomOf="@id/read_header"
             app:layout_constraintEnd_toEndOf="@id/read_header"
             app:layout_constraintTop_toTopOf="@id/read_header" />
