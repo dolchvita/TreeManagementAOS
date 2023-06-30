@@ -12,6 +12,7 @@ import java.security.NoSuchAlgorithmException;
 
 // 카카오맵 API 등록시 필요한 키해시값 추출
 public class KeyHash {
+    protected String TAG = this.getClass().getName();
 
     public static String getKeyHash(Context context) {
         try {
@@ -29,5 +30,7 @@ public class KeyHash {
         }
         return null;
     }
+
+
 
 }

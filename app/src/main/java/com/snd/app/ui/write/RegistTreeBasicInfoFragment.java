@@ -71,12 +71,6 @@ public class RegistTreeBasicInfoFragment extends TMFragment {
     }
 
 
-    public void test(){
-        getView().findViewById(R.id.loading_layout_box).setVisibility(View.GONE);
-    }
-
-
-
     private void showAlertDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle("");

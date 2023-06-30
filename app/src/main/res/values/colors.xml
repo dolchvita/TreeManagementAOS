@@ -11,7 +11,7 @@
 
     <color name="transparent">#00FFFFFF</color>
     <color name="kelly_green">#52B10D</color>
-    <color name="cocoa_brown" tools:override="true">#321800</color>
+    <color name="cocoa_brown" tools:override="true">#191970</color>
     <color name="cocoa_brown_70" tools:override="true">#B2321800</color>
     <color name="cocoa_brown_30" tools:override="true">#4D321800</color>
     <color name="cocoa_brown_15" tools:override="true">#25321800</color>

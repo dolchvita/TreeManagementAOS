@@ -30,6 +30,7 @@
             android:id="@+id/write_back"
             style="@style/image_btn"
             android:layout_marginStart="10dp"
+            android:onClick="@{()->treeInfoVM.setBack()}"
             app:layout_constraintBottom_toBottomOf="@id/write_header"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@id/write_header"
@@ -73,6 +74,7 @@
                 android:layout_marginEnd="4dp"
                 android:layout_weight="1"
                 android:text="취 소"
+                android:onClick="@{()->treeInfoVM.setBack()}"
                 app:layout_constraintEnd_toStartOf="@id/write_cancel"
                 app:layout_constraintStart_toStartOf="parent" />
 

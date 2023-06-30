@@ -158,6 +158,7 @@
                     android:longClickable="false"
                     android:nextFocusDown="@id/tr_height"
                     android:paddingEnd="50dp"
+                    android:hint="0"
                     app:layout_constraintEnd_toEndOf="@id/grd_fr_width_tv"
                     app:layout_constraintStart_toStartOf="@id/grd_fr_width_tv"
                     app:layout_constraintTop_toBottomOf="@id/grd_fr_width_tv" />
@@ -175,7 +176,7 @@
                     android:id="@+id/grd_fr_height"
                     style="@style/tree_info_edt"
                     android:inputType="numberDecimal"
-
+                    android:hint="0"
                     app:layout_constraintEnd_toEndOf="@id/grd_fr_height_label"
                     app:layout_constraintStart_toStartOf="@id/grd_fr_height_label"
                     app:layout_constraintTop_toBottomOf="@id/grd_fr_height_label" />
@@ -193,6 +194,7 @@
                 <androidx.appcompat.widget.AppCompatEditText
                     android:id="@+id/environment_material"
                     style="@style/tree_info_edt"
+                    android:hint="0"
                     app:layout_constraintEnd_toEndOf="@id/environment_material_tv"
                     app:layout_constraintStart_toStartOf="@id/environment_material_tv"
                     app:layout_constraintTop_toBottomOf="@id/environment_material_tv" />
@@ -220,6 +222,7 @@
                         android:id="@+id/boundary_stone"
                         style="@style/tree_info_edt"
                         android:layout_width="0dp"
+                        android:hint="0"
                         android:inputType="numberDecimal"
                         android:layout_height="wrap_content"
                         app:layout_constraintEnd_toEndOf="@id/boundary_stone_tv"
@@ -241,7 +244,7 @@
                         style="@style/tree_info_edt"
                         android:layout_width="0dp"
                         android:inputType="numberDecimal"
-
+                        android:hint="0"
                         android:layout_height="wrap_content"
                         app:layout_constraintEnd_toEndOf="@id/road_width_tv"
                         app:layout_constraintStart_toStartOf="@id/road_width_tv"
@@ -262,7 +265,7 @@
                         style="@style/tree_info_edt"
                         android:layout_width="0dp"
                         android:inputType="numberDecimal"
-
+                        android:hint="0"
                         android:layout_height="wrap_content"
                         app:layout_constraintEnd_toEndOf="@id/sidewalk_width_label"
                         app:layout_constraintStart_toStartOf="@id/sidewalk_width_label"
@@ -284,6 +287,7 @@
                 <androidx.appcompat.widget.AppCompatEditText
                     android:id="@+id/packing_material"
                     style="@style/tree_info_edt"
+                    android:hint="0"
                     app:layout_constraintEnd_toEndOf="@id/packing_material_tv"
                     app:layout_constraintStart_toStartOf="@id/packing_material_tv"
                     app:layout_constraintTop_toBottomOf="@id/packing_material_tv" />
@@ -300,6 +304,7 @@
                 <androidx.appcompat.widget.AppCompatEditText
                     android:id="@+id/soil_ph"
                     style="@style/tree_info_edt"
+                    android:hint="0"
                     android:inputType="numberDecimal"
                     app:layout_constraintEnd_toEndOf="@id/soil_ph_tv"
                     app:layout_constraintStart_toStartOf="@id/soil_ph_tv"
@@ -318,6 +323,7 @@
                 <androidx.appcompat.widget.AppCompatEditText
                     android:id="@+id/soil_density"
                     style="@style/tree_info_edt"
+                    android:hint="0"
                     android:inputType="numberDecimal"
                     app:layout_constraintEnd_toEndOf="@id/soil_density_tv"
                     app:layout_constraintStart_toStartOf="@id/soil_density_tv"

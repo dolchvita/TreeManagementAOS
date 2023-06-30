@@ -19,6 +19,7 @@ import com.snd.app.MainActivity;
 import com.snd.app.R;
 import com.snd.app.common.TMActivity;
 import com.snd.app.data.AppModule;
+import com.snd.app.data.KeyHash;
 import com.snd.app.domain.UserDTO;
 
 import org.json.JSONException;

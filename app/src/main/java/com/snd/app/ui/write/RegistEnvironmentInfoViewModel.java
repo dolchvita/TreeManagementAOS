@@ -24,8 +24,11 @@ public class RegistEnvironmentInfoViewModel extends TMViewModel {
 
     // 뒤로 가기
     public void setBack(){
+        // 여기서 문자를 다르게 주고 상황을 정의해보자
+
         _back.setValue("click");
     }
+
     public LiveData getBack(){
         return _back;
     }

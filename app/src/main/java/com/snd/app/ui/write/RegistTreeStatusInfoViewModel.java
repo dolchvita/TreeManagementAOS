@@ -27,7 +27,7 @@ public class RegistTreeStatusInfoViewModel extends TMViewModel {
 
     // 뒤로 가기
     public void setBack(){
-        _back.setValue("click");
+        _back.setValue("goSpecificLocation");
     }
     public LiveData getBack(){
         return _back;

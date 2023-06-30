@@ -131,7 +131,6 @@
                     app:layout_constraintStart_toStartOf="@id/specificLocation_sr_no_tv"
                     app:layout_constraintTop_toBottomOf="@id/specificLocation_sr_no_tv" />
 
-
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/specificLocation_material_tv"
                     style="@style/tree_info_label"
@@ -142,13 +141,13 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/specificLocation_sr_no" />
 
-
                 <androidx.appcompat.widget.AppCompatEditText
                     android:id="@+id/specificLocation_carriageway"
                     style="@style/tree_info_edt"
                     android:inputType="numberDecimal"
                     app:layout_constraintEnd_toEndOf="@id/specificLocation_material_tv"
                     app:layout_constraintHorizontal_bias="0.0"
+                    android:hint="0"
                     app:layout_constraintStart_toStartOf="@id/specificLocation_material_tv"
                     app:layout_constraintTop_toBottomOf="@id/specificLocation_material_tv" />
 
@@ -182,6 +181,7 @@
                     android:id="@+id/specificLocation_distance"
                     style="@style/tree_info_edt"
                     android:inputType="numberDecimal"
+                    android:hint="0"
                     app:layout_constraintEnd_toEndOf="@id/specificLocation_distance_tv"
                     app:layout_constraintStart_toStartOf="@id/specificLocation_distance_tv"
                     app:layout_constraintTop_toBottomOf="@id/specificLocation_distance_tv" />

@@ -24,7 +24,6 @@ import com.snd.app.data.LocalDateTimeAdapter;
 import com.snd.app.databinding.ReadActBinding;
 import com.snd.app.domain.tree.TreeIntegratedVO;
 import com.snd.app.ui.write.MyCallback;
-import com.snd.app.ui.write.RegistTreeInfoActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -148,7 +147,6 @@ public class GetTreeInfoActivity extends TMActivity implements AdapterView.OnIte
                 if (response.isSuccessful()){
                     String responseData = response.body().string();
                     Log.d(TAG,"** 성공 / 응답 **"+responseData);
-
 
                     GetTreeInfoActivity.this.runOnUiThread(new Runnable() {
                         @Override

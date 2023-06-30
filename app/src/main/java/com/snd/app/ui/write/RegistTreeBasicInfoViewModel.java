@@ -117,7 +117,7 @@ public class RegistTreeBasicInfoViewModel extends TMViewModel {
 
     // 카메라 실행시키는 메서드
     public void setCamera(){
-        _camera.setValue("test");
+        _camera.setValue("goStatus");
     }
 
 

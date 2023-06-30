@@ -15,7 +15,7 @@ public class RegistTreeSpecificLocationInfoViewModel extends TMViewModel {
 
 
     public void setBack(){
-        _back.setValue("click");
+        _back.setValue("goBasic");
     }
     public LiveData getBack(){
         return _back;

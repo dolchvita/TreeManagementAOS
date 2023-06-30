@@ -3,13 +3,16 @@ package com.snd.app.common;
 import android.Manifest;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.Signature;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -19,6 +22,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatEditText;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+
+import com.snd.app.data.KeyHash;
+
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 
 // 모든 액티비티가 상속받을 최상위 객체
@@ -44,6 +52,7 @@ public class TMActivity extends AppCompatActivity {
    @Override
    protected void onCreate(@Nullable Bundle savedInstanceState) {
       super.onCreate(savedInstanceState);
+
       Log.d(TAG, "** TMActivity 생성 **");
       sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
       editor = sharedPreferences.edit();
@@ -73,6 +82,7 @@ public class TMActivity extends AppCompatActivity {
       };
       requestPermissions();
    }
+
 
 
    // 1 제일 먼저 동작하는 메서드 !

@@ -135,11 +135,11 @@
                     style="@style/tree_info_edt"
                     android:completionThreshold="0"
                     android:longClickable="false"
+                    android:hint="수목명을 입력하세요"
                     android:text="@{treeBasicInfoVM.species}"
                     app:layout_constraintEnd_toEndOf="@id/tr_name_tv"
                     app:layout_constraintStart_toStartOf="@id/tr_name_tv"
-                    app:layout_constraintTop_toBottomOf="@id/tr_name_tv"
-                    tools:hint="소유주를 입력해주세요." />
+                    app:layout_constraintTop_toBottomOf="@id/tr_name_tv"/>
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tr_submitter_tv"
@@ -255,6 +255,7 @@
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
                 <!--./위치정보-->
+
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.core.widget.NestedScrollView>
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -332,46 +333,6 @@
                 app:layout_constraintTop_toTopOf="@id/treeBasic_kakao_map"
                 tools:text="서울시 송파구 오금동" />
 
-            <com.google.android.material.button.MaterialButtonToggleGroup
-                android:id="@+id/treeBasic_toggle_group"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
-                app:checkedButton="@id/normal"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/treeBasic_address"
-                app:selectionRequired="true"
-                app:singleSelection="true">
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/treeBasic_normal"
-                    style="@style/toggleStyle"
-                    android:layout_width="70dp"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="@drawable/selector_toggle"
-                    android:text="일반"
-                    android:textColor="@drawable/selector_toggle_text"
-                    app:autoSizeMaxTextSize="14dp"
-                    app:autoSizeMinTextSize="10dp"
-                    app:autoSizeStepGranularity="2sp"
-                    app:autoSizeTextType="uniform"
-                    app:strokeColor="@color/cocoa_brown_70" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/treeBasic_satellite"
-                    style="@style/toggleStyle"
-                    android:layout_width="70dp"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="@drawable/selector_toggle"
-                    android:text="위성"
-                    android:textColor="@drawable/selector_toggle_text"
-                    app:autoSizeMaxTextSize="14dp"
-                    app:autoSizeMinTextSize="8dp"
-                    app:autoSizeStepGranularity="2sp"
-                    app:autoSizeTextType="uniform"
-                    app:strokeColor="@color/cocoa_brown_70"
-                    tools:checkable="false" />
-            </com.google.android.material.button.MaterialButtonToggleGroup>
         </androidx.constraintlayout.widget.ConstraintLayout>
         <!--./카카오맵-->
 
