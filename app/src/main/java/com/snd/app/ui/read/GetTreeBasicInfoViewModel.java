@@ -3,6 +3,8 @@ package com.snd.app.ui.read;
 import android.util.Log;
 
 import androidx.databinding.ObservableField;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import com.snd.app.common.TMViewModel;
 import com.snd.app.domain.tree.TreeIntegratedVO;
@@ -21,6 +23,17 @@ public class GetTreeBasicInfoViewModel extends TMViewModel {
     public ObservableField<String> longitude=new ObservableField<>();
     public ObservableField<String> basicInserted=new ObservableField<>();
 
+    private MutableLiveData _gps_btn=new MutableLiveData();
+    public LiveData gps_btn=getGPS();
+
+
+    public void setGPS(){
+        _gps_btn.setValue("click");
+    }
+    public LiveData getGPS(){
+        return _gps_btn;
+    }
+
 
     // 데이터바인딩시 참조할 변수 매핑
     public void setTextViewModel(TreeIntegratedVO treeIntegratedVO){
@@ -31,6 +44,7 @@ public class GetTreeBasicInfoViewModel extends TMViewModel {
         latitude.set(String.valueOf(treeIntegratedVO.getLatitude()));
         longitude.set(String.valueOf(treeIntegratedVO.getLongitude()));
         basicInserted.set(getBasicInserted(treeIntegratedVO.getBasicInserted()));
+
     }
 
 

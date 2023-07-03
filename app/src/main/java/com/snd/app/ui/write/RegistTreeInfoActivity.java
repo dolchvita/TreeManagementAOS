@@ -10,6 +10,8 @@ import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
@@ -33,7 +35,6 @@ import com.snd.app.data.LocationRepository;
 import com.snd.app.data.SpinnerValueListener;
 import com.snd.app.databinding.WriteActBinding;
 import com.snd.app.domain.tree.TreeBasicInfoDTO;
-import com.snd.app.ui.tree.PhotoAdapter;
 
 import net.daum.mf.map.api.MapPOIItem;
 import net.daum.mf.map.api.MapPoint;
@@ -46,9 +47,7 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -80,7 +79,6 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
     // 이미지 리스트
     List<String> photoPaths;
     private File currentPhotoFile;
-    private PhotoAdapter photoAdapter;
     List<File> currentList=new ArrayList<>();
 
     TreeBasicInfoDTO treeBasicInfoDTO;
@@ -90,12 +88,13 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
     private KakaoMapFragment kakaoMapFragment;
 
     // 팝업버튼 확인
-    int num=0;
+    int num=1;
     // 사진 지울시 확인 버튼 감지용
     public Boolean pest=true;
     Boolean click=false;
     Boolean insert;
     Boolean sidewalk;
+
 
 
     @Override
@@ -168,7 +167,6 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
         setKakaoMapFragment(R.id.treeBasic_kakao_map);
         registTreeSpecificLocationInfoVM=new ViewModelProvider(this).get(RegistTreeSpecificLocationInfoViewModel.class);
 
-
         treeInfoVM.back.observe(this, new Observer() {
             @Override
             public void onChanged(Object o) {
@@ -205,7 +203,12 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
             Toast.makeText(getApplicationContext(), "위성 감지 중입니다. 잠시만 기다려주세요.", Toast.LENGTH_LONG).show();
 
         }else {
+            // 확인 자체에서 팝업을 띄울 필요가 있을까?
+            mappingDTO();
+
+
             //팝업 창 띄우기
+            /*
             AlertDialog.Builder builder = new AlertDialog.Builder(RegistTreeInfoActivity.this);
             builder.setTitle("입력하신 내용을 저장하시겠습니까?");
             builder.setMessage("");
@@ -218,6 +221,8 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
             });
             AlertDialog dialog = builder.create();
             dialog.show();
+
+             */
         }
     }
 
@@ -225,14 +230,13 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
 
     // 등록 호출 2
     public void mappingDTO(){
-        num++;
+        Log.d(TAG,"** mappingDTO 호출 **");
 
         if(num==BASIC){
             registerTreeBasicInfo();
             if(currentList.size()>0){
                 registerTreeImage(currentList);
             }
-            registerTreeLocationInfo();
 
         } else if (num == SPACIFICLOCATION) {
             registerSpecificLocationInfo();
@@ -250,8 +254,9 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
     // 등록 호출 3
     // PostMethod (공통)
     public void registerTreeInfo(JSONObject postData, String postUrl){
-        OkHttpClient client = new OkHttpClient();
+        Log.d(TAG,"** registerTreeInfo 호출 **");
 
+        OkHttpClient client = new OkHttpClient();
         RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), postData.toString());
         String url = sndUrl+postUrl;
         // 요청 생성
@@ -285,6 +290,12 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
                             }
                         }
                     });
+                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(RegistTreeInfoActivity.this, "등록되었습니다", Toast.LENGTH_SHORT).show();
+                        }
+                    });
 
                 }else{
                     String responseData = response.body().string();
@@ -297,12 +308,12 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
                 Log.d(TAG,"** 오류남 **");
             }
         });
-        Toast.makeText(this, "등록되었습니다", Toast.LENGTH_SHORT).show();
     }
 
 
 
     public void registerTreeInfo2(JSONObject postData, String postUrl){
+        Log.d(TAG, "** registerTreeInfo2 호출 **");
         OkHttpClient client = new OkHttpClient();
 
         RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), postData.toString());
@@ -321,9 +332,18 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
                     String responseData = response.body().string();
                     Log.d(TAG,"** 성공 / 응답 **"+responseData);
 
+                    registerTreeLocationInfo();
+
                 }else{
                     String responseData = response.body().string();
                     Log.d(TAG,"** 실패 / 응답 **"+responseData);
+
+                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(RegistTreeInfoActivity.this, "이미 등록된 칩입니다.", Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 }
             }
             @Override
@@ -331,7 +351,7 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
                 Log.d(TAG,"** 오류남 **");
             }
         });
-        Toast.makeText(this, "등록되었습니다", Toast.LENGTH_SHORT).show();
+
     }
 
 
@@ -374,7 +394,12 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
                 Log.d(TAG,"** 오류남 **");
             }
         });
-        Toast.makeText(this, "등록되었습니다", Toast.LENGTH_SHORT).show();
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(RegistTreeInfoActivity.this, "등록되었습니다", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
 
@@ -392,14 +417,19 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
                     switchFragment(registTreeSpecificLocationInfoFr);
                     // 위치 상세정보 출력
                     initSpecificLocationFr();
+                    Log.d(TAG,"** ㅎㅇ ** "+num);
+                    num=SPACIFICLOCATION;
 
                 } else if (num == SPACIFICLOCATION) {
                     switchFragment(registTreeStatusInfoFr);
                     initStatusInfoFr();
+                    num=STATUS;
+
 
                 } else if (num == STATUS) {
                     switchFragment(registEnvironmentInfoFr);
                     initEnvironmentInfoFr();
+                    num=ENVIRONMENT;
 
                 } else if (num == ENVIRONMENT) {
                     // 메인화면으로 인텐트 전환!!
@@ -423,18 +453,25 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
     // 1-1) 수목 기본정보 등록
     public void registerTreeBasicInfo(){
         JSONObject treeBasicData=new JSONObject();
-        try {
-            // 입력 데이터 보내기
-            treeBasicData.put("nfc", idHex);
-            treeBasicData.put("species", getInputText(findViewById(R.id.tr_name)));
-            treeBasicData.put("submitter", submitter);
-            treeBasicData.put("vendor", vendor);
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
-        }
-        insert=false;
-        registerTreeInfo2(treeBasicData, "/app/tree/registerBasicInfo");
+
+       if(getInputText(findViewById(R.id.tr_name))==null || getInputText(findViewById(R.id.tr_name)).equals("0")){
+           Log.d(TAG, "** RegistAct - 수목명 없음 **");
+           Toast.makeText(this, "수목명을 입력해주세요", Toast.LENGTH_SHORT).show();
+
+       }else {
+           try {
+               // 입력 데이터 보내기
+               treeBasicData.put("nfc", idHex);
+               treeBasicData.put("species", getInputText(findViewById(R.id.tr_name)));
+               treeBasicData.put("submitter", submitter);
+               treeBasicData.put("vendor", vendor);
+           } catch (JSONException e) {
+               throw new RuntimeException(e);
+           }
+           registerTreeInfo2(treeBasicData, "/app/tree/registerBasicInfo");
+       }
     }
+
 
 
     // 1-2) 수목 위치(기본)정보 등록
@@ -452,7 +489,6 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
-        insert=true;
         registerTreeInfo(treeLocationData, "/app/tree/registerLocationInfo");
     }
 
@@ -628,7 +664,9 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
     @Override
     protected void onResume() {
         super.onResume();
-        findViewById(R.id.loading_layout_box).setVisibility(View.VISIBLE);
+        if(!click){
+            findViewById(R.id.loading_layout_box).setVisibility(View.VISIBLE);
+        }
     }
 
 
@@ -728,7 +766,7 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
         Uri contentUri = Uri.fromFile(imageFile);
         mediaScanIntent.setData(contentUri);
         this.sendBroadcast(mediaScanIntent);
-        Toast.makeText(this, "Saved to Gallery", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "사진이 저장되었습니다.", Toast.LENGTH_SHORT).show();
     }
 
     // 갤러리 이미지 스캔

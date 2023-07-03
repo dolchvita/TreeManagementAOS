@@ -140,6 +140,7 @@ public class TMActivity extends AppCompatActivity {
    }
 
 
+
    // 마지막 위치 정보 가져오기
    public void getLocation() {
       Log.d(TAG,"** getLocation 함수 호출 **");

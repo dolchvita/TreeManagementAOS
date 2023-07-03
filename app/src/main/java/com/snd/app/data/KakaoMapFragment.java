@@ -22,7 +22,7 @@ import java.util.ArrayList;
 
 public class KakaoMapFragment extends Fragment implements MapView.POIItemEventListener {
     protected String TAG = this.getClass().getName();
-    private MapView mapView;
+    public MapView mapView;
 
 
     @Override

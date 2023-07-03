@@ -15,6 +15,7 @@ import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.snd.app.R;
@@ -73,7 +74,6 @@ public class GetTreeInfoActivity extends TMActivity implements AdapterView.OnIte
         setKakaoMapFragment(R.id.readTreeBasic_map_layout);
         getTreeInfoByNFCtagId();
 
-
         // 스피너 설정
         Spinner spinner = findViewById(R.id.read_sipnner);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.read_act_menu, android.R.layout.simple_spinner_item);
@@ -81,7 +81,46 @@ public class GetTreeInfoActivity extends TMActivity implements AdapterView.OnIte
         spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(this);
 
+
+        // 버튼 클릭하기
+        getTreeBasicInfoVM.gps_btn.observe(this, new Observer() {
+            @Override
+            public void onChanged(Object o) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(GetTreeInfoActivity.this);
+                builder.setTitle("위치를 변경하시겠습니까?");
+                builder.setMessage("");
+                builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //getLocation();
+
+                        // 지도에 표시하기
+                        //kakaoMapFragment.addMarkers(latitude,longitude, idHex);
+                    }
+                });
+                builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                });
+                AlertDialog dialog = builder.create();
+                dialog.show();
+            }
+        });
+
     }
+
+
+
+    public void initMap(){
+        kakaoMapFragment.mapView.removeAllPOIItems();
+
+        getLocation();
+        Double thisLatitude;
+        Double thisLon;
+
+    }
+
 
 
     @Override
@@ -153,7 +192,6 @@ public class GetTreeInfoActivity extends TMActivity implements AdapterView.OnIte
                         public void run() {
                             if (response.isSuccessful()) {
 
-
                             }
                         }
                     });
@@ -170,7 +208,6 @@ public class GetTreeInfoActivity extends TMActivity implements AdapterView.OnIte
         });
         Toast.makeText(this, "등록되었습니다", Toast.LENGTH_SHORT).show();
     }
-
 
 
     public void setKakaoMapFragment(int viewId){
@@ -213,9 +250,11 @@ public class GetTreeInfoActivity extends TMActivity implements AdapterView.OnIte
                         treeIntegratedVO.setBasicVendor(data.getString("basicVendor"));
                         treeIntegratedVO.setLatitude(Double.parseDouble(data.getString("latitude")));
                         treeIntegratedVO.setLongitude(Double.parseDouble(data.getString("longitude")));
-                        getTreeBasicInfoVM.setTextViewModel(treeIntegratedVO);
                         LocalDateTime basicInserted=deserialize(data.getString("basicInserted"));
                         treeIntegratedVO.setBasicInserted(basicInserted);
+                        getTreeBasicInfoVM.setTextViewModel(treeIntegratedVO);
+                        kakaoMapFragment.addMarkers(Double.parseDouble(data.getString("latitude")), Double.parseDouble(data.getString("longitude")), idHex);
+
 
                     } catch (JSONException e) {
                         throw new RuntimeException(e);
@@ -246,7 +285,7 @@ public class GetTreeInfoActivity extends TMActivity implements AdapterView.OnIte
 
 
 
-    /* -------------------------- 프레그먼트 설정 관련 --------------------------------- */
+    /* ----------------------------- 프레그먼트 설정 관련 ----------------------------- */
 
     public void switchFragment(Fragment frName){
         FragmentTransaction transaction=getSupportFragmentManager().beginTransaction();
@@ -256,7 +295,8 @@ public class GetTreeInfoActivity extends TMActivity implements AdapterView.OnIte
 
 
 
-    /* ------------------------------ 스피너 설정 관련 ------------------------------- */
+    /* ----------------------------- 스피너 설정 관련 ----------------------------- */
+
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         Log.d(TAG, "** 선택된 메뉴 값 ** "+position);

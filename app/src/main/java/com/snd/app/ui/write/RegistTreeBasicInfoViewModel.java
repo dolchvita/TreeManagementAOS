@@ -86,9 +86,11 @@ public class RegistTreeBasicInfoViewModel extends TMViewModel {
         }
     }
 
+
     public MutableLiveData<List<Bitmap>> getImageList() {
         return _listData;
     }
+
 
     // 데이터바인딩시 참조할 변수 매핑
     public void setTextViewModel(TreeBasicInfoDTO treeBasicInfoDTO){
@@ -98,7 +100,7 @@ public class RegistTreeBasicInfoViewModel extends TMViewModel {
         Log.d(TAG, "** 뷰모델에서 확인 ** "+treeBasicInfoDTO.getVendor());
 
         NFC.set(treeBasicInfoDTO.getNFC());
-       // species.set(treeBasicInfoDTO.getSpecies());
+        // species.set(treeBasicInfoDTO.getSpecies());
         submitter.set(treeBasicInfoDTO.getSubmitter());
         vendor.set(treeBasicInfoDTO.getVendor());
     }
@@ -108,16 +110,10 @@ public class RegistTreeBasicInfoViewModel extends TMViewModel {
         this.myCallback = myCallback;
     }
 
-    public void viewModelMethod() {
-        if (myCallback != null) {
-            myCallback.onCustomCallback();
-        }
-    }
-
 
     // 카메라 실행시키는 메서드
     public void setCamera(){
-        _camera.setValue("goStatus");
+        _camera.setValue("click");
     }
 
 
