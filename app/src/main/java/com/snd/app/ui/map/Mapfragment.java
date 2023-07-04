@@ -37,7 +37,6 @@ public class Mapfragment extends Fragment implements MapView.POIItemEventListene
     public ArrayList<TreeTotalDTO> treeInfoList=new ArrayList<>();
     TMActivity tmActivity;
 
-
     // 생성자
     public Mapfragment(TMActivity tmActivity) {
         this.tmActivity = tmActivity;
@@ -50,6 +49,7 @@ public class Mapfragment extends Fragment implements MapView.POIItemEventListene
         mapVM=new MapViewModel();
     }
 
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -58,6 +58,7 @@ public class Mapfragment extends Fragment implements MapView.POIItemEventListene
         mapFrBinding.setMapVM(mapVM);
         return mapFrBinding.getRoot();
     }
+
 
     @Override
     public void onResume() {
@@ -78,6 +79,7 @@ public class Mapfragment extends Fragment implements MapView.POIItemEventListene
             @Override
             public void onCurrentLocationUpdate(MapView mapView, MapPoint mapPoint, float v) {
                 mapView.setMapCenterPoint(mapPoint, true);
+                //mapView.setCurrentLocationTrackingMode(MapView.CurrentLocationTrackingMode.TrackingModeOff);
             }
             @Override
             public void onCurrentLocationDeviceHeadingUpdate(MapView mapView, float v) {
@@ -89,14 +91,17 @@ public class Mapfragment extends Fragment implements MapView.POIItemEventListene
             public void onCurrentLocationUpdateCancelled(MapView mapView) {
             }
         });
-
-        // 현재 위치 표시 활성화 - 트래킹 모드 !
-        mapView.setCurrentLocationTrackingMode(MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeading);
+        //mapView.setMapCenterPoint(MapPoint.mapPointWithGeoCoord(37.53737528, 127.00557633), true);
     }
 
 
     // 위성 개수 추출 및 좌표값 실시간 렌더링 
     public void getLocationRepository(){
+        // 현재 위치 표시 활성화 - 트래킹 모드 !
+        mapView.setCurrentLocationTrackingMode(MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeading);
+        Log.d(TAG, "맵뷰 렌더링 1");
+
+
         LocationRepository locationRepository=new LocationRepository(getContext());
         locationRepository.setPermissionGranted(true);
         locationRepository.startTracking();
@@ -118,6 +123,9 @@ public class Mapfragment extends Fragment implements MapView.POIItemEventListene
                     // 데이터 렌더링 하기
                     mapVM._latitude.set(""+latitude);
                     mapVM._longitude.set(""+longitude);
+
+                    Log.d(TAG, "** 현재 위치 가져올 수 있나333 ** "+latitude+longitude);
+
                 }
             }
         });
@@ -146,6 +154,7 @@ public class Mapfragment extends Fragment implements MapView.POIItemEventListene
         // 이벤트 리스너 등록
         mapView.setPOIItemEventListener(this);
         mapView.addPOIItems(markerArr.toArray(new MapPOIItem[markerArr.size()]));
+
     }
 
 

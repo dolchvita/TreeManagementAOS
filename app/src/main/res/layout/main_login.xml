@@ -6,7 +6,8 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
-        tools:ignore="HardcodedText, SpUsage">
+    android:background="@color/white"
+    tools:ignore="HardcodedText, SpUsage">
 
         <!--헤더바-->
         <View
@@ -23,6 +24,7 @@
             app:layout_constraintBottom_toBottomOf="@id/header"
             app:layout_constraintEnd_toEndOf="@id/header"
             app:layout_constraintStart_toStartOf="@id/header"
+            android:textColor="@color/cocoa_brown"
             app:layout_constraintTop_toTopOf="@id/header" />
         <!--./헤더바-->
 

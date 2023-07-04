@@ -28,6 +28,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="24dp"
                 android:textSize="20dp"
+                android:textColor="@color/cocoa_brown"
                 android:text="@{homeVM.name}"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -66,7 +67,7 @@
                     android:layout_marginTop="5dp"
                     android:text="@{homeVM.company}"
                     android:textSize="20dp"
-
+                    android:textColor="@color/cocoa_brown"
                     app:layout_constraintStart_toStartOf="@id/user_info_layout"
                     app:layout_constraintTop_toBottomOf="@id/company_label" />
 
@@ -134,6 +135,7 @@
                     android:gravity="center"
                     android:text="NFC상태"
                     android:textSize="15dp"
+                    android:textColor="@color/cocoa_brown"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/divider2"
                     app:layout_constraintStart_toStartOf="parent"
@@ -158,6 +160,7 @@
                     android:gravity="center"
                     android:text="네트워크상태"
                     android:textSize="15dp"
+                    android:textColor="@color/cocoa_brown"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/divider3"
                     app:layout_constraintStart_toEndOf="@+id/divider2"
@@ -181,6 +184,7 @@
                     android:drawablePadding="5dp"
                     android:gravity="center"
                     android:text="GPS상태"
+                    android:textColor="@color/cocoa_brown"
                     android:textSize="15dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"

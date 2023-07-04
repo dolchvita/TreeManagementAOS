@@ -12,7 +12,8 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/white">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/treeStatus_layout"
@@ -20,7 +21,7 @@
         android:layout_height="0dp"
         layout_constraintHeight_default="percent"
         app:layout_constraintHeight_percent="0.5"
-        app:layout_constraintBottom_toTopOf="@+id/treeStatus_map_layout">
+        tools:ignore="MissingConstraints">
 
         <!--스크롤뷰-->
         <androidx.core.widget.NestedScrollView
@@ -227,6 +228,7 @@
                     style="@style/tree_info_edt"
                     android:inputType="text"
                     android:paddingEnd="50dp"
+                    android:textColor="@color/cocoa_brown"
                     app:layout_constraintEnd_toEndOf="@id/treeStatus_tr_state_tv"
                     app:layout_constraintStart_toStartOf="@id/treeStatus_tr_state_tv"
                     app:layout_constraintTop_toBottomOf="@id/treeStatus_tr_state_tv" />
@@ -236,86 +238,6 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
         <!--./스크롤뷰-->
 
-        <!--카카오맵-->
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/treeStatus_map_layout"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            app:layout_constraintHeight_default="percent"
-            app:layout_constraintHeight_percent="0.5"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/treeStatus_layout"
-            app:layout_constraintVertical_weight="2">
-
-            <RelativeLayout
-                android:id="@+id/treeStatus_kakao_map"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:background="#9C9C9C"
-                android:gravity="center"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.0" />
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/treeStatus_address"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:background="@color/mustard_yellow"
-                android:gravity="center"
-                android:textColor="@color/white"
-                app:layout_constraintEnd_toEndOf="@id/treeStatus_kakao_map"
-                app:layout_constraintStart_toStartOf="@id/treeStatus_kakao_map"
-                app:layout_constraintTop_toTopOf="@id/treeStatus_kakao_map"
-                tools:text="서울시 송파구 오금동" />
-
-            <com.google.android.material.button.MaterialButtonToggleGroup
-                android:id="@+id/treeStatus_toggle_group"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
-                app:checkedButton="@id/normal"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/treeStatus_address"
-                app:selectionRequired="true"
-                app:singleSelection="true">
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/treeStatus_normal"
-                    style="@style/toggleStyle"
-                    android:layout_width="70dp"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="@drawable/selector_toggle"
-                    android:text="일반"
-                    android:textColor="@drawable/selector_toggle_text"
-                    app:autoSizeMaxTextSize="14dp"
-                    app:autoSizeMinTextSize="10dp"
-                    app:autoSizeStepGranularity="2sp"
-                    app:autoSizeTextType="uniform"
-                    app:strokeColor="@color/cocoa_brown_70" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/treeStatus_satellite"
-                    style="@style/toggleStyle"
-                    android:layout_width="70dp"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="@drawable/selector_toggle"
-                    android:text="위성"
-                    android:textColor="@drawable/selector_toggle_text"
-                    app:autoSizeMaxTextSize="14dp"
-                    app:autoSizeMinTextSize="8dp"
-                    app:autoSizeStepGranularity="2sp"
-                    app:autoSizeTextType="uniform"
-                    app:strokeColor="@color/cocoa_brown_70"
-                    tools:checkable="false" />
-
-            </com.google.android.material.button.MaterialButtonToggleGroup>
-        </androidx.constraintlayout.widget.ConstraintLayout>
-        <!--./카카오맵-->
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -34,6 +34,7 @@
             android:paddingEnd="20dp"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
+            android:textColor="@color/cocoa_brown"
             app:layout_constraintBottom_toBottomOf="@id/read_header"
             app:layout_constraintEnd_toEndOf="@id/read_header"
             app:layout_constraintTop_toTopOf="@id/read_header" />
@@ -52,6 +53,7 @@
         <androidx.appcompat.widget.AppCompatTextView
             style="@style/headerTextStyle"
             android:text="정보 조회"
+            android:textColor="@color/cocoa_brown"
             app:layout_constraintBottom_toBottomOf="@id/read_header"
             app:layout_constraintEnd_toEndOf="@id/read_header"
             app:layout_constraintStart_toStartOf="@id/read_header"
@@ -62,6 +64,7 @@
             android:id="@+id/read_content"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:background="@color/white"
             app:layout_constraintBottom_toTopOf="@id/read_button_layout"
             app:layout_constraintTop_toBottomOf="@id/read_header"
             app:layout_constraintVertical_bias="0.0"

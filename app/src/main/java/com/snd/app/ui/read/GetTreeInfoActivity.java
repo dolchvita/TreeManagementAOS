@@ -129,7 +129,7 @@ public class GetTreeInfoActivity extends TMActivity implements AdapterView.OnIte
 
         //팝업 창 띄우기
         AlertDialog.Builder builder = new AlertDialog.Builder(GetTreeInfoActivity.this);
-        builder.setTitle("입력하신 내용으로 슈정하시겠습니까?");
+        builder.setTitle("입력하신 내용으로 수정하시겠습니까?");
         builder.setMessage("");
         builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
             @Override
@@ -137,7 +137,6 @@ public class GetTreeInfoActivity extends TMActivity implements AdapterView.OnIte
                 //mappingDTO();
                 // 확인 버튼을 눌렀을 때
                 modifyTreeBasicInfo();
-
             }
         });
         builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
@@ -192,6 +191,7 @@ public class GetTreeInfoActivity extends TMActivity implements AdapterView.OnIte
                         public void run() {
                             if (response.isSuccessful()) {
 
+
                             }
                         }
                     });
@@ -206,7 +206,7 @@ public class GetTreeInfoActivity extends TMActivity implements AdapterView.OnIte
                 Log.d(TAG,"** 오류남 **");
             }
         });
-        Toast.makeText(this, "등록되었습니다", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "수정되었습니다", Toast.LENGTH_SHORT).show();
     }
 
 

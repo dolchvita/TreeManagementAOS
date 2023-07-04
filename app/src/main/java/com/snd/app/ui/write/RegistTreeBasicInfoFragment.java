@@ -1,13 +1,19 @@
 package com.snd.app.ui.write;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -33,7 +39,6 @@ public class RegistTreeBasicInfoFragment extends TMFragment {
     public PhotoAdapter photoAdapter;
     public Boolean flag=true;   // 사진 지울시 확인 버튼 감지용
 
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -54,12 +59,12 @@ public class RegistTreeBasicInfoFragment extends TMFragment {
         treeBasicInfoVM.listData.observe(getActivity(), new Observer<List<Bitmap>>() {
             @Override
             public void onChanged(List<Bitmap> bitmaps) {
-
                 // 5-3) 변경 감지
                 photoAdapter.setImageList(bitmaps);
                 Log.d(TAG, "개수 확인"+photoAdapter.getItemCount());
             }
         });
+
 
         photoAdapter.tabClick.observe(getActivity(), new Observer() {
             @Override
@@ -85,6 +90,7 @@ public class RegistTreeBasicInfoFragment extends TMFragment {
                 treeBasicInfoVM.cnt-=1;
             }
         });
+
         builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -96,6 +102,31 @@ public class RegistTreeBasicInfoFragment extends TMFragment {
         dialog.show();
     }
 
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        nextText();
+    }
+
+
+    public void nextText(){
+        EditText edit1=getView().findViewById(R.id.tr_name);
+        edit1.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    Log.d(TAG, "완료버튼 누름"+actionId);
+
+                    // 키보드 숨기기
+                    InputMethodManager imm = (InputMethodManager) getView().getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                    return true;
+                }
+                return false;
+            }
+        });
+    }
 
 
 }

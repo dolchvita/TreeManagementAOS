@@ -12,7 +12,8 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/white">
 
         <View
             android:id="@+id/header"
@@ -35,6 +36,7 @@
         <androidx.appcompat.widget.AppCompatTextView
             style="@style/headerTextStyle"
             android:text="NFC 태그"
+            android:textColor="@color/cocoa_brown"
             app:layout_constraintBottom_toBottomOf="@id/header"
             app:layout_constraintEnd_toEndOf="@id/header"
             app:layout_constraintStart_toStartOf="@id/header"
@@ -50,7 +52,7 @@
             android:fontFamily="@font/notosans_kr_regular"
             android:textColor="@color/cocoa_brown"
             android:textSize="25dp"
-            android:text="수목 진단 정보 조회를 위해\n NFC 칩을 태그하세요."
+            android:text="@{treeVM.titleText}"
             app:layout_constraintTop_toBottomOf="@+id/header"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

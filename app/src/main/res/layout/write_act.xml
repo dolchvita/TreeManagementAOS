@@ -39,6 +39,7 @@
         <androidx.appcompat.widget.AppCompatTextView
             style="@style/headerTextStyle"
             android:text="@{treeInfoVM.registTitle}"
+            android:textColor="@color/cocoa_brown"
             app:layout_constraintBottom_toBottomOf="@id/write_header"
             app:layout_constraintEnd_toEndOf="@id/write_header"
             app:layout_constraintStart_toStartOf="@id/write_header"

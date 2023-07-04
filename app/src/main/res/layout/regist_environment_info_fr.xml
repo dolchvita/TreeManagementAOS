@@ -12,89 +12,8 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-
-        <!--카카오맵-->
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/environment_map_layout"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:layout_marginTop="20dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintVertical_weight="3"
-            app:layout_constraintBottom_toTopOf="@+id/environment_layout"
-            tools:ignore="MissingConstraints">
-
-            <RelativeLayout
-                android:id="@+id/environment_kakao_map"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:background="#9C9C9C"
-                android:gravity="center"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.0" />
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/environment_address"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:background="@color/mustard_yellow"
-                android:gravity="center"
-                android:textColor="@color/white"
-                app:layout_constraintEnd_toEndOf="@id/environment_kakao_map"
-                app:layout_constraintStart_toStartOf="@id/environment_kakao_map"
-                app:layout_constraintTop_toTopOf="@id/environment_kakao_map"
-                tools:text="서울시 송파구 오금동" />
-
-            <com.google.android.material.button.MaterialButtonToggleGroup
-                android:id="@+id/environment_toggle_group"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
-                app:checkedButton="@id/normal"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/environment_address"
-                app:selectionRequired="true"
-                app:singleSelection="true">
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/environment_normal"
-                    style="@style/toggleStyle"
-                    android:layout_width="70dp"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="@drawable/selector_toggle"
-                    android:text="일반"
-                    android:textColor="@drawable/selector_toggle_text"
-                    app:autoSizeMaxTextSize="14dp"
-                    app:autoSizeMinTextSize="10dp"
-                    app:autoSizeStepGranularity="2sp"
-                    app:autoSizeTextType="uniform"
-                    app:strokeColor="@color/cocoa_brown_70" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/environment_satellite"
-                    style="@style/toggleStyle"
-                    android:layout_width="70dp"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="@drawable/selector_toggle"
-                    android:text="위성"
-                    android:textColor="@drawable/selector_toggle_text"
-                    app:autoSizeMaxTextSize="14dp"
-                    app:autoSizeMinTextSize="8dp"
-                    app:autoSizeStepGranularity="2sp"
-                    app:autoSizeTextType="uniform"
-                    app:strokeColor="@color/cocoa_brown_70"
-                    tools:checkable="false" />
-
-            </com.google.android.material.button.MaterialButtonToggleGroup>
-        </androidx.constraintlayout.widget.ConstraintLayout>
-        <!--./카카오맵-->
+        android:layout_height="match_parent"
+        android:background="@color/white" >
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -103,7 +22,7 @@
         android:layout_height="0dp"
         layout_constraintHeight_default="percent"
         app:layout_constraintHeight_percent="0.7"
-        app:layout_constraintTop_toBottomOf="@+id/environment_map_layout">
+        tools:ignore="MissingConstraints">
 
         <!--스크롤뷰-->
         <androidx.core.widget.NestedScrollView
@@ -156,7 +75,7 @@
                     style="@style/tree_info_edt"
                     android:inputType="numberDecimal"
                     android:longClickable="false"
-                    android:nextFocusDown="@id/tr_height"
+                    android:nextFocusForward="@+id/grd_fr_height"
                     android:paddingEnd="50dp"
                     android:hint="0"
                     app:layout_constraintEnd_toEndOf="@id/grd_fr_width_tv"
@@ -177,6 +96,7 @@
                     style="@style/tree_info_edt"
                     android:inputType="numberDecimal"
                     android:hint="0"
+                    android:nextFocusForward="@+id/environment_material"
                     app:layout_constraintEnd_toEndOf="@id/grd_fr_height_label"
                     app:layout_constraintStart_toStartOf="@id/grd_fr_height_label"
                     app:layout_constraintTop_toBottomOf="@id/grd_fr_height_label" />
@@ -195,6 +115,7 @@
                     android:id="@+id/environment_material"
                     style="@style/tree_info_edt"
                     android:hint="0"
+                    android:nextFocusForward="@+id/boundary_stone"
                     app:layout_constraintEnd_toEndOf="@id/environment_material_tv"
                     app:layout_constraintStart_toStartOf="@id/environment_material_tv"
                     app:layout_constraintTop_toBottomOf="@id/environment_material_tv" />
@@ -225,6 +146,7 @@
                         android:hint="0"
                         android:inputType="numberDecimal"
                         android:layout_height="wrap_content"
+                        android:nextFocusForward="@+id/road_width"
                         app:layout_constraintEnd_toEndOf="@id/boundary_stone_tv"
                         app:layout_constraintStart_toStartOf="@id/boundary_stone_tv"
                         app:layout_constraintTop_toBottomOf="@id/boundary_stone_tv" />
@@ -246,6 +168,7 @@
                         android:inputType="numberDecimal"
                         android:hint="0"
                         android:layout_height="wrap_content"
+                        android:nextFocusForward="@+id/sidewalk_width"
                         app:layout_constraintEnd_toEndOf="@id/road_width_tv"
                         app:layout_constraintStart_toStartOf="@id/road_width_tv"
                         app:layout_constraintTop_toBottomOf="@id/road_width_tv" />
@@ -266,6 +189,7 @@
                         android:layout_width="0dp"
                         android:inputType="numberDecimal"
                         android:hint="0"
+                        android:nextFocusForward="@+id/packing_material"
                         android:layout_height="wrap_content"
                         app:layout_constraintEnd_toEndOf="@id/sidewalk_width_label"
                         app:layout_constraintStart_toStartOf="@id/sidewalk_width_label"
@@ -288,6 +212,7 @@
                     android:id="@+id/packing_material"
                     style="@style/tree_info_edt"
                     android:hint="0"
+                    android:nextFocusForward="@+id/soil_ph"
                     app:layout_constraintEnd_toEndOf="@id/packing_material_tv"
                     app:layout_constraintStart_toStartOf="@id/packing_material_tv"
                     app:layout_constraintTop_toBottomOf="@id/packing_material_tv" />
@@ -305,6 +230,7 @@
                     android:id="@+id/soil_ph"
                     style="@style/tree_info_edt"
                     android:hint="0"
+                    android:nextFocusForward="@+id/soil_density"
                     android:inputType="numberDecimal"
                     app:layout_constraintEnd_toEndOf="@id/soil_ph_tv"
                     app:layout_constraintStart_toStartOf="@id/soil_ph_tv"

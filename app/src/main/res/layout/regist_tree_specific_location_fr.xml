@@ -12,7 +12,8 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/white">
 
 
         <!--카카오맵-->
@@ -163,6 +164,7 @@
                 <Spinner
                     android:id="@+id/specificLocation_tr_state"
                     style="@style/tree_info_edt"
+                    android:textColor="@color/cocoa_brown"
                     app:layout_constraintEnd_toEndOf="@id/specificLocation_tr_state_tv"
                     app:layout_constraintStart_toStartOf="@id/specificLocation_tr_state_tv"
                     app:layout_constraintTop_toBottomOf="@id/specificLocation_tr_state_tv" />

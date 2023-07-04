@@ -2,12 +2,18 @@ package com.snd.app.ui.write;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -51,6 +57,8 @@ public class RegistTreeSpecificLocationInfoFragment extends TMFragment {
         super.onResume();
         // 레이아웃이 참조가 안되고 있는 건 아닐까? -> 정답
 
+        nextText();
+
         // 스피너 설정
         Spinner spinner=(Spinner) getView().findViewById(R.id.specificLocation_tr_state);
         ArrayAdapter adapter=ArrayAdapter.createFromResource(getContext(), R.array.treeStatus_pest,  android.R.layout.simple_spinner_item);
@@ -69,8 +77,28 @@ public class RegistTreeSpecificLocationInfoFragment extends TMFragment {
                 // 아무것도 선택되지 않았을 때 처리
             }
         });
-
     }
+
+
+    public void nextText(){
+        EditText edit1=getView().findViewById(R.id.specificLocation_distance);
+        edit1.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    Log.d(TAG, "완료버튼 누름"+actionId);
+
+                    // 키보드 숨기기
+                    InputMethodManager imm = (InputMethodManager) getView().getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                    return true;
+                }
+                return false;
+            }
+        });
+    }
+
+
 
 
 }

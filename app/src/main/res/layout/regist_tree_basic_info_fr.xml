@@ -32,19 +32,22 @@
             android:layout_height="match_parent"
             android:fillViewport="true"
             android:overScrollMode="never"
-            android:scrollbarStyle="insideInset"
             android:scrollbarSize="6dp"
+            android:scrollbarStyle="insideInset"
             android:scrollbarThumbVertical="@color/purple_200"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintVertical_weight="3"
-            tools:ignore="MissingConstraints">
+            tools:ignore="MissingConstraints"
+            tools:layout_editor_absoluteY="0dp">
 
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/info_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@color/white"
                 android:elevation="10dp"
                 android:padding="10dp">
 
@@ -104,10 +107,9 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.551"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/add_camera_view"
-                    />
+                    app:layout_constraintTop_toBottomOf="@+id/add_camera_view" />
 
-                <androidx.appcompat.widget.AppCompatAutoCompleteTextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tree_name"
                     style="@style/tree_info_edt"
                     android:completionThreshold="0"
@@ -118,8 +120,7 @@
                     app:layout_constraintStart_toStartOf="@id/tree_nfc_tv"
 
                     app:layout_constraintTop_toBottomOf="@id/tree_nfc_tv"
-                    tools:text="0485cc0a635a80"
-                    />
+                    tools:text="0485cc0a635a80" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tr_name_tv"
@@ -134,12 +135,12 @@
                     android:id="@+id/tr_name"
                     style="@style/tree_info_edt"
                     android:completionThreshold="0"
-                    android:longClickable="false"
                     android:hint="수목명을 입력하세요"
+                    android:longClickable="false"
                     android:text="@{treeBasicInfoVM.species}"
                     app:layout_constraintEnd_toEndOf="@id/tr_name_tv"
                     app:layout_constraintStart_toStartOf="@id/tr_name_tv"
-                    app:layout_constraintTop_toBottomOf="@id/tr_name_tv"/>
+                    app:layout_constraintTop_toBottomOf="@id/tr_name_tv" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tr_submitter_tv"
@@ -150,7 +151,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/tr_name" />
 
-                <androidx.appcompat.widget.AppCompatAutoCompleteTextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tr_submitter"
                     style="@style/tree_info_edt"
                     android:completionThreshold="0"
@@ -170,7 +171,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/tr_submitter" />
 
-                <androidx.appcompat.widget.AppCompatAutoCompleteTextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tr_vendor"
                     style="@style/tree_info_edt"
                     android:completionThreshold="0"

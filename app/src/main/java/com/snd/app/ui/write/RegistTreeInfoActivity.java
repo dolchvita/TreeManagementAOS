@@ -104,7 +104,6 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
         writeActBinding.setLifecycleOwner(this);
         treeInfoVM=new RegistTreeInfoViewModel();
         writeActBinding.setTreeInfoVM(treeInfoVM);
-
         submitter=sharedPreferences.getString("id", null);
         vendor=sharedPreferences.getString("company", null);
         // 화면에 보일 프레그먼트
@@ -149,9 +148,10 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
             public void onChanged(Integer satellitesCount) {
                 Log.d(TAG, "현재 위성 개수: " + satellitesCount);
 
-                if (satellitesCount>6){
+                if (satellitesCount>5){
                     if (!click){
                         findViewById(R.id.loading_layout_box).setVisibility(View.GONE);
+                        findViewById(R.id.write_cancel).setBackgroundColor(getResources().getColor(R.color.cocoa_brown));
                     }
 
                     // 위도 경도 가져오기
@@ -205,24 +205,6 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
         }else {
             // 확인 자체에서 팝업을 띄울 필요가 있을까?
             mappingDTO();
-
-
-            //팝업 창 띄우기
-            /*
-            AlertDialog.Builder builder = new AlertDialog.Builder(RegistTreeInfoActivity.this);
-            builder.setTitle("입력하신 내용을 저장하시겠습니까?");
-            builder.setMessage("");
-            builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    mappingDTO();
-                    // 확인 버튼을 눌렀을 때
-                }
-            });
-            AlertDialog dialog = builder.create();
-            dialog.show();
-
-             */
         }
     }
 
@@ -417,7 +399,6 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
                     switchFragment(registTreeSpecificLocationInfoFr);
                     // 위치 상세정보 출력
                     initSpecificLocationFr();
-                    Log.d(TAG,"** ㅎㅇ ** "+num);
                     num=SPACIFICLOCATION;
 
                 } else if (num == SPACIFICLOCATION) {
@@ -606,7 +587,6 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
     }
 
 
-
     // 카카오맵 전환
     public void setKakaoMapFragment(int viewId){
         kakaoMapFragment = new KakaoMapFragment();
@@ -618,7 +598,6 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
 
     public void initEnvironmentInfoFr(){
         treeInfoVM.registTitle.set("환경 정보 입력");
-        setKakaoMapFragment(R.id.environment_map_layout);
         RegistEnvironmentInfoViewModel registEnvironmentInfoVM=new ViewModelProvider(this).get(RegistEnvironmentInfoViewModel.class);
         registEnvironmentInfoVM.setCallback(this);
         registEnvironmentInfoVM.idHex.set(idHex);
@@ -627,7 +606,6 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
 
     public void initStatusInfoFr(){
         treeInfoVM.registTitle.set("수목 상태 정보 입력");
-        setKakaoMapFragment(R.id.treeStatus_map_layout);
         RegistTreeStatusInfoViewModel registTreeStatusInfoVM=new ViewModelProvider(this).get(RegistTreeStatusInfoViewModel.class);
         registTreeStatusInfoVM.setCallback(this);
         registTreeStatusInfoVM.idHex.set(idHex);

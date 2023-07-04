@@ -10,6 +10,7 @@ public class TreeViewModel extends ViewModel {
     private MutableLiveData _back=new MutableLiveData<>();
     public LiveData back=getBack();
 
+    public  ObservableField<String> titleText=new ObservableField<>();
 
     public void setBack(){
         _back.setValue("click");
@@ -18,5 +19,7 @@ public class TreeViewModel extends ViewModel {
     public LiveData getBack(){
         return _back;
     }
+
+
 
 }
