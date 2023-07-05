@@ -101,8 +101,9 @@
                 android:layout_height="match_parent"
                 android:layout_marginStart="4dp"
                 android:layout_weight="1"
-                android:text="수 정"
                 android:onClick="@{()->getTreeInfoVM.modify()}"
+                android:text="수 정"
+                android:background="@color/cocoa_brown"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/read_save"
                 app:layout_constraintTop_toTopOf="parent" />

@@ -3,10 +3,12 @@ package com.snd.app.ui.read;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -17,6 +19,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.snd.app.R;
 import com.snd.app.common.TMActivity;
@@ -25,10 +28,13 @@ import com.snd.app.data.LocalDateTimeAdapter;
 import com.snd.app.databinding.ReadActBinding;
 import com.snd.app.domain.tree.TreeIntegratedVO;
 import com.snd.app.ui.write.MyCallback;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 
@@ -169,7 +175,6 @@ public class GetTreeInfoActivity extends TMActivity implements AdapterView.OnIte
 
     public void putTreeInfo(JSONObject putData, String postUrl){
         OkHttpClient client = new OkHttpClient();
-
         RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), putData.toString());
         String url = sndUrl+postUrl;
         // 요청 생성
@@ -256,6 +261,8 @@ public class GetTreeInfoActivity extends TMActivity implements AdapterView.OnIte
                         kakaoMapFragment.addMarkers(Double.parseDouble(data.getString("latitude")), Double.parseDouble(data.getString("longitude")), idHex);
 
 
+                        getTreeImage();
+
                     } catch (JSONException e) {
                         throw new RuntimeException(e);
                     }
@@ -285,6 +292,15 @@ public class GetTreeInfoActivity extends TMActivity implements AdapterView.OnIte
 
 
 
+    /* ----------------------------- 사진 조회 관련 ----------------------------- */
+
+    public void getTreeImage(){
+
+    }
+
+
+
+
     /* ----------------------------- 프레그먼트 설정 관련 ----------------------------- */
 
     public void switchFragment(Fragment frName){
@@ -309,7 +325,6 @@ public class GetTreeInfoActivity extends TMActivity implements AdapterView.OnIte
            switchFragment(getTreeStatusFr);
        } else if (position == 4) {
            switchFragment(getEnvironmentFr);
-
        }
     }
 

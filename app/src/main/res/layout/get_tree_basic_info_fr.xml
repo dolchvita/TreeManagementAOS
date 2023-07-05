@@ -45,18 +45,54 @@
                 android:layout_height="0dp"
                 app:layout_constraintTop_toBottomOf="@id/get_tree_info_layout">
 
+                <!--카메라뷰-->
+                <View
+                    android:id="@+id/get_tree_info_add_camera_view"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/rectangle_outline_10"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/get_tree_info_add_image"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    app:layout_constraintBottom_toTopOf="@id/get_tree_info_image_cnt"
+                    app:layout_constraintEnd_toEndOf="@id/get_tree_info_add_camera_view"
+                    app:layout_constraintStart_toStartOf="@id/get_tree_info_add_camera_view"
+                    app:layout_constraintTop_toTopOf="@id/get_tree_info_add_camera_view"
+                    app:srcCompat="@drawable/ic_add_photo" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/get_tree_info_image_cnt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/cocoa_brown"
+                    app:layout_constraintBottom_toBottomOf="@id/get_tree_info_add_camera_view"
+                    app:layout_constraintEnd_toEndOf="@id/get_tree_info_add_camera_view"
+                    app:layout_constraintStart_toStartOf="@id/get_tree_info_add_camera_view"
+                    app:layout_constraintTop_toBottomOf="@id/get_tree_info_add_image" />
+
 
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/get_tree_info_info_rv_image"
+                    android:id="@+id/get_tree_info_rv_image"
                     android:layout_width="0dp"
                     android:layout_height="100dp"
                     android:orientation="horizontal"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:layout_constraintBottom_toBottomOf="@id/get_tree_info_add_camera_view"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toEndOf="@id/get_tree_info_add_camera_view"
+                    app:layout_constraintTop_toTopOf="@id/get_tree_info_add_camera_view"
                     app:layout_constraintVertical_bias="0.0"
-                    tools:listitem="@layout/image_item"
-                    tools:ignore="MissingConstraints" />
+                    tools:listitem="@layout/image_item" />
+                <!--./카메라뷰-->
+
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/get_tree_info_info_nfc_tv"
@@ -65,7 +101,7 @@
                     android:layout_height="wrap_content"
                     android:text="NFC 일련번호"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/get_tree_info_info_rv_image" />
+                    app:layout_constraintTop_toBottomOf="@id/get_tree_info_rv_image" />
 
 
                 <androidx.appcompat.widget.AppCompatTextView
@@ -124,10 +160,32 @@
                     android:id="@+id/crw_height_label"
                     style="@style/tree_info_label"
                     android:layout_marginTop="10dp"
-                    android:text="조사업체"
+                    android:text="정보생성일자"
                     app:layout_constraintEnd_toStartOf="@id/crw_diam_tv"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/scarlet_diam" />
+
+                <androidx.appcompat.widget.AppCompatEditText
+                    android:id="@+id/crw_diam"
+                    style="@style/tree_info_edt"
+                    android:inputType="numberDecimal"
+                    android:longClickable="false"
+                    android:paddingEnd="50dp"
+                    android:hint="2023.06.02"
+                    android:text="@{getTreeBasicInfoVM.basicInserted}"
+                    app:layout_constraintEnd_toEndOf="@id/crw_height_label"
+                    app:layout_constraintStart_toStartOf="@id/crw_height_label"
+                    app:layout_constraintTop_toBottomOf="@id/crw_height_label"
+                    />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/crw_diam_tv"
+                    style="@style/tree_info_label"
+                    android:layout_marginTop="10dp"
+                    android:text="조사업체"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/crw_height_label"
+                    app:layout_constraintTop_toBottomOf="@id/tr_height" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/crw_height"
@@ -138,32 +196,11 @@
                     android:paddingEnd="50dp"
                     android:hint="snd"
                     android:text="@{getTreeBasicInfoVM.vendor}"
-                    app:layout_constraintEnd_toEndOf="@id/crw_height_label"
-                    app:layout_constraintStart_toStartOf="@id/crw_height_label"
-                    app:layout_constraintTop_toBottomOf="@id/crw_height_label"
-                    />
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/crw_diam_tv"
-                    style="@style/tree_info_label"
-                    android:layout_marginTop="10dp"
-                    android:text="정보생성일자"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/crw_height_label"
-                    app:layout_constraintTop_toBottomOf="@id/tr_height" />
-
-                <androidx.appcompat.widget.AppCompatEditText
-                    android:id="@+id/crw_diam"
-                    style="@style/tree_info_edt"
-                    android:inputType="numberDecimal"
-                    android:longClickable="false"
-                    android:paddingEnd="50dp"
-                    android:hint="2023.06.02"
-                    android:text="@{getTreeBasicInfoVM.basicInserted}"
                     app:layout_constraintEnd_toEndOf="@id/crw_diam_tv"
                     app:layout_constraintStart_toStartOf="@id/crw_diam_tv"
                     app:layout_constraintTop_toBottomOf="@id/crw_diam_tv"
                     />
+
 
 
                 <!--위치정보-->
@@ -175,7 +212,7 @@
                     android:background="@drawable/rectangle_white_5"
                     android:elevation="2dp"
                     android:padding="5dp"
-                    app:layout_constraintTop_toBottomOf="@id/crw_height"
+                    app:layout_constraintTop_toBottomOf="@id/crw_diam"
                     tools:layout_editor_absoluteX="15dp">
 
                     <androidx.appcompat.widget.AppCompatTextView

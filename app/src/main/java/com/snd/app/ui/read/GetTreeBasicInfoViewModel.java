@@ -1,5 +1,6 @@
 package com.snd.app.ui.read;
 
+import android.graphics.Bitmap;
 import android.util.Log;
 
 import androidx.databinding.ObservableField;
@@ -11,6 +12,7 @@ import com.snd.app.domain.tree.TreeIntegratedVO;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 public class GetTreeBasicInfoViewModel extends TMViewModel {
 
@@ -25,6 +27,7 @@ public class GetTreeBasicInfoViewModel extends TMViewModel {
 
     private MutableLiveData _gps_btn=new MutableLiveData();
     public LiveData gps_btn=getGPS();
+
 
 
     public void setGPS(){

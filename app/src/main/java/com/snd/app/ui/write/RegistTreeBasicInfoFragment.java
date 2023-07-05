@@ -49,7 +49,6 @@ public class RegistTreeBasicInfoFragment extends TMFragment {
         treeBasicInfoActBinding.setTreeBasicInfoVM(treeBasicInfoVM);
 
         recyclerView = treeBasicInfoActBinding.basicRvImage;
-        Log.d(TAG, "** 무슨 문제라도? **"+recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         recyclerView.addItemDecoration(new SpaceItemDecoration(20));
         photoAdapter=new PhotoAdapter();

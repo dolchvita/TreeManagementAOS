@@ -194,8 +194,6 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
             }
         });
 
-
-
     }//./onCreate
 
 
@@ -221,7 +219,6 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
             }, NfcAdapter.FLAG_READER_NFC_A | NfcAdapter.FLAG_READER_SKIP_NDEF_CHECK, null);
         }
     }
-
 
 
 
@@ -415,6 +412,7 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
     }
 
 
+
     // 등록 호출 4
     public void AlertDialog(String title, String message){
         AlertDialog.Builder builder = new AlertDialog.Builder(RegistTreeInfoActivity.this);
@@ -446,16 +444,30 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
                     Intent intent=new Intent(RegistTreeInfoActivity.this, MainActivity.class);
                     startActivity(intent);
                 }
+
             }
         });
+
         builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+
+                if(num ==BASIC) {
+                    switchFragment(registTreeStatusInfoFr);
+                    initStatusInfoFr();
+                    num=STATUS;
+
+                } else if (num == STATUS) {
+                    Intent intent=new Intent(RegistTreeInfoActivity.this, MainActivity.class);
+                    startActivity(intent);
+                }
+
             }
         });
         AlertDialog dialog = builder.create();
         dialog.show();
     }
+
 
 
     /* ---------------------------- Mapping METHODS ---------------------------- */
@@ -776,6 +788,7 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
         Toast.makeText(this, "사진이 저장되었습니다.", Toast.LENGTH_SHORT).show();
     }
 
+
     // 갤러리 이미지 스캔
     private void scanImageFile(File imageFile) {
         MediaScannerConnection.scanFile(this,
@@ -788,6 +801,7 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
                     }
                 });
     }
+
 
     // 갤러리 새로고침
     private void refreshGallery() {
