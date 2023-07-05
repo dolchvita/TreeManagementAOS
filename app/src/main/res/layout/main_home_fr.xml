@@ -199,16 +199,10 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/btn_layout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="20dp"
                 app:layout_constraintTop_toBottomOf="@id/state_info_layout"
-                tools:layout_editor_absoluteX="0dp"
-                android:layout_marginStart="24dp"
-                android:layout_marginEnd="24dp"
-                android:background="@drawable/rectangle_white_5"
-                android:elevation="5dp"
-                android:padding="10dp">
+                android:background="@drawable/rectangle_white_5">
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/diagnose"
@@ -235,12 +229,11 @@
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintVertical_bias="0.0" />
 
-
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/check"
                     android:layout_width="0dp"
                     android:layout_height="100dp"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="10dp"
                     android:layout_marginEnd="24dp"
                     android:background="@drawable/rectangle_white_5"
                     android:drawableTop="@drawable/ic_read"
@@ -248,7 +241,7 @@
                     android:fontFamily="@font/notosans_kr_bold"
                     android:gravity="center"
                     android:onClick="@{() -> homeVM.onCheckViewClicked(check)}"
-                    android:padding="15dp"
+                    android:padding="10dp"
                     android:text="수목 정보 확인"
                     android:textColor="@color/cocoa_brown"
                     android:textSize="15dp"

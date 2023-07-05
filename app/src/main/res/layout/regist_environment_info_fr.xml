@@ -83,6 +83,17 @@
                     app:layout_constraintTop_toBottomOf="@id/grd_fr_width_tv" />
 
                 <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/grd_fr_width_suffix"
+                    style="@style/tree_info_edt"
+                    android:layout_marginEnd="10dp"
+                    android:text="cm"
+                    android:textColor="@color/cocoa_brown_70"
+                    app:layout_constraintBottom_toBottomOf="@id/grd_fr_width"
+                    app:layout_constraintEnd_toEndOf="@id/grd_fr_width"
+                    app:layout_constraintTop_toTopOf="@id/grd_fr_width" />
+
+
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/grd_fr_height_label"
                     style="@style/tree_info_label"
                     android:layout_marginTop="10dp"
@@ -100,6 +111,16 @@
                     app:layout_constraintEnd_toEndOf="@id/grd_fr_height_label"
                     app:layout_constraintStart_toStartOf="@id/grd_fr_height_label"
                     app:layout_constraintTop_toBottomOf="@id/grd_fr_height_label" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/grd_fr_height_suffix"
+                    style="@style/tree_info_edt"
+                    android:layout_marginEnd="10dp"
+                    android:text="cm"
+                    android:textColor="@color/cocoa_brown_70"
+                    app:layout_constraintBottom_toBottomOf="@id/grd_fr_height"
+                    app:layout_constraintEnd_toEndOf="@id/grd_fr_height"
+                    app:layout_constraintTop_toTopOf="@id/grd_fr_height" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/environment_material_tv"
@@ -152,6 +173,17 @@
                         app:layout_constraintTop_toBottomOf="@id/boundary_stone_tv" />
 
                     <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/bndr_stone_suffix"
+                        style="@style/tree_info_edt"
+                        android:layout_marginEnd="10dp"
+                        android:text="cm"
+                        android:textColor="@color/cocoa_brown_70"
+                        app:layout_constraintBottom_toBottomOf="@id/boundary_stone"
+                        app:layout_constraintEnd_toEndOf="@id/boundary_stone"
+                        app:layout_constraintTop_toTopOf="@id/boundary_stone" />
+
+
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/road_width_tv"
                         style="@style/tree_info_label"
                         android:layout_width="110dp"
@@ -174,6 +206,16 @@
                         app:layout_constraintTop_toBottomOf="@id/road_width_tv" />
 
                     <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/road_width_suffix"
+                        style="@style/tree_info_edt"
+                        android:layout_marginEnd="10dp"
+                        android:text="m"
+                        android:textColor="@color/cocoa_brown_70"
+                        app:layout_constraintBottom_toBottomOf="@id/road_width"
+                        app:layout_constraintEnd_toEndOf="@id/road_width"
+                        app:layout_constraintTop_toTopOf="@id/road_width" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/sidewalk_width_label"
                         style="@style/tree_info_label"
                         android:layout_width="110dp"
@@ -194,6 +236,17 @@
                         app:layout_constraintEnd_toEndOf="@id/sidewalk_width_label"
                         app:layout_constraintStart_toStartOf="@id/sidewalk_width_label"
                         app:layout_constraintTop_toBottomOf="@id/sidewalk_width_label" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/sidewalk_width_suffix"
+                        style="@style/tree_info_edt"
+                        android:layout_marginEnd="10dp"
+                        android:text="m"
+                        android:textColor="@color/cocoa_brown_70"
+                        app:layout_constraintBottom_toBottomOf="@id/sidewalk_width"
+                        app:layout_constraintEnd_toEndOf="@id/sidewalk_width"
+                        app:layout_constraintTop_toTopOf="@id/sidewalk_width" />
+
                 </androidx.constraintlayout.widget.ConstraintLayout>
                 <!--./3칸 입력-->
 
@@ -237,6 +290,16 @@
                     app:layout_constraintTop_toBottomOf="@id/soil_ph_tv" />
 
                 <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/soil_ph_suffix"
+                    style="@style/tree_info_edt"
+                    android:layout_marginEnd="10dp"
+                    android:text="㎏/㎤"
+                    android:textColor="@color/cocoa_brown_70"
+                    app:layout_constraintBottom_toBottomOf="@id/soil_ph"
+                    app:layout_constraintEnd_toEndOf="@id/soil_ph"
+                    app:layout_constraintTop_toTopOf="@id/soil_ph" />
+
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/soil_density_tv"
                     style="@style/tree_info_label"
                     android:layout_marginTop="10dp"
@@ -254,6 +317,16 @@
                     app:layout_constraintEnd_toEndOf="@id/soil_density_tv"
                     app:layout_constraintStart_toStartOf="@id/soil_density_tv"
                     app:layout_constraintTop_toBottomOf="@id/soil_density_tv" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/soil_density_suffix"
+                    style="@style/tree_info_edt"
+                    android:layout_marginEnd="10dp"
+                    android:text="㎏/㎤"
+                    android:textColor="@color/cocoa_brown_70"
+                    app:layout_constraintBottom_toBottomOf="@id/soil_density"
+                    app:layout_constraintEnd_toEndOf="@id/soil_density"
+                    app:layout_constraintTop_toTopOf="@id/soil_density" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.core.widget.NestedScrollView>

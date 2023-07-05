@@ -1,6 +1,5 @@
 package com.snd.app.ui.home;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,9 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 
-import com.snd.app.MainActivity;
 import com.snd.app.R;
 import com.snd.app.data.AppComponent;
 import com.snd.app.data.AppModule;
@@ -22,10 +19,7 @@ import com.snd.app.databinding.MainHomeFrBinding;
 
 public class HomeFragment extends Fragment {
     MainHomeFrBinding homeFrBinding;
-    //MainActivity mainActivity;
     HomeViewModel homeVM;
-    SharedPreferences sharedPreferences;
-
 
 
     @Nullable

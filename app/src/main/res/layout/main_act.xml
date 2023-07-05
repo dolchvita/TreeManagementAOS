@@ -38,7 +38,7 @@
             app:srcCompat="@drawable/ic_notice" />
 
 
-        <androidx.appcompat.widget.AppCompatAutoCompleteTextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/title"
             style="@style/headerTextStyle"
             android:elevation="0dp"

@@ -303,6 +303,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginTop="7dp"
+            android:background="@color/white"
             app:layout_constraintHeight_default="percent"
             app:layout_constraintHeight_percent="0.5"
             app:layout_constraintEnd_toEndOf="parent"

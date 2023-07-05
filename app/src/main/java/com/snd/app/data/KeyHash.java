@@ -26,7 +26,7 @@ public class KeyHash {
                 return Base64.encodeToString(md.digest(), Base64.NO_WRAP);
             }
         } catch (PackageManager.NameNotFoundException | NoSuchAlgorithmException e) {
-            Log.e("KeyHashExtractor", "Error: " + e.getMessage());
+            Log.d("KeyHashExtractor", "Error: " + e.getMessage());
         }
         return null;
     }

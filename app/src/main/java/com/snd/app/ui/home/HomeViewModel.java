@@ -19,9 +19,7 @@ public class HomeViewModel extends ViewModel {
     private String TAG= this.getClass().getName();
     SharedPreferences sharedPreferences;
     private MutableLiveData<String> _company;
-    LiveData company=getCompany();
     private MutableLiveData<String> _name;
-    LiveData name=getName();
 
 
     @Inject
@@ -52,6 +50,7 @@ public class HomeViewModel extends ViewModel {
     // 수목 등록
     public void onTextViewClicked(View view) {
         Log.d(TAG,"** 넘어오는 뷰의 정체는? ** "+view);
+
         // 액티비티 변경을 위한 Intent 생성
         Intent intent = new Intent(view.getContext(), TreeActivity.class);
         // 액티비티 변경 로직

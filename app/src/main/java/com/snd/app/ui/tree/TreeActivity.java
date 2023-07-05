@@ -2,10 +2,11 @@ package com.snd.app.ui.tree;
 
 import android.app.PendingIntent;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -15,12 +16,14 @@ import androidx.lifecycle.Observer;
 
 import com.snd.app.R;
 import com.snd.app.common.TMActivity;
+import com.snd.app.data.IntentManager;
+import com.snd.app.data.NfcManager;
 import com.snd.app.databinding.TreeActBinding;
 import com.snd.app.ui.read.GetTreeInfoActivity;
 import com.snd.app.ui.write.RegistTreeInfoActivity;
 
 
-public class TreeActivity extends TMActivity implements NfcAdapter.ReaderCallback {
+public class TreeActivity extends TMActivity{
     private String TAG=this.getClass().getName();
 
     TreeActBinding treeActBinding;
@@ -33,7 +36,10 @@ public class TreeActivity extends TMActivity implements NfcAdapter.ReaderCallbac
     private static final String IDHEX="IDHEX";
     String idHex;
 
-    boolean isTagDiscovered = false;
+    private boolean isTagDiscovered = false;
+    NfcManager nfcManager;
+
+    IntentManager intentManager;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -56,13 +62,18 @@ public class TreeActivity extends TMActivity implements NfcAdapter.ReaderCallbac
                 finish();
             }
         });
-    }
+        NFC_MODE=1;
+
+        nfcManager = new NfcManager(this);
+        nfcManager.ignore();
+
+        intentManager=new IntentManager(this);
+
+    }// ./onCeate
 
 
 
     public void setTitleText(){
-
-
         if(actVersion.equals("read")){
             treeVM.titleText.set("수목 진단 정보 조회를 위해\n NFC 칩을 태그하세요.");
         } else {
@@ -71,39 +82,11 @@ public class TreeActivity extends TMActivity implements NfcAdapter.ReaderCallbac
     }
 
 
-    // NFC 인식
-    @Override
-    public void onTagDiscovered(Tag tag) {
-
-        Log.d(TAG, "** NFC 인식하였음 !! ** ");
-        // 라더 읽기 모드 비활성화
-        if (nfcAdapter != null) {
-            nfcAdapter.disableReaderMode(this);
-        }
-
-        byte[] id = tag.getId();
-        idHex = bytesToHexString(id).toUpperCase();
-        Log.d(TAG, "** NFC 아이디 추출 ** "+id);
-        Log.d(TAG, "** NFC 아이디 가공 ** "+idHex);
-
-        // 화면 전환하기
-        switchActivity(getIntent().getStringExtra("actName"));
-        Log.d(TAG, "** actName 확인dddd ** "+getIntent().getStringExtra("actName"));
-
-
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(TreeActivity.this, "NFC 발견", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-
-    }
-
 
     // 이미 액티비티의 이름을 받아서 처리하는 메소드
     public void switchActivity(String actName){
+        Log.d(TAG, "** switchActivity 호출 ** ");
+
         Intent intent = null;
         switch (actName){
             case "RegistTreeInfoActivity":
@@ -135,58 +118,86 @@ public class TreeActivity extends TMActivity implements NfcAdapter.ReaderCallbac
             // NFC가 비활성화된 경우 처리
             Toast.makeText(this, "NFC가 비활성화되어 있습니다. 설정에서 활성화해주세요.", Toast.LENGTH_SHORT).show();
         }
-
-        IntentFilter ndef = new IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED);
-        try {
-            ndef.addDataType("*/*");    /* Handles all MIME based dispatches.
-                                   You should specify only the ones that you need. */
-        } catch (IntentFilter.MalformedMimeTypeException e) {
-            throw new RuntimeException("fail", e);
-        }
-        IntentFilter[] intentFilters = new IntentFilter[] {ndef, };
     }
 
 
+
+    private static final long DEBOUNCE_TIME_MS = 1000; // Adjust this value as needed
+    private long lastTagDiscoveryTime;
 
     @Override
     protected void onResume() {
         super.onResume();
+        if (nfcAdapter != null) {
+            nfcAdapter.enableForegroundDispatch(this, nfcPendingIntent, null, null);
+        }
         // NFC 리더 모드 활성화
         if (nfcAdapter != null) {
-            nfcAdapter.enableReaderMode(this, this, NfcAdapter.FLAG_READER_NFC_A | NfcAdapter.FLAG_READER_SKIP_NDEF_CHECK, null);
+            nfcAdapter.enableReaderMode(this, new NfcAdapter.ReaderCallback() {
+                @Override
+                public void onTagDiscovered(Tag tag) {
+                    Log.d(TAG, "** NFC 인식하였음 !! ** ");
+                    // 여기서 아무것도 수행하지 않으면 된다.
+
+                    byte[] id = tag.getId();
+                    idHex = bytesToHexString(id).toUpperCase();
+                    Log.d(TAG, "** NFC 아이디 추출 ** "+id);
+                    Log.d(TAG, "** NFC 아이디 가공 ** "+idHex);
+                    //setIsTagDiscovered();
+
+                    long now = System.currentTimeMillis();
+                    if (now - lastTagDiscoveryTime < DEBOUNCE_TIME_MS) {
+                        // Ignore this event, since it's too close to the last one
+                        return;
+                    }
+                    lastTagDiscoveryTime = now;
+
+                    switchActivity(getIntent().getStringExtra("actName"));
+
+                    nfcManager.handleTag(tag);
+                }
+            }, NfcAdapter.FLAG_READER_NFC_A | NfcAdapter.FLAG_READER_SKIP_NDEF_CHECK, null);
         }
     }
+
+
+
+    public void test(){
+        Log.d(TAG, "** 실행하러 온더 !! ** ");
+
+        // NFC 읽기 모드 비활성화
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                Log.d(TAG, "** run 호출 ** ");
+                Log.d(TAG, "** run 호출 ** "+getIntent().getStringExtra("actName"));
+
+                switchActivity(getIntent().getStringExtra("actName"));
+
+
+            }
+        });
+
+    }
+
+
+
+    @Override
+    public void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        // Handle NFC tag here
+    }
+
 
 
     @Override
     protected void onPause() {
+        Log.d(TAG, "** onPause 호출 !! **");
         super.onPause();
-        // NFC 리더 모드 비활성화
+        NfcAdapter nfcAdapter = NfcAdapter.getDefaultAdapter(this);
         if (nfcAdapter != null) {
-            nfcAdapter.disableReaderMode(this);
+            nfcAdapter.disableForegroundDispatch(this);
         }
-    }
-
-
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        Log.d(TAG, "**onNewIntent 메서드 호출 ** ");
-
-        /*
-        if (NfcAdapter.ACTION_TAG_DISCOVERED.equals(intent.getAction())) {
-            // NFC 태그가 감지되었을 때 처리
-            Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
-            String tagUid = bytesToHexString(tag.getId()); // 태그의 UID를 가져옴
-
-
-            // 태그의 UID 처리
-            //Toast.makeText(this, "NFC 태그 UID: " + tagUid, Toast.LENGTH_SHORT).show();
-        }
-
-         */
-
-
     }
 
 
@@ -207,6 +218,7 @@ public class TreeActivity extends TMActivity implements NfcAdapter.ReaderCallbac
         }
         return sb.toString();
     }
+
 
 
 }

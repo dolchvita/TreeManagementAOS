@@ -1,7 +1,9 @@
 package com.snd.app.common;
 
 import android.Manifest;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -9,6 +11,7 @@ import android.content.pm.Signature;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.nfc.NfcAdapter;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
@@ -49,6 +52,10 @@ public class TMActivity extends AppCompatActivity {
    TMViewModel tmVM;
    protected static final String DEFAULT_VALUE = "0";
 
+   public static int NFC_MODE = 1;
+   private boolean isNfcTagDetected = false;
+
+
    @Override
    protected void onCreate(@Nullable Bundle savedInstanceState) {
       super.onCreate(savedInstanceState);
@@ -58,6 +65,7 @@ public class TMActivity extends AppCompatActivity {
       editor = sharedPreferences.edit();
       tmVM = new TMViewModel();
       Log.d(TAG, "** TMActivity 생성 ** " + tmVM);
+
 
       // 매니저 초기화
       locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -81,7 +89,38 @@ public class TMActivity extends AppCompatActivity {
          }
       };
       requestPermissions();
+
    }
+
+
+   @Override
+   protected void onResume() {
+      super.onResume();
+      NfcAdapter nfcAdapter = NfcAdapter.getDefaultAdapter(this);
+      if (nfcAdapter != null) {
+         nfcAdapter.disableForegroundDispatch(this);
+      }
+   }
+
+
+   @Override
+   protected void onNewIntent(Intent intent) {
+      super.onNewIntent(intent);
+
+      if (!isNfcTagDetected) {
+         // NFC 태그 인식 이벤트 처리
+         isNfcTagDetected = true;
+
+         // 추가 작업 수행
+
+         // NFC 전달 비활성화
+         NfcAdapter nfcAdapter = NfcAdapter.getDefaultAdapter(this);
+         if (nfcAdapter != null) {
+            nfcAdapter.disableForegroundDispatch(this);
+         }
+      }
+   }
+
 
 
 

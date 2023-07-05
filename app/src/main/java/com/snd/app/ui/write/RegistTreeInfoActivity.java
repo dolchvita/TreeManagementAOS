@@ -2,12 +2,15 @@ package com.snd.app.ui.write;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.PendingIntent;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
+import android.nfc.NfcAdapter;
+import android.nfc.Tag;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -32,6 +35,7 @@ import com.snd.app.R;
 import com.snd.app.common.TMActivity;
 import com.snd.app.data.KakaoMapFragment;
 import com.snd.app.data.LocationRepository;
+import com.snd.app.data.NfcManager;
 import com.snd.app.data.SpinnerValueListener;
 import com.snd.app.databinding.WriteActBinding;
 import com.snd.app.domain.tree.TreeBasicInfoDTO;
@@ -96,10 +100,10 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
     Boolean sidewalk;
 
 
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        initNfc();
         writeActBinding= DataBindingUtil.setContentView(this, R.layout.write_act);
         writeActBinding.setLifecycleOwner(this);
         treeInfoVM=new RegistTreeInfoViewModel();
@@ -172,7 +176,7 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
             public void onChanged(Object o) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(RegistTreeInfoActivity.this);
                 builder.setTitle("입력 중인 내용을 취소하시겠습니까?");
-                builder.setMessage("입력 중인 내용은 저장되지 않습니다.");
+                builder.setMessage("현재 페이지에서 입력 중인 내용은 저장되지 않습니다.");
                 builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -190,7 +194,34 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
             }
         });
 
+
+
     }//./onCreate
+
+
+    public NfcAdapter nfcAdapter = null;
+    public PendingIntent nfcPendingIntent;
+    // NFC 초기화 설정
+    private void initNfc() {
+        Log.d(TAG, "** NFC 초기화 호출 ** ");
+        nfcAdapter = NfcAdapter.getDefaultAdapter(this);
+        nfcPendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), PendingIntent.FLAG_IMMUTABLE);
+
+        if (nfcAdapter != null) {
+            nfcAdapter.enableReaderMode(this, new NfcAdapter.ReaderCallback() {
+                @Override
+                public void onTagDiscovered(Tag tag) {
+                    Log.d(TAG, "** NFC 인식하였음 !! 22 ** ");
+
+                    // 여기서 아무것도 수행하지 않으면 된다.
+                    NfcManager nfcManager = new NfcManager(RegistTreeInfoActivity.this);
+                    nfcManager.handleTag(tag);
+
+                }
+            }, NfcAdapter.FLAG_READER_NFC_A | NfcAdapter.FLAG_READER_SKIP_NDEF_CHECK, null);
+        }
+    }
+
 
 
 
@@ -214,7 +245,7 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
     public void mappingDTO(){
         Log.d(TAG,"** mappingDTO 호출 **");
 
-        if(num==BASIC){
+        if(num == BASIC){
             registerTreeBasicInfo();
             if(currentList.size()>0){
                 registerTreeImage(currentList);
@@ -247,7 +278,6 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
                 .addHeader("Authorization", sharedPreferences.getString("Authorization", null))
                 .post(requestBody)
                 .build();
-
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onResponse(@NonNull Call call, @NonNull okhttp3.Response response) throws IOException {
@@ -405,7 +435,6 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
                     switchFragment(registTreeStatusInfoFr);
                     initStatusInfoFr();
                     num=STATUS;
-
 
                 } else if (num == STATUS) {
                     switchFragment(registEnvironmentInfoFr);

@@ -44,12 +44,19 @@
         <activity
             android:name=".ui.tree.TreeActivity"
             android:exported="true">
-
         </activity>
 
         <activity
             android:name=".ui.write.RegistTreeInfoActivity"
-            android:exported="true"/>
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.nfc.action.TECH_DISCOVERED"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+            <meta-data
+                android:name="android.nfc.action.TECH_DISCOVERED"
+                android:resource="@xml/nfc_tech_filter" />
+        </activity>
 
         <!-- 사진 파일 접근 -->
         <provider
