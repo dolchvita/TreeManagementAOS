@@ -123,7 +123,6 @@ public class TMActivity extends AppCompatActivity {
 
 
 
-
    // 1 제일 먼저 동작하는 메서드 !
    protected void requestPermissions() {
       // 1 카메라 권한

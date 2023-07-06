@@ -2,8 +2,11 @@ package com.snd.app.ui.read;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -14,6 +17,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.FileProvider;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
@@ -37,6 +41,8 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -87,6 +93,7 @@ public class GetTreeInfoActivity extends TMActivity implements AdapterView.OnIte
         spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(this);
 
+        onCamera();
 
         // 버튼 클릭하기
         getTreeBasicInfoVM.gps_btn.observe(this, new Observer() {
@@ -120,7 +127,6 @@ public class GetTreeInfoActivity extends TMActivity implements AdapterView.OnIte
 
     public void initMap(){
         kakaoMapFragment.mapView.removeAllPOIItems();
-
         getLocation();
         Double thisLatitude;
         Double thisLon;
@@ -128,7 +134,7 @@ public class GetTreeInfoActivity extends TMActivity implements AdapterView.OnIte
     }
 
 
-
+    // 수정 버튼
     @Override
     public void onCustomCallback() {
         Log.d(TAG, "**수정 버튼 **");
@@ -261,7 +267,6 @@ public class GetTreeInfoActivity extends TMActivity implements AdapterView.OnIte
                         kakaoMapFragment.addMarkers(Double.parseDouble(data.getString("latitude")), Double.parseDouble(data.getString("longitude")), idHex);
 
 
-                        getTreeImage();
 
                     } catch (JSONException e) {
                         throw new RuntimeException(e);
@@ -294,10 +299,84 @@ public class GetTreeInfoActivity extends TMActivity implements AdapterView.OnIte
 
     /* ----------------------------- 사진 조회 관련 ----------------------------- */
 
-    public void getTreeImage(){
+    // 이미지 리스트
+    List<String> photoPaths;
+    private File currentPhotoFile;
+    List<File> currentList=new ArrayList<>();
 
+    public void onCamera (){
+        // 카메라 가동시키기
+        getTreeBasicInfoVM.camera.observe(this, new Observer() {
+            @Override
+            public void onChanged(Object o) {
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(GetTreeInfoActivity.this);
+                builder.setTitle("사진을 수정하시겠습니까?");
+                builder.setMessage("기존 사진은 모두 삭제됩니다.");
+                builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // 이 전에 먼저 사진 삭제하고 렌더링 하기
+
+                        startCamera();
+                    }
+                });
+                builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                });
+                AlertDialog dialog = builder.create();
+                dialog.show();
+
+            }
+        });
     }
 
+
+
+    // 1 파일 객체 가져오기 - 사진 찍기 전에 빈 파일 미리 생성하는 역할
+    private File createImageFile() throws IOException {
+        // 사진 이름 가공
+        String imageFileName = "JPEG_" + System.currentTimeMillis();
+        File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+        File imageFile = new File(storageDir, imageFileName + ".jpg");
+        return imageFile;
+    }
+
+
+    // 2 카메라 촬영 - 아마 문제 없음
+    private void startCamera() {
+        Log.d(TAG,"** startCamera 호출됨 **");
+
+        if (getTreeBasicInfoVM.listData.getValue() != null && getTreeBasicInfoVM.currentList.size() >= 2) {
+            Toast.makeText(this, "이미지 업로드 최대 2개를 초과하였습니다.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+
+            try {
+                // 2-1) 이미지 파일 생성 - 사진이 저장될 경로 반환
+                currentPhotoFile = createImageFile();
+
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+
+            // 2-2) 카메라 앱이 사진을 찍은 후 앱으로 결과를 전달할 때 필요한 URI를 설정하는 부분
+            if (currentPhotoFile != null) {
+                Log.d(TAG,"** currentPhotoFile 전달 **");
+
+                Uri photoUri = FileProvider.getUriForFile(this, "com.snd.app.fileprovider", currentPhotoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);  // 2-3)저장 경로 설정 후
+
+                // 2-4) 결과 메서드 호출
+                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CODE);
+            }
+        }
+        Log.d(TAG,"** 통과됨 **"+currentPhotoFile);
+    }
 
 
 

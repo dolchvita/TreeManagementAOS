@@ -14,7 +14,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/get_tree_info_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/white">
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -52,6 +53,7 @@
                     android:layout_height="100dp"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="8dp"
+                    android:onClick="@{()->getTreeBasicInfoVM.setCamera()}"
                     android:background="@drawable/rectangle_outline_10"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -72,6 +74,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/cocoa_brown"
+                    android:text="사진 추가"
                     app:layout_constraintBottom_toBottomOf="@id/get_tree_info_add_camera_view"
                     app:layout_constraintEnd_toEndOf="@id/get_tree_info_add_camera_view"
                     app:layout_constraintStart_toStartOf="@id/get_tree_info_add_camera_view"

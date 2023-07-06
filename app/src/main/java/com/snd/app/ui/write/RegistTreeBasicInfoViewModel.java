@@ -31,9 +31,11 @@ public class RegistTreeBasicInfoViewModel extends TMViewModel {
     // 저장버튼
     private MyCallback myCallback;
     // 액티비티와 어댑터가 가져갈 리스트
+
     // 실제 사진이 담기는 리스트
     private MutableLiveData<List<Bitmap>> _listData = new MutableLiveData<>();
     public LiveData listData=getImageList();
+
     // 사진 개수 표현하기
     public MutableLiveData<String> _imgCount=new MutableLiveData<>();
     public LiveData imgCount=getImgCount();

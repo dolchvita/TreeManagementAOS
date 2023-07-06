@@ -27,6 +27,7 @@ public class HomeFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         AppComponent appComponent = DaggerAppComponent.builder().appModule(new AppModule(getContext())).build();
         homeVM=appComponent.homeViewModel();
+
         //프레그먼트가 사용할 xml 파일
         homeFrBinding=DataBindingUtil.inflate(inflater, R.layout.main_home_fr, container, false);
         homeFrBinding.setLifecycleOwner(this);

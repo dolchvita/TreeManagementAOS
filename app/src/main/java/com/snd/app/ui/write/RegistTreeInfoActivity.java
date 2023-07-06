@@ -112,7 +112,7 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
         vendor=sharedPreferences.getString("company", null);
         // 화면에 보일 프레그먼트
         // NFC 코드 추출
-        idHex=getIntent().getStringExtra("IDHEX");
+        //idHex=getIntent().getStringExtra("IDHEX");
         Log.d(TAG,"** 아이디 확인 **"+idHex);
         // 수목 기본 정보
         treeBasicInfoVM=new ViewModelProvider(this).get(RegistTreeBasicInfoViewModel.class);
@@ -124,16 +124,12 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
         registTreeSpecificLocationInfoFr=new RegistTreeSpecificLocationInfoFragment();
         registTreeStatusInfoFr=new RegistTreeStatusInfoFragment();
         registEnvironmentInfoFr=new RegistEnvironmentInfoFragment();
+        NfcLoadingFragment nfcLoadingFragment=new NfcLoadingFragment();
 
         treeInfoVM.registTitle.set("기본 정보 입력");
-        getSupportFragmentManager().beginTransaction().replace(R.id.write_content, new RegistTreeBasicInfoFragment()).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.write_content, nfcLoadingFragment).commit();
 
-        try {
-            setTreeBasicInfoDTO();
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-
+        //initBasicInfoFr();
         onCamera();
 
         treeBasicInfoVM.imgCount.observe(this, new Observer<String>() {
@@ -155,7 +151,7 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
                 if (satellitesCount>5){
                     if (!click){
                         findViewById(R.id.loading_layout_box).setVisibility(View.GONE);
-                        findViewById(R.id.write_cancel).setBackgroundColor(getResources().getColor(R.color.cocoa_brown));
+                        findViewById(R.id.write_cancel).setBackgroundColor(getResources().getColor(R.color.cocoa_brown));   // 저장 버튼 활성화
                     }
 
                     // 위도 경도 가져오기
@@ -167,9 +163,6 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
             }
         });
 
-        // 카카오맵
-        setKakaoMapFragment(R.id.treeBasic_kakao_map);
-        registTreeSpecificLocationInfoVM=new ViewModelProvider(this).get(RegistTreeSpecificLocationInfoViewModel.class);
 
         treeInfoVM.back.observe(this, new Observer() {
             @Override
@@ -197,6 +190,30 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
     }//./onCreate
 
 
+
+    public void initBasicInfoFr(){
+        switchFragment(registTreeBasicInfoFr);
+        // 카카오맵
+        setKakaoMapFragment(R.id.treeBasic_kakao_map);
+        registTreeSpecificLocationInfoVM=new ViewModelProvider(this).get(RegistTreeSpecificLocationInfoViewModel.class);
+
+        try {
+            setTreeBasicInfoDTO();
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
+        if(!click){
+            findViewById(R.id.loading_layout_box).setVisibility(View.VISIBLE);
+        }
+
+    }
+
+
+
+
+    /* ---------------------------- NFC ---------------------------- */
+
     public NfcAdapter nfcAdapter = null;
     public PendingIntent nfcPendingIntent;
     // NFC 초기화 설정
@@ -211,9 +228,16 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
                 public void onTagDiscovered(Tag tag) {
                     Log.d(TAG, "** NFC 인식하였음 !! 22 ** ");
 
+                    byte[] id = tag.getId();
+                    idHex = bytesToHexString(id).toUpperCase();
+                    Log.d(TAG, "** NFC 아이디 추출 ** "+id);
+                    Log.d(TAG, "** NFC 아이디 가공 ** "+idHex);
+
                     // 여기서 아무것도 수행하지 않으면 된다.
                     NfcManager nfcManager = new NfcManager(RegistTreeInfoActivity.this);
                     nfcManager.handleTag(tag);
+
+                    initBasicInfoFr();
 
                 }
             }, NfcAdapter.FLAG_READER_NFC_A | NfcAdapter.FLAG_READER_SKIP_NDEF_CHECK, null);
@@ -221,6 +245,17 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
     }
 
 
+    private String bytesToHexString(byte[] bytes) {
+        StringBuilder sb = new StringBuilder();
+        for (byte b : bytes) {
+            sb.append(String.format("%02x", b));
+        }
+        return sb.toString();
+    }
+
+
+
+    /* ---------------------------- SERVER METHODS ---------------------------- */
 
     // 등록 호출 1
     @SuppressLint("WrongViewCast")
@@ -229,7 +264,6 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
         if(!click){
             // 거짓이라면..
             Toast.makeText(getApplicationContext(), "위성 감지 중입니다. 잠시만 기다려주세요.", Toast.LENGTH_LONG).show();
-
         }else {
             // 확인 자체에서 팝업을 띄울 필요가 있을까?
             mappingDTO();
@@ -683,9 +717,7 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
     @Override
     protected void onResume() {
         super.onResume();
-        if(!click){
-            findViewById(R.id.loading_layout_box).setVisibility(View.VISIBLE);
-        }
+
     }
 
 
@@ -811,6 +843,7 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
         mediaScanIntent.setData(contentUri);
         sendBroadcast(mediaScanIntent);
     }
+
 
 
     // 리스너 메소드들
