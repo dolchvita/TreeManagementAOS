@@ -34,6 +34,8 @@
             android:overScrollMode="never"
             android:scrollbarSize="6dp"
             android:scrollbarStyle="insideInset"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
             android:scrollbarThumbVertical="@color/purple_200"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
@@ -48,6 +50,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/white"
+
                 android:elevation="10dp"
                 android:padding="10dp">
 

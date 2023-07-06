@@ -211,7 +211,6 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
 
 
 
-
     /* ---------------------------- NFC ---------------------------- */
 
     public NfcAdapter nfcAdapter = null;

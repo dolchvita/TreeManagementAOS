@@ -3,6 +3,7 @@ package com.snd.app.ui.read;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,9 +27,12 @@ import java.util.List;
 
 public class GetTreeBasicInfoFragment extends TMFragment {
     GetTreeBasicInfoViewModel getTreeBasicInfoVM;
+    PhotoUrlAdapter photoAdapter;
     private RecyclerView recyclerView;
     public Boolean flag=true;   // 사진 지울시 확인 버튼 감지용
-    PhotoUrlAdapter photoAdapter;
+    public String idHex;
+
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -37,12 +41,6 @@ public class GetTreeBasicInfoFragment extends TMFragment {
         getTreeBasicInfoVM=new ViewModelProvider(getActivity()).get(GetTreeBasicInfoViewModel.class);
         getTreeBasicInfoFrBinding.setGetTreeBasicInfoVM(getTreeBasicInfoVM);
 
-        // 웹에서 가져온 이미지 URL 리스트
-        List<String> photoUrls = new ArrayList<>();
-        photoUrls.add("http://snd.synology.me:9955/images/0495150A635A80_1.jpg");
-        photoUrls.add("http://snd.synology.me:9955/images/0495150A635A80_2.jpg");
-
-
         // 사진 설정
         recyclerView = getTreeBasicInfoFrBinding.getTreeInfoRvImage;
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
@@ -50,7 +48,10 @@ public class GetTreeBasicInfoFragment extends TMFragment {
         photoAdapter=new PhotoUrlAdapter();
         recyclerView.setAdapter(photoAdapter);
 
-        photoAdapter.setImageList(photoUrls);
+
+        if(getPhotoUrl().size()>1){
+            photoAdapter.setImageList(getPhotoUrl());
+        }
 
         photoAdapter.tabClick.observe(getActivity(), new Observer() {
             @Override
@@ -60,6 +61,26 @@ public class GetTreeBasicInfoFragment extends TMFragment {
         });
         return getTreeBasicInfoFrBinding.getRoot();
     }
+
+
+
+   public List<String> getPhotoUrl(){
+       Log.d(TAG, "** 넘어온 태그 아이디 **"+idHex);
+       List<String> photoUrls = new ArrayList<>();
+
+       String sndUrl="http://snd.synology.me:9955/images/";
+       String photo1=sndUrl+idHex+"_1.jpg";
+       String photo2=sndUrl+idHex+"_2.jpg";
+
+        if(photo1!=null || photo2!=null){
+            Log.d(TAG, "** 실제 존재하는지 확인 **"+photo1);
+            Log.d(TAG, "** 실제 존재하는지 확인 **"+photo2);
+            photoUrls.add(photo1);
+            photoUrls.add(photo2);
+        }
+        return photoUrls;
+   }
+
 
 
     private void showAlertDialog() {
@@ -74,7 +95,6 @@ public class GetTreeBasicInfoFragment extends TMFragment {
                 photoAdapter.setAlertDialog(photoAdapter.clickedPosition, flag);
             }
         });
-
         builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {

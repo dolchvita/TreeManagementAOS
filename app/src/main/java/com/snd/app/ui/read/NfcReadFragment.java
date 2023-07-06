@@ -1,4 +1,4 @@
-package com.snd.app.ui.write;
+package com.snd.app.ui.read;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -12,19 +12,18 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.snd.app.R;
 import com.snd.app.common.TMFragment;
-import com.snd.app.databinding.TreeWriteFrBinding;
+import com.snd.app.databinding.TreeReadFrBinding;
 import com.snd.app.ui.tree.TreeViewModel;
 
-public class NfcLoadingFragment extends TMFragment {
+public class NfcReadFragment extends TMFragment {
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        TreeWriteFrBinding treeWriteFrBinding=DataBindingUtil.inflate(inflater, R.layout.tree_write_fr, container, false);
-        treeWriteFrBinding.setLifecycleOwner(this);
+        TreeReadFrBinding treeReadFrBinding= DataBindingUtil.inflate(inflater, R.layout.tree_read_fr, container, false);
+        treeReadFrBinding.setLifecycleOwner(this);
         TreeViewModel treeVM=new ViewModelProvider(getActivity()).get(TreeViewModel.class);
-        treeWriteFrBinding.setTreeVM(treeVM);
-        return treeWriteFrBinding.getRoot();
+        treeReadFrBinding.setTreeVM(treeVM);
+        return treeReadFrBinding.getRoot();
     }
-
 }

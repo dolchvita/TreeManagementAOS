@@ -20,8 +20,7 @@ import java.util.List;
 
 public class PhotoUrlAdapter extends RecyclerView.Adapter<PhotoUrlAdapter.PhotoViewHolder> {
     protected String TAG=this.getClass().getName();
-    private List<String> imageList = new ArrayList<>();
-
+    private List<String> imageList;
     private MutableLiveData<Integer> _alertDialog=new MutableLiveData();
 
     // 사진 번호
@@ -30,6 +29,7 @@ public class PhotoUrlAdapter extends RecyclerView.Adapter<PhotoUrlAdapter.PhotoV
     public LiveData tabClick=getTabClcick();    // getter(결과)
 
 
+    // 이미지 리스트 반영
     public void setImageList(List<String> imageList) {
         this.imageList = imageList;
         notifyDataSetChanged();
@@ -48,17 +48,20 @@ public class PhotoUrlAdapter extends RecyclerView.Adapter<PhotoUrlAdapter.PhotoV
         return new PhotoViewHolder(view);
     }
 
+
     @Override
     public void onBindViewHolder(@NonNull PhotoViewHolder holder, int position) {
         String imageUrl = imageList.get(position);
         holder.bind(imageUrl);
     }
 
+
     @Override
     public int getItemCount() {
-        Log.d(TAG,"** getItemCount 호출 **");
+        Log.d(TAG,"** getItemCount호출 - 개수는?  **"+imageList.size());
         return imageList.size();
     }
+
 
     static class PhotoViewHolder extends RecyclerView.ViewHolder {
         ImageView photoImageView;
@@ -78,6 +81,8 @@ public class PhotoUrlAdapter extends RecyclerView.Adapter<PhotoUrlAdapter.PhotoV
         }
     }
 
+
+
     @Override
     public void onBindViewHolder(@NonNull PhotoViewHolder holder, int position, @NonNull List<Object> payloads) {
         super.onBindViewHolder(holder, position, payloads);
@@ -93,6 +98,7 @@ public class PhotoUrlAdapter extends RecyclerView.Adapter<PhotoUrlAdapter.PhotoV
         });
     }
 
+
     // 1 클릭
     public void setAlertDialog(int clickedPosition, Boolean flag) {
         this.clickedPosition=clickedPosition;
@@ -102,6 +108,7 @@ public class PhotoUrlAdapter extends RecyclerView.Adapter<PhotoUrlAdapter.PhotoV
             notifyDataSetChanged();
         }
     }
+
 
     public void setTabClick(Integer value){
         // 클릭된 수로 속성 변경하기

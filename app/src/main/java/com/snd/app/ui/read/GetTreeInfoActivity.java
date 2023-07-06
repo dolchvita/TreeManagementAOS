@@ -1,9 +1,12 @@
 package com.snd.app.ui.read;
 
 import android.app.AlertDialog;
+import android.app.PendingIntent;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.nfc.NfcAdapter;
+import android.nfc.Tag;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -25,13 +28,17 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.snd.app.R;
 import com.snd.app.common.TMActivity;
 import com.snd.app.data.KakaoMapFragment;
 import com.snd.app.data.LocalDateTimeAdapter;
+import com.snd.app.data.NfcManager;
 import com.snd.app.databinding.ReadActBinding;
 import com.snd.app.domain.tree.TreeIntegratedVO;
 import com.snd.app.ui.write.MyCallback;
+import com.snd.app.ui.write.RegistTreeInfoActivity;
+import com.snd.app.ui.write.RegistTreeSpecificLocationInfoViewModel;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
@@ -61,30 +68,29 @@ public class GetTreeInfoActivity extends TMActivity implements AdapterView.OnIte
     GetTreeSpecificLocationFragment getTreeSpecificLocationFr;
     GetTreeStatusFragment getTreeStatusFr;
     GetEnvironmentFragment getEnvironmentFr;
-
+    NfcReadFragment nfcReadFragment;
     TreeIntegratedVO treeIntegratedVO;
+
 
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        idHex=getIntent().getStringExtra("IDHEX");
+        initNfc();
         ReadActBinding readActBinding= DataBindingUtil.setContentView(this, R.layout.read_act);
         readActBinding.setLifecycleOwner(this);
         GetTreeInfoViewModel getTreeInfoVM=new GetTreeInfoViewModel();
         readActBinding.setGetTreeInfoVM(getTreeInfoVM);
         getTreeBasicInfoVM=new ViewModelProvider(this).get(GetTreeBasicInfoViewModel.class);
-
         getTreeInfoVM.setCallback(this);
 
         getTreeBasicInfoFr=new GetTreeBasicInfoFragment();
         getTreeSpecificLocationFr=new GetTreeSpecificLocationFragment();
         getTreeStatusFr=new GetTreeStatusFragment();
         getEnvironmentFr=new GetEnvironmentFragment();
+        nfcReadFragment=new NfcReadFragment();
 
-        getSupportFragmentManager().beginTransaction().replace(R.id.read_content, getTreeBasicInfoFr).commit();
-        setKakaoMapFragment(R.id.readTreeBasic_map_layout);
-        getTreeInfoByNFCtagId();
+        getSupportFragmentManager().beginTransaction().replace(R.id.read_content, nfcReadFragment).commit();
 
         // 스피너 설정
         Spinner spinner = findViewById(R.id.read_sipnner);
@@ -107,7 +113,7 @@ public class GetTreeInfoActivity extends TMActivity implements AdapterView.OnIte
                     public void onClick(DialogInterface dialog, int which) {
                         //getLocation();
 
-                        // 지도에 표시하기
+                        // 지도 수정
                         //kakaoMapFragment.addMarkers(latitude,longitude, idHex);
                     }
                 });
@@ -121,19 +127,61 @@ public class GetTreeInfoActivity extends TMActivity implements AdapterView.OnIte
             }
         });
 
+    }// ./onCreate
+
+
+
+    /* ---------------------------- NFC ---------------------------- */
+
+    private void initNfc() {
+        Log.d(TAG, "** NFC 초기화 호출 ** ");
+        NfcAdapter nfcAdapter = NfcAdapter.getDefaultAdapter(this);
+        PendingIntent nfcPendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), PendingIntent.FLAG_IMMUTABLE);
+
+        if (nfcAdapter != null) {
+            nfcAdapter.enableReaderMode(this, new NfcAdapter.ReaderCallback() {
+                @Override
+                public void onTagDiscovered(Tag tag) {
+                    Log.d(TAG, "** NFC 인식하였음 !! 22 ** ");
+
+                    byte[] id = tag.getId();
+                    idHex = bytesToHexString(id).toUpperCase();
+                    Log.d(TAG, "** NFC 아이디 추출 ** "+id);
+                    Log.d(TAG, "** NFC 아이디 가공 ** "+idHex);
+
+                    // 여기서 아무것도 수행하지 않으면 된다.
+                    NfcManager nfcManager = new NfcManager(GetTreeInfoActivity.this);
+                    nfcManager.handleTag(tag);
+
+                    initBasicInfoFr();
+
+                }
+            }, NfcAdapter.FLAG_READER_NFC_A | NfcAdapter.FLAG_READER_SKIP_NDEF_CHECK, null);
+        }
     }
 
 
-
-    public void initMap(){
-        kakaoMapFragment.mapView.removeAllPOIItems();
-        getLocation();
-        Double thisLatitude;
-        Double thisLon;
-
+    private String bytesToHexString(byte[] bytes) {
+        StringBuilder sb = new StringBuilder();
+        for (byte b : bytes) {
+            sb.append(String.format("%02x", b));
+        }
+        return sb.toString();
     }
 
 
+    /* ---------------------------------- FRAGMENT ---------------------------------- */
+
+    public void initBasicInfoFr(){
+        switchFragment(getTreeBasicInfoFr);
+        // 카카오맵
+        kakaoMapFragment = new KakaoMapFragment();
+        setKakaoMapFragment(R.id.readTreeBasic_map_layout);
+        getTreeInfoByNFCtagId();
+        getTreeBasicInfoFr.idHex=idHex;
+    }
+
+    
     // 수정 버튼
     @Override
     public void onCustomCallback() {
@@ -189,7 +237,6 @@ public class GetTreeInfoActivity extends TMActivity implements AdapterView.OnIte
                 .addHeader("Authorization", sharedPreferences.getString("Authorization", null))
                 .put(requestBody)
                 .build();
-
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onResponse(@NonNull Call call, @NonNull okhttp3.Response response) throws IOException {
@@ -201,7 +248,6 @@ public class GetTreeInfoActivity extends TMActivity implements AdapterView.OnIte
                         @Override
                         public void run() {
                             if (response.isSuccessful()) {
-
 
                             }
                         }
@@ -221,12 +267,13 @@ public class GetTreeInfoActivity extends TMActivity implements AdapterView.OnIte
     }
 
 
+
     public void setKakaoMapFragment(int viewId){
-        kakaoMapFragment = new KakaoMapFragment();
         getSupportFragmentManager().beginTransaction()
                 .replace(viewId, kakaoMapFragment)
                 .commit();
     }
+
 
 
     // 수목에 대한 모든 정보 가져오는 메서드 !
@@ -265,7 +312,6 @@ public class GetTreeInfoActivity extends TMActivity implements AdapterView.OnIte
                         treeIntegratedVO.setBasicInserted(basicInserted);
                         getTreeBasicInfoVM.setTextViewModel(treeIntegratedVO);
                         kakaoMapFragment.addMarkers(Double.parseDouble(data.getString("latitude")), Double.parseDouble(data.getString("longitude")), idHex);
-
 
 
                     } catch (JSONException e) {
@@ -398,8 +444,10 @@ public class GetTreeInfoActivity extends TMActivity implements AdapterView.OnIte
 
        if (position==1){
            switchFragment(getTreeBasicInfoFr);
+           initBasicInfoFr();
        } else if (position == 2) {
            switchFragment(getTreeSpecificLocationFr);
+
        } else if (position == 3) {
            switchFragment(getTreeStatusFr);
        } else if (position == 4) {
