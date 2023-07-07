@@ -9,12 +9,13 @@ import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -26,9 +27,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.RecyclerView;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.snd.app.R;
 import com.snd.app.common.TMActivity;
 import com.snd.app.data.KakaoMapFragment;
@@ -38,9 +37,6 @@ import com.snd.app.databinding.ReadActBinding;
 import com.snd.app.domain.tree.TreeIntegratedVO;
 import com.snd.app.ui.write.MyCallback;
 import com.snd.app.ui.write.RegistTreeInfoActivity;
-import com.snd.app.ui.write.RegistTreeSpecificLocationInfoViewModel;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -48,8 +44,6 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -61,7 +55,11 @@ import okhttp3.RequestBody;
 public class GetTreeInfoActivity extends TMActivity implements AdapterView.OnItemSelectedListener, MyCallback {
     private String idHex;
     private KakaoMapFragment kakaoMapFragment;
+    GetTreeInfoViewModel getTreeInfoVM;
+
+    // 뷰모델들
     GetTreeBasicInfoViewModel getTreeBasicInfoVM;
+    GetTreeSpecificLocationViewModel getTreeSpecificLocationVM;
 
     // 프레그먼트들
     GetTreeBasicInfoFragment getTreeBasicInfoFr;
@@ -71,7 +69,11 @@ public class GetTreeInfoActivity extends TMActivity implements AdapterView.OnIte
     NfcReadFragment nfcReadFragment;
     TreeIntegratedVO treeIntegratedVO;
 
-
+    private int FAGMENTNUM;
+    private final int BASIC=1;
+    private final int SPACIFICLOCATION=2;
+    private final int STATUS=3;
+    private final int ENVIRONMENT=4;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -79,16 +81,19 @@ public class GetTreeInfoActivity extends TMActivity implements AdapterView.OnIte
         initNfc();
         ReadActBinding readActBinding= DataBindingUtil.setContentView(this, R.layout.read_act);
         readActBinding.setLifecycleOwner(this);
-        GetTreeInfoViewModel getTreeInfoVM=new GetTreeInfoViewModel();
+        getTreeInfoVM=new GetTreeInfoViewModel();
         readActBinding.setGetTreeInfoVM(getTreeInfoVM);
-        getTreeBasicInfoVM=new ViewModelProvider(this).get(GetTreeBasicInfoViewModel.class);
         getTreeInfoVM.setCallback(this);
 
+        getTreeBasicInfoVM=new ViewModelProvider(this).get(GetTreeBasicInfoViewModel.class);
+        getTreeSpecificLocationVM=new ViewModelProvider(this).get(GetTreeSpecificLocationViewModel.class);
+
+
+        nfcReadFragment=new NfcReadFragment();
         getTreeBasicInfoFr=new GetTreeBasicInfoFragment();
         getTreeSpecificLocationFr=new GetTreeSpecificLocationFragment();
         getTreeStatusFr=new GetTreeStatusFragment();
         getEnvironmentFr=new GetEnvironmentFragment();
-        nfcReadFragment=new NfcReadFragment();
 
         getSupportFragmentManager().beginTransaction().replace(R.id.read_content, nfcReadFragment).commit();
 
@@ -126,6 +131,9 @@ public class GetTreeInfoActivity extends TMActivity implements AdapterView.OnIte
                 dialog.show();
             }
         });
+
+        // 모든 정보를 가지고 있는 객체
+        treeIntegratedVO=new TreeIntegratedVO();
 
     }// ./onCreate
 
@@ -172,7 +180,24 @@ public class GetTreeInfoActivity extends TMActivity implements AdapterView.OnIte
 
     /* ---------------------------------- FRAGMENT ---------------------------------- */
 
+    public void switchFragment(Fragment frName){
+        FragmentTransaction transaction=getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.read_content, frName);
+        transaction.commit();
+    }
+
+
+    public void setKakaoMapFragment(int viewId){
+        getSupportFragmentManager().beginTransaction()
+                .replace(viewId, kakaoMapFragment)
+                .commit();
+    }
+
+
     public void initBasicInfoFr(){
+        FAGMENTNUM=BASIC;
+
+        getTreeInfoVM.readTitle.set("수목 기본 정보 조회");
         switchFragment(getTreeBasicInfoFr);
         // 카카오맵
         kakaoMapFragment = new KakaoMapFragment();
@@ -181,7 +206,20 @@ public class GetTreeInfoActivity extends TMActivity implements AdapterView.OnIte
         getTreeBasicInfoFr.idHex=idHex;
     }
 
-    
+
+    public void initSpecificLocationFr(){
+        FAGMENTNUM=SPACIFICLOCATION;
+
+        kakaoMapFragment = new KakaoMapFragment();
+        getTreeInfoVM.readTitle.set("위치 상세 정보 조회");
+        switchFragment(getTreeSpecificLocationFr);
+        setKakaoMapFragment(R.id.get_tree_specific_location_map_layout);
+        // 조회 메서드 가져오기
+        getTreeInfoByNFCtagId();
+        //getTreeSpecificLocationVM.setUserInfo(treeIntegratedVO);
+    }
+
+
     // 수정 버튼
     @Override
     public void onCustomCallback() {
@@ -268,15 +306,7 @@ public class GetTreeInfoActivity extends TMActivity implements AdapterView.OnIte
 
 
 
-    public void setKakaoMapFragment(int viewId){
-        getSupportFragmentManager().beginTransaction()
-                .replace(viewId, kakaoMapFragment)
-                .commit();
-    }
-
-
-
-    // 수목에 대한 모든 정보 가져오는 메서드 !
+    // 수목에 대한 "모든" 정보 가져오는 메서드 ! - 이것을 객체화할 수는 없을까?
     public void getTreeInfoByNFCtagId(){
         String url = sndUrl+"/app/tree/getTreeInfo/"+idHex;
         OkHttpClient client = new OkHttpClient();
@@ -292,8 +322,6 @@ public class GetTreeInfoActivity extends TMActivity implements AdapterView.OnIte
                     String responseData = response.body().string();
                     Log.d(TAG,"** 위치 성공 / 응답 **"+responseData);
 
-                    treeIntegratedVO=new TreeIntegratedVO();
-
                     try {
                         // 제이슨 데이터로 변환 후 추출
                         JSONObject json=new JSONObject(responseData);
@@ -301,17 +329,28 @@ public class GetTreeInfoActivity extends TMActivity implements AdapterView.OnIte
                         Log.d(TAG,"** data 추출 **"+data.toString());
 
                         treeIntegratedVO.setNFC(data.getString("nfc"));
+                        if(kakaoMapFragment!=null){
+                            //kakaoMapFragment.addMarkers(Double.parseDouble(data.getString("latitude")), Double.parseDouble(data.getString("longitude")), idHex);
+                        }
 
-                        // 기본 정보
-                        treeIntegratedVO.setSpecies(data.getString("species"));
-                        treeIntegratedVO.setBasicSubmitter(data.getString("basicSubmitter"));
-                        treeIntegratedVO.setBasicVendor(data.getString("basicVendor"));
-                        treeIntegratedVO.setLatitude(Double.parseDouble(data.getString("latitude")));
-                        treeIntegratedVO.setLongitude(Double.parseDouble(data.getString("longitude")));
-                        LocalDateTime basicInserted=deserialize(data.getString("basicInserted"));
-                        treeIntegratedVO.setBasicInserted(basicInserted);
-                        getTreeBasicInfoVM.setTextViewModel(treeIntegratedVO);
-                        kakaoMapFragment.addMarkers(Double.parseDouble(data.getString("latitude")), Double.parseDouble(data.getString("longitude")), idHex);
+
+                        if(FAGMENTNUM==BASIC){
+                            /* 기본 정보 매핑 */
+                            treeIntegratedVO.setSpecies(data.getString("species"));
+                            treeIntegratedVO.setBasicSubmitter(data.getString("basicSubmitter"));
+                            treeIntegratedVO.setBasicVendor(data.getString("basicVendor"));
+                            treeIntegratedVO.setLatitude(Double.parseDouble(data.getString("latitude")));
+                            treeIntegratedVO.setLongitude(Double.parseDouble(data.getString("longitude")));
+                            LocalDateTime basicInserted=deserialize(data.getString("basicInserted"));
+                            treeIntegratedVO.setBasicInserted(basicInserted);
+
+                            getTreeBasicInfoVM.setTextViewModel(treeIntegratedVO);
+
+                        } else if (FAGMENTNUM==SPACIFICLOCATION) {
+                            /* 위치 상세 매핑 */
+                            Log.d(TAG, "** 위치상세 ** "+FAGMENTNUM);
+
+                        }
 
 
                     } catch (JSONException e) {
@@ -331,6 +370,7 @@ public class GetTreeInfoActivity extends TMActivity implements AdapterView.OnIte
     }
 
 
+
     public LocalDateTime deserialize(String inserted){
         String[] strArr = inserted.replace("[", "").replace("]", "").split(",");
         int[] intArr = new int[strArr.length];
@@ -346,9 +386,7 @@ public class GetTreeInfoActivity extends TMActivity implements AdapterView.OnIte
     /* ----------------------------- 사진 조회 관련 ----------------------------- */
 
     // 이미지 리스트
-    List<String> photoPaths;
     private File currentPhotoFile;
-    List<File> currentList=new ArrayList<>();
 
     public void onCamera (){
         // 카메라 가동시키기
@@ -380,7 +418,6 @@ public class GetTreeInfoActivity extends TMActivity implements AdapterView.OnIte
     }
 
 
-
     // 1 파일 객체 가져오기 - 사진 찍기 전에 빈 파일 미리 생성하는 역할
     private File createImageFile() throws IOException {
         // 사진 이름 가공
@@ -393,8 +430,6 @@ public class GetTreeInfoActivity extends TMActivity implements AdapterView.OnIte
 
     // 2 카메라 촬영 - 아마 문제 없음
     private void startCamera() {
-        Log.d(TAG,"** startCamera 호출됨 **");
-
         if (getTreeBasicInfoVM.listData.getValue() != null && getTreeBasicInfoVM.currentList.size() >= 2) {
             Toast.makeText(this, "이미지 업로드 최대 2개를 초과하였습니다.", Toast.LENGTH_SHORT).show();
             return;
@@ -426,15 +461,6 @@ public class GetTreeInfoActivity extends TMActivity implements AdapterView.OnIte
 
 
 
-    /* ----------------------------- 프레그먼트 설정 관련 ----------------------------- */
-
-    public void switchFragment(Fragment frName){
-        FragmentTransaction transaction=getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.read_content, frName);
-        transaction.commit();
-    }
-
-
 
     /* ----------------------------- 스피너 설정 관련 ----------------------------- */
 
@@ -445,8 +471,10 @@ public class GetTreeInfoActivity extends TMActivity implements AdapterView.OnIte
        if (position==1){
            switchFragment(getTreeBasicInfoFr);
            initBasicInfoFr();
+
        } else if (position == 2) {
            switchFragment(getTreeSpecificLocationFr);
+            initSpecificLocationFr();
 
        } else if (position == 3) {
            switchFragment(getTreeStatusFr);

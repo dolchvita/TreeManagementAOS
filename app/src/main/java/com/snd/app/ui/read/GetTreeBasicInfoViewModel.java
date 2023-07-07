@@ -70,6 +70,7 @@ public class GetTreeBasicInfoViewModel extends TMViewModel {
         return formatDateTime;
     }
 
+
     public MutableLiveData<List<Bitmap>> getImageList() {
         return _listData;
     }
@@ -78,6 +79,8 @@ public class GetTreeBasicInfoViewModel extends TMViewModel {
     public void setCamera(){
         _camera.setValue("click");
     }
+
+
     public LiveData getCamera(){
         if(_camera==null){
             _camera=new MutableLiveData<String>();

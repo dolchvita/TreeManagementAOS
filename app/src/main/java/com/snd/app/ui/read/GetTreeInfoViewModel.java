@@ -1,5 +1,6 @@
 package com.snd.app.ui.read;
 
+import androidx.databinding.ObservableField;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
@@ -9,6 +10,7 @@ import com.snd.app.ui.write.MyCallback;
 public class GetTreeInfoViewModel extends TMViewModel {
     private String TAG=this.getClass().getName();
     private MyCallback myCallback;
+    public ObservableField<String> readTitle=new ObservableField<>();
 
     public void setCallback(MyCallback myCallback) {
         this.myCallback = myCallback;

@@ -73,8 +73,6 @@ public class GetTreeBasicInfoFragment extends TMFragment {
        String photo2=sndUrl+idHex+"_2.jpg";
 
         if(photo1!=null || photo2!=null){
-            Log.d(TAG, "** 실제 존재하는지 확인 **"+photo1);
-            Log.d(TAG, "** 실제 존재하는지 확인 **"+photo2);
             photoUrls.add(photo1);
             photoUrls.add(photo2);
         }

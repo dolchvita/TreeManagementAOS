@@ -673,7 +673,7 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
     public void initEnvironmentInfoFr(){
         treeInfoVM.registTitle.set("환경 정보 입력");
         RegistEnvironmentInfoViewModel registEnvironmentInfoVM=new ViewModelProvider(this).get(RegistEnvironmentInfoViewModel.class);
-        registEnvironmentInfoVM.setCallback(this);
+        registEnvironmentInfoVM.setCallback(this);      // 이거 굳이 필요한가?
         registEnvironmentInfoVM.idHex.set(idHex);
     }
 

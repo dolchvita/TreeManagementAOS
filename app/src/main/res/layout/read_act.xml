@@ -53,7 +53,7 @@
 
         <androidx.appcompat.widget.AppCompatTextView
             style="@style/headerTextStyle"
-            android:text="정보 조회"
+            android:text="@{getTreeInfoVM.readTitle}"
             android:textColor="@color/cocoa_brown"
             app:layout_constraintBottom_toBottomOf="@id/read_header"
             app:layout_constraintEnd_toEndOf="@id/read_header"

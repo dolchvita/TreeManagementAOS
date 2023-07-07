@@ -22,9 +22,11 @@ public class TreeIntegratedVO {
     private String address;
     private String streetCode;
     private String areaCode;
+
     private Integer carriageway;
     private Boolean sidewalk;
     private Double distance;
+
     private Integer orderNumber;
     private String locationSubmitter;
     private String locationVendor;

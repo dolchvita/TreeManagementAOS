@@ -128,6 +128,7 @@
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/get_tree_specific_location_sr_no"
                     style="@style/tree_info_edt"
+                    android:text="@{specificLocationVM.nfc}"
                     app:layout_constraintEnd_toEndOf="@id/get_tree_specific_location_sr_no_tv"
                     app:layout_constraintStart_toStartOf="@id/get_tree_specific_location_sr_no_tv"
                     app:layout_constraintTop_toBottomOf="@id/get_tree_specific_location_sr_no_tv" />
@@ -151,6 +152,7 @@
                     android:hint="0"
                     app:layout_constraintStart_toStartOf="@id/get_tree_specific_location_material_tv"
                     app:layout_constraintTop_toBottomOf="@id/get_tree_specific_location_material_tv" />
+
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/get_tree_specific_location_tr_state_tv"
