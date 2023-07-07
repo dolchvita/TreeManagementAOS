@@ -1,5 +1,7 @@
 package com.snd.app.ui.read;
 
+import android.util.Log;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
@@ -10,26 +12,28 @@ import com.snd.app.domain.tree.TreeIntegratedVO;
 public class GetTreeSpecificLocationViewModel extends TMViewModel {
 
     // 기본 정보
-    private MutableLiveData<String> _nfc;
+    public MutableLiveData<TreeIntegratedVO> Ldata;
     // 공유되어야 하는 객체.
     TreeIntegratedVO treeIntegratedVO;
 
-    public GetTreeSpecificLocationViewModel() {
-        _nfc=new MutableLiveData<>();
 
-        treeIntegratedVO=new TreeIntegratedVO();
-        treeIntegratedVO.setNFC("tq");
+
+    public GetTreeSpecificLocationViewModel() {
+        Ldata=new MutableLiveData<>();
+
+        treeIntegratedVO=TreeIntegratedVO.getInstance();
+
+
+        //treeIntegratedVO.setNFC("tq");
         setUserInfo(treeIntegratedVO);
     }
 
 
     public void setUserInfo(TreeIntegratedVO treeIntegratedVO) {
-        _nfc.setValue(treeIntegratedVO.getNFC());
+        Log.d(TAG, "휴                   "+treeIntegratedVO);
+        Ldata.setValue(treeIntegratedVO);
     }
 
 
-    public LiveData<String> getNfc() {
-        return _nfc;
-    }
-
+    
 }

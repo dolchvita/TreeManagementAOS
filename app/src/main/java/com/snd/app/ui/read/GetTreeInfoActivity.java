@@ -33,6 +33,7 @@ import com.snd.app.common.TMActivity;
 import com.snd.app.data.KakaoMapFragment;
 import com.snd.app.data.LocalDateTimeAdapter;
 import com.snd.app.data.NfcManager;
+import com.snd.app.data.SpinnerValueListener;
 import com.snd.app.databinding.ReadActBinding;
 import com.snd.app.domain.tree.TreeIntegratedVO;
 import com.snd.app.ui.write.MyCallback;
@@ -52,7 +53,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 
-public class GetTreeInfoActivity extends TMActivity implements AdapterView.OnItemSelectedListener, MyCallback {
+public class GetTreeInfoActivity extends TMActivity implements AdapterView.OnItemSelectedListener, MyCallback, SpinnerValueListener {
     private String idHex;
     private KakaoMapFragment kakaoMapFragment;
     GetTreeInfoViewModel getTreeInfoVM;
@@ -133,7 +134,7 @@ public class GetTreeInfoActivity extends TMActivity implements AdapterView.OnIte
         });
 
         // 모든 정보를 가지고 있는 객체
-        treeIntegratedVO=new TreeIntegratedVO();
+        treeIntegratedVO=TreeIntegratedVO.getInstance();
 
     }// ./onCreate
 
@@ -216,7 +217,8 @@ public class GetTreeInfoActivity extends TMActivity implements AdapterView.OnIte
         setKakaoMapFragment(R.id.get_tree_specific_location_map_layout);
         // 조회 메서드 가져오기
         getTreeInfoByNFCtagId();
-        //getTreeSpecificLocationVM.setUserInfo(treeIntegratedVO);
+
+        getTreeSpecificLocationVM.setUserInfo(treeIntegratedVO);
     }
 
 
@@ -330,8 +332,9 @@ public class GetTreeInfoActivity extends TMActivity implements AdapterView.OnIte
 
                         treeIntegratedVO.setNFC(data.getString("nfc"));
                         if(kakaoMapFragment!=null){
-                            //kakaoMapFragment.addMarkers(Double.parseDouble(data.getString("latitude")), Double.parseDouble(data.getString("longitude")), idHex);
+                            kakaoMapFragment.addMarkers(Double.parseDouble(data.getString("latitude")), Double.parseDouble(data.getString("longitude")), idHex);
                         }
+                        Log.d(TAG, "휴                   "+treeIntegratedVO);
 
 
                         if(FAGMENTNUM==BASIC){
@@ -346,10 +349,10 @@ public class GetTreeInfoActivity extends TMActivity implements AdapterView.OnIte
 
                             getTreeBasicInfoVM.setTextViewModel(treeIntegratedVO);
 
-                        } else if (FAGMENTNUM==SPACIFICLOCATION) {
                             /* 위치 상세 매핑 */
                             Log.d(TAG, "** 위치상세 ** "+FAGMENTNUM);
-
+                            treeIntegratedVO.setCarriageway(Integer.parseInt(data.getString("carriageway")));
+                            treeIntegratedVO.setDistance(Double.parseDouble(data.getString("distance")));
                         }
 
 
@@ -468,19 +471,19 @@ public class GetTreeInfoActivity extends TMActivity implements AdapterView.OnIte
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         Log.d(TAG, "** 선택된 메뉴 값 ** "+position);
 
-       if (position==1){
-           switchFragment(getTreeBasicInfoFr);
-           initBasicInfoFr();
+        if (position==1){
+            switchFragment(getTreeBasicInfoFr);
+            initBasicInfoFr();
 
-       } else if (position == 2) {
-           switchFragment(getTreeSpecificLocationFr);
+        } else if (position == 2) {
+            switchFragment(getTreeSpecificLocationFr);
             initSpecificLocationFr();
 
-       } else if (position == 3) {
-           switchFragment(getTreeStatusFr);
-       } else if (position == 4) {
-           switchFragment(getEnvironmentFr);
-       }
+        } else if (position == 3) {
+            switchFragment(getTreeStatusFr);
+        } else if (position == 4) {
+            switchFragment(getEnvironmentFr);
+        }
     }
 
 
@@ -490,4 +493,8 @@ public class GetTreeInfoActivity extends TMActivity implements AdapterView.OnIte
     }
 
 
+    @Override
+    public void onSpinnerValueChanged(String value) {
+
+    }
 }

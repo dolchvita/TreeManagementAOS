@@ -1,10 +1,14 @@
 package com.snd.app.ui.read;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -13,9 +17,11 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.snd.app.R;
 import com.snd.app.common.TMFragment;
+import com.snd.app.data.SpinnerValueListener;
 import com.snd.app.databinding.GetTreeSpecificLocationFrBinding;
 
 public class GetTreeSpecificLocationFragment extends TMFragment {
+    private SpinnerValueListener spinnerValueListener;
 
     @Nullable
     @Override
@@ -27,6 +33,19 @@ public class GetTreeSpecificLocationFragment extends TMFragment {
         getTreeSpecificLocationFrBinding.setSpecificLocationVM(getTreeSpecificLocationVM);
         return getTreeSpecificLocationFrBinding.getRoot();
     }
+
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        // 액티비티가 인터페이스를 구현하고 있는지 확인
+        if (context instanceof SpinnerValueListener) {
+            spinnerValueListener = (SpinnerValueListener) context;
+        } else {
+            throw new RuntimeException(context.toString() + " must implement SpinnerValueListener");
+        }
+    }
+
 
 
 

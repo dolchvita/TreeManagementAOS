@@ -5,6 +5,18 @@ import java.time.LocalDateTime;
 
 // 수목의 모든 정보를 담는 객체
 public class TreeIntegratedVO {
+   private static TreeIntegratedVO instance;
+
+    public static TreeIntegratedVO getInstance() {
+        if(instance==null){
+            instance=new TreeIntegratedVO();
+        }
+        return instance;
+    }
+
+    private TreeIntegratedVO(){
+        // 생성자 막기
+    }
 
     /*Data Of TreeBasicInfo*/
     private String NFC;

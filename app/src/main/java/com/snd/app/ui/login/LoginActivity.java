@@ -41,6 +41,8 @@ public class LoginActivity extends TMActivity {
     // 1 로그인 정보
     JSONObject loginData=new JSONObject();
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,7 +78,6 @@ public class LoginActivity extends TMActivity {
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
-
         JsonObjectRequest request1 = new JsonObjectRequest(Request.Method.POST, sndUrl+"/app/login", loginData,
                 new Response.Listener<JSONObject>() {
                     @Override
@@ -100,7 +101,6 @@ public class LoginActivity extends TMActivity {
                         Toast.makeText(getApplicationContext(),"로그인 정보가 올바르지 않습니다", Toast.LENGTH_SHORT).show();
                     }
                 });
-
         //jsonObjectRequest.setShouldCache(false);
         AppModule.requestQueue.add(request1);
     }
@@ -119,7 +119,6 @@ public class LoginActivity extends TMActivity {
                 if(response.equals("success")){
                     getUserInfoByUserId(t_id.getText().toString(), token);
                 }
-
             }
         }, new Response.ErrorListener() {
             @Override
@@ -185,6 +184,7 @@ public class LoginActivity extends TMActivity {
    }
 
 
+
    // 4 회원 정보 저장하기
    public void saveUserInfo(UserDTO user){
 
@@ -200,8 +200,9 @@ public class LoginActivity extends TMActivity {
 
        // 위의 코드를 모듈화 해보기
        Log.d(TAG, "** 저장된 SP 객체의 회사명 ** "+sharedPreferences.getString("company",null));
-
     }
+
+
 
     public void startActivity(){
         Intent intent=new Intent(this, MainActivity.class);

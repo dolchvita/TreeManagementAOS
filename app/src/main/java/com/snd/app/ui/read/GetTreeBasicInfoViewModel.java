@@ -36,7 +36,6 @@ public class GetTreeBasicInfoViewModel extends TMViewModel {
     private MutableLiveData<List<Bitmap>> _listData = new MutableLiveData<>();
     public LiveData listData=getImageList();
 
-
     public void setGPS(){
         _gps_btn.setValue("click");
     }
@@ -48,6 +47,8 @@ public class GetTreeBasicInfoViewModel extends TMViewModel {
 
     // 데이터바인딩시 참조할 변수 매핑
     public void setTextViewModel(TreeIntegratedVO treeIntegratedVO){
+        Log.d(TAG, "휴                   "+treeIntegratedVO);
+
         NFC.set(treeIntegratedVO.getNFC());
         species.set(treeIntegratedVO.getSpecies());
         submitter.set(treeIntegratedVO.getBasicSubmitter());
