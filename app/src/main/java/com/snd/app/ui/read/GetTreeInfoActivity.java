@@ -9,8 +9,6 @@ import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
-import android.os.Looper;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
@@ -37,7 +35,6 @@ import com.snd.app.data.SpinnerValueListener;
 import com.snd.app.databinding.ReadActBinding;
 import com.snd.app.domain.tree.TreeIntegratedVO;
 import com.snd.app.ui.write.MyCallback;
-import com.snd.app.ui.write.RegistTreeInfoActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -208,9 +205,9 @@ public class GetTreeInfoActivity extends TMActivity implements AdapterView.OnIte
     }
 
 
+
     public void initSpecificLocationFr(){
         FAGMENTNUM=SPACIFICLOCATION;
-
         kakaoMapFragment = new KakaoMapFragment();
         getTreeInfoVM.readTitle.set("위치 상세 정보 조회");
         switchFragment(getTreeSpecificLocationFr);
@@ -220,6 +217,21 @@ public class GetTreeInfoActivity extends TMActivity implements AdapterView.OnIte
 
         getTreeSpecificLocationVM.setUserInfo(treeIntegratedVO);
     }
+
+
+
+    public void initStatusInfoFr(){
+        getTreeInfoVM.readTitle.set("수목 상태 정보 조회");
+        switchFragment(getTreeStatusFr);
+    }
+
+
+
+    public void initEnvironmentInfoFr(){
+        getTreeInfoVM.readTitle.set("환경 정보 입력");
+        switchFragment(getEnvironmentFr);
+    }
+
 
 
     // 수정 버튼
@@ -334,26 +346,34 @@ public class GetTreeInfoActivity extends TMActivity implements AdapterView.OnIte
                         if(kakaoMapFragment!=null){
                             kakaoMapFragment.addMarkers(Double.parseDouble(data.getString("latitude")), Double.parseDouble(data.getString("longitude")), idHex);
                         }
-                        Log.d(TAG, "휴                   "+treeIntegratedVO);
 
 
-                        if(FAGMENTNUM==BASIC){
-                            /* 기본 정보 매핑 */
-                            treeIntegratedVO.setSpecies(data.getString("species"));
-                            treeIntegratedVO.setBasicSubmitter(data.getString("basicSubmitter"));
-                            treeIntegratedVO.setBasicVendor(data.getString("basicVendor"));
-                            treeIntegratedVO.setLatitude(Double.parseDouble(data.getString("latitude")));
-                            treeIntegratedVO.setLongitude(Double.parseDouble(data.getString("longitude")));
-                            LocalDateTime basicInserted=deserialize(data.getString("basicInserted"));
-                            treeIntegratedVO.setBasicInserted(basicInserted);
+                        /* 기본 정보 매핑 */
+                        treeIntegratedVO.setSpecies(data.getString("species"));
+                        treeIntegratedVO.setBasicSubmitter(data.getString("basicSubmitter"));
+                        treeIntegratedVO.setBasicVendor(data.getString("basicVendor"));
+                        treeIntegratedVO.setLatitude(Double.parseDouble(data.getString("latitude")));
+                        treeIntegratedVO.setLongitude(Double.parseDouble(data.getString("longitude")));
+                        LocalDateTime basicInserted=deserialize(data.getString("basicInserted"));
+                        treeIntegratedVO.setBasicInserted(basicInserted);
 
-                            getTreeBasicInfoVM.setTextViewModel(treeIntegratedVO);
+                        getTreeBasicInfoVM.setTextViewModel(treeIntegratedVO);
 
-                            /* 위치 상세 매핑 */
-                            Log.d(TAG, "** 위치상세 ** "+FAGMENTNUM);
-                            treeIntegratedVO.setCarriageway(Integer.parseInt(data.getString("carriageway")));
-                            treeIntegratedVO.setDistance(Double.parseDouble(data.getString("distance")));
-                        }
+
+                        /* 위치 상세 매핑 */
+                        Log.d(TAG, "** 위치상세 ** "+FAGMENTNUM);
+                        treeIntegratedVO.setCarriageway(Integer.parseInt(data.getString("carriageway")));
+                        treeIntegratedVO.setDistance(Double.parseDouble(data.getString("distance")));
+
+
+                        /* 상태 정보 매핑 */
+                        treeIntegratedVO.setDBH(Double.parseDouble(data.getString("dbh")));
+                        treeIntegratedVO.setRCC(Double.parseDouble(data.getString("rcc")));
+                        treeIntegratedVO.setHeight(Double.parseDouble(data.getString("height")));
+                        treeIntegratedVO.setLength(Double.parseDouble(data.getString("length")));
+                        treeIntegratedVO.setWidth(Double.parseDouble(data.getString("width")));
+
+
 
 
                     } catch (JSONException e) {
@@ -476,13 +496,14 @@ public class GetTreeInfoActivity extends TMActivity implements AdapterView.OnIte
             initBasicInfoFr();
 
         } else if (position == 2) {
-            switchFragment(getTreeSpecificLocationFr);
             initSpecificLocationFr();
 
         } else if (position == 3) {
-            switchFragment(getTreeStatusFr);
+            //switchFragment(getTreeStatusFr);
+            initStatusInfoFr();
+
         } else if (position == 4) {
-            switchFragment(getEnvironmentFr);
+            initEnvironmentInfoFr();
         }
     }
 

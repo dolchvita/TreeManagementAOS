@@ -75,6 +75,7 @@ public class KakaoMapFragment extends Fragment implements MapView.POIItemEventLi
     }
 
 
+
     public void initMapView(){
        // mapView=new MapView(getContext());
         // 초기 세팅하기
@@ -96,7 +97,6 @@ public class KakaoMapFragment extends Fragment implements MapView.POIItemEventLi
         // 현재 위치 표시 활성화 - 트래킹 모드 !
         mapView.setCurrentLocationTrackingMode(MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeading);
     }
-
 
 
 

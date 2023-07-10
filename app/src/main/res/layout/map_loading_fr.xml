@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!--카카오맵-->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/loading_map_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="7dp"
+        android:background="@color/white"
+        tools:ignore="MissingConstraints">
+
+        <RelativeLayout
+            android:id="@+id/loading_kakao_map"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#9C9C9C"
+            android:gravity="center"/>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    <!--./카카오맵-->
+
+</androidx.constraintlayout.widget.ConstraintLayout>

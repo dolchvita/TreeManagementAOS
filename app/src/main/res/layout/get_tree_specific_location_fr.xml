@@ -128,7 +128,7 @@
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/get_tree_specific_location_sr_no"
                     style="@style/tree_info_edt"
-                    android:text="@{specificLocationVM.Ldata.NFC}"
+                    android:text="@{specificLocationVM.locationData.NFC}"
                     app:layout_constraintEnd_toEndOf="@id/get_tree_specific_location_sr_no_tv"
                     app:layout_constraintStart_toStartOf="@id/get_tree_specific_location_sr_no_tv"
                     app:layout_constraintTop_toBottomOf="@id/get_tree_specific_location_sr_no_tv" />
@@ -150,7 +150,7 @@
                     app:layout_constraintEnd_toEndOf="@id/get_tree_specific_location_material_tv"
                     app:layout_constraintHorizontal_bias="0.0"
                     android:hint="0"
-                    android:text="@{String.valueOf(specificLocationVM.Ldata.carriageway)}"
+                    android:text="@{String.valueOf(specificLocationVM.locationData.carriageway)}"
                     app:layout_constraintStart_toStartOf="@id/get_tree_specific_location_material_tv"
                     app:layout_constraintTop_toBottomOf="@id/get_tree_specific_location_material_tv" />
 
@@ -187,7 +187,7 @@
                     style="@style/tree_info_edt"
                     android:inputType="numberDecimal"
                     android:hint="0"
-                    android:text="@{String.valueOf(specificLocationVM.Ldata.distance)}"
+                    android:text="@{String.valueOf(specificLocationVM.locationData.distance)}"
                     app:layout_constraintEnd_toEndOf="@id/get_tree_specific_location_distance_tv"
                     app:layout_constraintStart_toStartOf="@id/get_tree_specific_location_distance_tv"
                     app:layout_constraintTop_toBottomOf="@id/get_tree_specific_location_distance_tv" />

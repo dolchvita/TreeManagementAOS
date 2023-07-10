@@ -12,26 +12,21 @@ import com.snd.app.domain.tree.TreeIntegratedVO;
 public class GetTreeSpecificLocationViewModel extends TMViewModel {
 
     // 기본 정보
-    public MutableLiveData<TreeIntegratedVO> Ldata;
+    public MutableLiveData<TreeIntegratedVO> locationData;
     // 공유되어야 하는 객체.
     TreeIntegratedVO treeIntegratedVO;
 
-
-
     public GetTreeSpecificLocationViewModel() {
-        Ldata=new MutableLiveData<>();
-
+        locationData=new MutableLiveData<>();
         treeIntegratedVO=TreeIntegratedVO.getInstance();
 
-
-        //treeIntegratedVO.setNFC("tq");
         setUserInfo(treeIntegratedVO);
     }
 
 
     public void setUserInfo(TreeIntegratedVO treeIntegratedVO) {
         Log.d(TAG, "휴                   "+treeIntegratedVO);
-        Ldata.setValue(treeIntegratedVO);
+        locationData.setValue(treeIntegratedVO);
     }
 
 

@@ -48,6 +48,30 @@ public class GetTreeSpecificLocationFragment extends TMFragment {
 
 
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        // 스피너 설정
+        Spinner spinner=(Spinner) getView().findViewById(R.id.get_tree_specific_location_tr_state);
+        ArrayAdapter adapter=ArrayAdapter.createFromResource(getContext(), R.array.treeStatus_pest,  android.R.layout.simple_spinner_item);
+        spinner.setAdapter(adapter);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                // 선택된 값 가져오기
+                String selectedValue = spinner.getSelectedItem().toString();
+
+                // 액티비티로 선택된 값 전달
+                spinnerValueListener.onSpinnerValueChanged(selectedValue);
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // 아무것도 선택되지 않았을 때 처리
+
+            }
+        });
+    }
 
 
 }

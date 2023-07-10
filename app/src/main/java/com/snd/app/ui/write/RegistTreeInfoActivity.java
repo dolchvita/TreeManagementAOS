@@ -92,7 +92,7 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
     private KakaoMapFragment kakaoMapFragment;
 
     // 팝업버튼 확인
-    int num=1;
+    int num=0;
     // 사진 지울시 확인 버튼 감지용
     public Boolean pest=true;
     Boolean click=false;
@@ -119,6 +119,9 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
         // 콜백 연결
         treeInfoVM.setCallback(this);
 
+        //카카오맵 미리 생성
+
+
         // 프레그먼트들
         registTreeBasicInfoFr=new RegistTreeBasicInfoFragment();
         registTreeSpecificLocationInfoFr=new RegistTreeSpecificLocationInfoFragment();
@@ -129,7 +132,6 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
         treeInfoVM.registTitle.set("기본 정보 입력");
         getSupportFragmentManager().beginTransaction().replace(R.id.write_content, nfcLoadingFragment).commit();
 
-        //initBasicInfoFr();
         onCamera();
 
         treeBasicInfoVM.imgCount.observe(this, new Observer<String>() {
@@ -150,14 +152,15 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
 
                 if (satellitesCount>5){
                     if (!click){
-                        findViewById(R.id.loading_layout_box).setVisibility(View.GONE);
+                        //findViewById(R.id.loading_layout_box).setVisibility(View.GONE);
                         findViewById(R.id.write_cancel).setBackgroundColor(getResources().getColor(R.color.cocoa_brown));   // 저장 버튼 활성화
-                    }
 
-                    // 위도 경도 가져오기
-                    getLocation();
-                    // 디자인 요소 반영
-                    getTreeLocation();
+                        // 위도 경도 가져오기
+                        getLocation();
+                        // 디자인 요소 반영
+                        getTreeLocation();
+
+                    }
                     click=true;
                 }
             }
@@ -191,6 +194,8 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
 
 
 
+
+
     public void initBasicInfoFr(){
         switchFragment(registTreeBasicInfoFr);
         // 카카오맵
@@ -201,10 +206,6 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
             setTreeBasicInfoDTO();
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
-        }
-
-        if(!click){
-            findViewById(R.id.loading_layout_box).setVisibility(View.VISIBLE);
         }
 
     }
@@ -236,7 +237,8 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
                     NfcManager nfcManager = new NfcManager(RegistTreeInfoActivity.this);
                     nfcManager.handleTag(tag);
 
-                    initBasicInfoFr();
+                    //initBasicInfoFr();
+                    initKakaoMapFr();
 
                 }
             }, NfcAdapter.FLAG_READER_NFC_A | NfcAdapter.FLAG_READER_SKIP_NDEF_CHECK, null);
@@ -250,6 +252,18 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
             sb.append(String.format("%02x", b));
         }
         return sb.toString();
+    }
+
+
+
+    public void initKakaoMapFr(){
+        MapLoadingFragment mapLoadingFragment=new MapLoadingFragment();
+        switchFragment(mapLoadingFragment);
+        setKakaoMapFragment(R.id.loading_map_layout);
+
+        if(!click){
+            //findViewById(R.id.loading_layout_box).setVisibility(View.VISIBLE);
+        }
     }
 
 
@@ -273,8 +287,6 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
 
     // 등록 호출 2
     public void mappingDTO(){
-        Log.d(TAG,"** mappingDTO 호출 **");
-
         if(num == BASIC){
             registerTreeBasicInfo();
             if(currentList.size()>0){
@@ -289,9 +301,32 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
 
         } else if (num == ENVIRONMENT) {
             registerTreeEnvironmentInfo();
+
+        } else if (num == 0) {
+            checkLocation();
         }
     }
 
+
+    public void checkLocation(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(RegistTreeInfoActivity.this);
+        builder.setTitle("현재 위치가 맞습니까?");
+        builder.setMessage("");
+        builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                initBasicInfoFr();
+                num=BASIC;
+            }
+        });
+        builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
 
 
     // 등록 호출 3
@@ -654,6 +689,7 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
     /* ---------------------------------- Fragment 관련 ---------------------------------- */
 
     public void switchFragment(Fragment frName){
+        // 여기서 생성하기
         Log.d(TAG, "**프레그먼트 이름 확인 ** "+frName);
         FragmentTransaction transaction=getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.write_content, frName);
@@ -664,6 +700,7 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
     // 카카오맵 전환
     public void setKakaoMapFragment(int viewId){
         kakaoMapFragment = new KakaoMapFragment();
+        // 카카오맵 전환하기...
         getSupportFragmentManager().beginTransaction()
                 .replace(viewId, kakaoMapFragment)
                 .commit();

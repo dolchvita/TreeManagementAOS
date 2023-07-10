@@ -46,12 +46,12 @@ public class TreeIntegratedVO {
     private LocalDateTime locationModified;
 
     /*Data Of TreeStatusInfo*/
-    private Double DBH;
-    private Double RCC;
-    private Double height;
-    private Double length;
-    private Double width;
-    private Boolean pest;
+    private Double DBH;         // 흉고직경
+    private Double RCC;         // 근원직경
+    private Double height;      // 수고
+    private Double length;      // 지하고
+    private Double width;       // 수관폭
+    private Boolean pest;       // 병충해 유무
     private LocalDate creation;
     private String statusSubmitter;
     private String statusVendor;
