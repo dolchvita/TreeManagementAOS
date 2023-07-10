@@ -7,12 +7,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.snd.app.R;
-import com.snd.app.domain.tree.TreeBasicInfoDTO;
 
 import net.daum.mf.map.api.MapPOIItem;
 import net.daum.mf.map.api.MapPoint;
@@ -45,9 +42,16 @@ public class KakaoMapFragment extends Fragment implements MapView.POIItemEventLi
 
 
     public void addMarkers(Double latitude, Double longitude, String idHex){
-        Log.d(TAG, "** 카카오맵 프레그먼트에서 호출 -**"+latitude+", "+longitude);
-        //mapView.setCurrentLocationTrackingMode(MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeading);
+        Log.d(TAG, "** addMarkers 호출 -**"+latitude+", "+longitude);
 
+        Log.d(TAG, "** addMarkers 호출 -** 맵뷰 실체 "+ mapView);
+
+        //mapView.setCurrentLocationTrackingMode(MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeading);
+        if(mapView==null){
+            Log.d(TAG, "** addMarkers에서 맵뷰 null **");
+
+            return;
+        }
         // 중심점 변경
         mapView.setMapCenterPoint(MapPoint.mapPointWithGeoCoord(latitude, longitude), true);
 
@@ -110,11 +114,12 @@ public class KakaoMapFragment extends Fragment implements MapView.POIItemEventLi
         mapView.setCurrentLocationEventListener(null);
         mapView.setCurrentLocationTrackingMode(MapView.CurrentLocationTrackingMode.TrackingModeOff);
         mapView.setCurrentLocationRadius(0);
-        mapView.setZoomLevel(-1, true);
+        mapView.setZoomLevel(-2, true);
         mapView = null;
 
         super.onDestroyView();
     }
+
 
 
     // 리스너 상속된 메서드들

@@ -1,12 +1,15 @@
 package com.snd.app.ui.write;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.Location;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.nfc.NfcAdapter;
@@ -22,6 +25,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
@@ -30,6 +34,11 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
 import com.snd.app.MainActivity;
 import com.snd.app.R;
 import com.snd.app.common.TMActivity;
@@ -156,16 +165,18 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
                         findViewById(R.id.write_cancel).setBackgroundColor(getResources().getColor(R.color.cocoa_brown));   // 저장 버튼 활성화
 
                         // 위도 경도 가져오기
-                        getLocation();
-                        // 디자인 요소 반영
-                        getTreeLocation();
+                        checkLocationAccuracy();
+                        Log.d(TAG, "** 위도22 : " + latitude + ", 경도22 : " + longitude);
+
+
+                        // 여기를 먼저 거치고 checkLocationAccuracy를 실행하기 시작 (비동기 같음)
+
 
                     }
                     click=true;
                 }
             }
         });
-
 
         treeInfoVM.back.observe(this, new Observer() {
             @Override
@@ -194,6 +205,39 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
 
 
 
+    // 오차 범위 설정하는 메서드 -> 마지막 위치 대신 가져오기
+    public void checkLocationAccuracy() {
+        Log.d(TAG,"** checkLocationAccuracy 함수 호출 **");
+
+        FusedLocationProviderClient client = LocationServices.getFusedLocationProviderClient(this);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // 권한 확인
+            return;
+        }
+        client.requestLocationUpdates(new LocationRequest(), new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                if (locationResult == null) {
+                    return;
+                }
+                for (Location location : locationResult.getLocations()) {
+                    if (location.getAccuracy() <= 30) {  // 오차 범위가 30미터 이내인 경우
+                        Log.d(TAG, "Location with good accuracy: " + location.getLatitude() + ", " + location.getLongitude());
+
+                        latitude = location.getLatitude();
+                        longitude = location.getLongitude();
+                        Log.d(TAG, "** 위도: " + latitude + ", 경도 : " + longitude);
+
+
+                        // 이시점에서 불러야 함
+                        getTreeLocation();
+
+
+                    }
+                }
+            }
+        }, null);
+    }
 
 
     public void initBasicInfoFr(){
@@ -262,8 +306,10 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
         setKakaoMapFragment(R.id.loading_map_layout);
 
         if(!click){
-            //findViewById(R.id.loading_layout_box).setVisibility(View.VISIBLE);
+           // findViewById(R.id.loading_layout_box).setVisibility(View.VISIBLE);
         }
+
+        // 디자인 요소 반영 - 호출 전 카카오맵 초기화 필요
     }
 
 
@@ -512,7 +558,6 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
                     Intent intent=new Intent(RegistTreeInfoActivity.this, MainActivity.class);
                     startActivity(intent);
                 }
-
             }
         });
 
@@ -733,8 +778,13 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
 
     // 디자인 요소에 세팅하기
     public void getTreeLocation(){
-        treeBasicInfoVM.latitude.set(""+latitude);
-        treeBasicInfoVM.longitude.set(""+longitude);
+       Log.d(TAG, "** getTreeLocation 호출되었니? **");
+        Log.d(TAG, "** 위도: " + latitude + ", 경도 : " + longitude);
+
+        //treeBasicInfoVM.latitude.set(""+latitude);
+        //treeBasicInfoVM.longitude.set(""+longitude);
+        
+        // 이거 호출되기 전에 초기화 안됨
         kakaoMapFragment.addMarkers(latitude,longitude, idHex);
     }
 

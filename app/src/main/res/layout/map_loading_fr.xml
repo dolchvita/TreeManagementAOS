@@ -13,6 +13,7 @@
         android:background="@color/white"
         tools:ignore="MissingConstraints">
 
+
         <RelativeLayout
             android:id="@+id/loading_kakao_map"
             android:layout_width="match_parent"
@@ -20,6 +21,40 @@
             android:background="#9C9C9C"
             android:gravity="center"/>
 
+
+        <!--로딩박스-->
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/loading_layout_box"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+
+            android:gravity="center">
+
+            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/loading_layout"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/border_background"
+                android:orientation="vertical"
+                android:padding="10dp" >
+
+                <ProgressBar
+                    android:id="@+id/progress"
+                    android:layout_gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:id="@+id/tv1"
+                    android:layout_gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="위성 감지 중입니다. 잠시만 기다려주세요."
+                    android:textColor="@android:color/black"
+                    android:layout_marginTop="5dp" />
+            </LinearLayout>
+        </RelativeLayout>
+        <!--./로딩박스-->
 
     </androidx.constraintlayout.widget.ConstraintLayout>
     <!--./카카오맵-->

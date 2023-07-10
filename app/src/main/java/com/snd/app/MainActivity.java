@@ -74,7 +74,7 @@ public class MainActivity extends TMActivity {
                 transaction.commit();
             }
         });
-        getLocation();
+        //getLocation();
     }
 
 

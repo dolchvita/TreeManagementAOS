@@ -1,13 +1,10 @@
 package com.snd.app.common;
 
 import android.Manifest;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.content.pm.Signature;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -15,7 +12,6 @@ import android.nfc.NfcAdapter;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
-import android.util.Base64;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -26,10 +22,11 @@ import androidx.appcompat.widget.AppCompatEditText;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.snd.app.data.KeyHash;
-
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
 
 
 // 모든 액티비티가 상속받을 최상위 객체
@@ -179,8 +176,47 @@ public class TMActivity extends AppCompatActivity {
 
 
 
+   /*
+   // 오차 범위 설정하는 메서드 -> 마지막 위치 대신 가져오기
+   public void checkLocationAccuracy() {
+      Log.d(TAG,"** checkLocationAccuracy 함수 호출 **");
+
+      FusedLocationProviderClient client = LocationServices.getFusedLocationProviderClient(this);
+      if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+         // 권한 확인
+         return;
+      }
+      client.requestLocationUpdates(new LocationRequest(), new LocationCallback() {
+         @Override
+         public void onLocationResult(LocationResult locationResult) {
+            if (locationResult == null) {
+               return;
+            }
+            for (Location location : locationResult.getLocations()) {
+               if (location.getAccuracy() <= 30) {  // 오차 범위가 30미터 이내인 경우
+                  Log.d(TAG, "Location with good accuracy: " + location.getLatitude() + ", " + location.getLongitude());
+
+                  latitude = location.getLatitude();
+                  longitude = location.getLongitude();
+                  Log.d(TAG, "** 위도: " + latitude + ", 경도 : " + longitude);
+
+
+                  // 이시점에서 불러야 함
+
+
+               }
+            }
+         }
+      }, null);
+   }
+
+    */
+
+
+
    // 마지막 위치 정보 가져오기
    public void getLocation() {
+
       Log.d(TAG,"** getLocation 함수 호출 **");
       LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 

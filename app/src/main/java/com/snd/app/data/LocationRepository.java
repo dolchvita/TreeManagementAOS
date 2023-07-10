@@ -1,8 +1,10 @@
 package com.snd.app.data;
 
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.location.GnssStatus;
 import android.location.GpsSatellite;
 import android.location.GpsStatus;
@@ -13,6 +15,7 @@ import android.os.Looper;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
@@ -68,6 +71,9 @@ public class LocationRepository {
         checkLocationSettings();
         initLocationCallback();
     }
+
+
+
 
     private void checkLocationSettings() {
         Task<LocationSettingsResponse> task = LocationServices.getSettingsClient(context).checkLocationSettings(builder.build());
@@ -135,6 +141,17 @@ public class LocationRepository {
                             super.onSatelliteStatusChanged(status);
 
                             int satelliteCount = status.getSatelliteCount();
+
+
+                            int usedInFixCount = 0;     // 실제 사용 가능한 위성 개수
+                            for (int i = 0; i < satelliteCount; i++) {
+                                if (status.usedInFix(i)) {
+                                    usedInFixCount++;
+                                }
+                            }
+                            Log.d(TAG, "Total satellites: " + satelliteCount + ", ** 실제 사용 가능한 위성 개수 " + usedInFixCount);
+
+
                             totalSatelliteCount += satelliteCount;
 
                             Log.d(TAG, "현재 누적 위성 개수: " + totalSatelliteCount);
