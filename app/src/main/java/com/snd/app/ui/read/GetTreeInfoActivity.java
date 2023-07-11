@@ -76,7 +76,9 @@ public class GetTreeInfoActivity extends TMActivity implements AdapterView.OnIte
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         initNfc();
+
         ReadActBinding readActBinding= DataBindingUtil.setContentView(this, R.layout.read_act);
         readActBinding.setLifecycleOwner(this);
         getTreeInfoVM=new GetTreeInfoViewModel();
@@ -85,7 +87,6 @@ public class GetTreeInfoActivity extends TMActivity implements AdapterView.OnIte
 
         getTreeBasicInfoVM=new ViewModelProvider(this).get(GetTreeBasicInfoViewModel.class);
         getTreeSpecificLocationVM=new ViewModelProvider(this).get(GetTreeSpecificLocationViewModel.class);
-
 
         nfcReadFragment=new NfcReadFragment();
         getTreeBasicInfoFr=new GetTreeBasicInfoFragment();
@@ -343,6 +344,7 @@ public class GetTreeInfoActivity extends TMActivity implements AdapterView.OnIte
                         Log.d(TAG,"** data 추출 **"+data.toString());
 
                         treeIntegratedVO.setNFC(data.getString("nfc"));
+
                         if(kakaoMapFragment!=null){
                             kakaoMapFragment.addMarkers(Double.parseDouble(data.getString("latitude")), Double.parseDouble(data.getString("longitude")), idHex);
                         }
@@ -372,8 +374,6 @@ public class GetTreeInfoActivity extends TMActivity implements AdapterView.OnIte
                         treeIntegratedVO.setHeight(Double.parseDouble(data.getString("height")));
                         treeIntegratedVO.setLength(Double.parseDouble(data.getString("length")));
                         treeIntegratedVO.setWidth(Double.parseDouble(data.getString("width")));
-
-
 
 
                     } catch (JSONException e) {

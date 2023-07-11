@@ -81,7 +81,9 @@ public class Mapfragment extends TMFragment implements MapView.POIItemEventListe
     @Override
     public void onResume() {
         super.onResume();
-        initMapView();
+        if(mapView == null){
+            initMapView();
+        }
         mapView.onResume();
         getLocationRepository();
     }
@@ -253,6 +255,7 @@ public class Mapfragment extends TMFragment implements MapView.POIItemEventListe
     public void onCalloutBalloonOfPOIItemTouched(MapView mapView, MapPOIItem mapPOIItem, MapPOIItem.CalloutBalloonButtonType calloutBalloonButtonType) {
         // 말풍선 클릭
         Intent intent = new Intent(getContext(), GetTreeInfoActivity.class);
+        intent.putExtra("fragmentName", "GetTreeBasicInfoFragment");
         intent.putExtra("IDHEX", mapPOIItem.getItemName());
         startActivity(intent);
     }
