@@ -7,11 +7,11 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
 import com.snd.app.R;
 import com.snd.app.common.TMFragment;
 
 public class MapLoadingFragment extends TMFragment {
+
 
     @Nullable
     @Override

@@ -73,8 +73,6 @@ public class LocationRepository {
     }
 
 
-
-
     private void checkLocationSettings() {
         Task<LocationSettingsResponse> task = LocationServices.getSettingsClient(context).checkLocationSettings(builder.build());
         task.addOnSuccessListener(new OnSuccessListener<LocationSettingsResponse>() {

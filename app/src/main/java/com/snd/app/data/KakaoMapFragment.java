@@ -24,6 +24,8 @@ public class KakaoMapFragment extends Fragment implements MapView.POIItemEventLi
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        Log.d(TAG, "** onCreateView 호출 -**");
+
         View view = inflater.inflate(R.layout.kakaomap_fragment, container, false);
 
         // KakaoMap 뷰 초기화
@@ -44,14 +46,14 @@ public class KakaoMapFragment extends Fragment implements MapView.POIItemEventLi
     public void addMarkers(Double latitude, Double longitude, String idHex){
         Log.d(TAG, "** addMarkers 호출 -**"+latitude+", "+longitude);
 
+        // 맵뷰 연동하기
         Log.d(TAG, "** addMarkers 호출 -** 맵뷰 실체 "+ mapView);
 
         //mapView.setCurrentLocationTrackingMode(MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeading);
         if(mapView==null){
             Log.d(TAG, "** addMarkers에서 맵뷰 null **");
-
-            return;
         }
+
         // 중심점 변경
         mapView.setMapCenterPoint(MapPoint.mapPointWithGeoCoord(latitude, longitude), true);
 
@@ -67,6 +69,7 @@ public class KakaoMapFragment extends Fragment implements MapView.POIItemEventLi
         // 이벤트 리스너 등록
         mapView.setPOIItemEventListener(this);
         mapView.addPOIItems(markerArr.toArray(new MapPOIItem[markerArr.size()]));
+        mapView.invalidate();
     }
 
 

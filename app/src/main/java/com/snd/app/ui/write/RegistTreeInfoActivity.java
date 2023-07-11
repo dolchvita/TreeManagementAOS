@@ -20,7 +20,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.provider.MediaStore;
 import android.util.Log;
-import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -159,7 +158,7 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
             public void onChanged(Integer satellitesCount) {
                 Log.d(TAG, "현재 위성 개수: " + satellitesCount);
 
-                if (satellitesCount>5){
+                if (satellitesCount>40){
                     if (!click){
                         //findViewById(R.id.loading_layout_box).setVisibility(View.GONE);
                         findViewById(R.id.write_cancel).setBackgroundColor(getResources().getColor(R.color.cocoa_brown));   // 저장 버튼 활성화
@@ -168,9 +167,7 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
                         checkLocationAccuracy();
                         Log.d(TAG, "** 위도22 : " + latitude + ", 경도22 : " + longitude);
 
-
                         // 여기를 먼저 거치고 checkLocationAccuracy를 실행하기 시작 (비동기 같음)
-
 
                     }
                     click=true;
@@ -221,7 +218,7 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
                     return;
                 }
                 for (Location location : locationResult.getLocations()) {
-                    if (location.getAccuracy() <= 30) {  // 오차 범위가 30미터 이내인 경우
+                    if (location.getAccuracy() <= 15) {  // 오차 범위가 30미터 이내인 경우
                         Log.d(TAG, "Location with good accuracy: " + location.getLatitude() + ", " + location.getLongitude());
 
                         latitude = location.getLatitude();
@@ -306,7 +303,7 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
         setKakaoMapFragment(R.id.loading_map_layout);
 
         if(!click){
-           // findViewById(R.id.loading_layout_box).setVisibility(View.VISIBLE);
+            // findViewById(R.id.loading_layout_box).setVisibility(View.VISIBLE);
         }
 
         // 디자인 요소 반영 - 호출 전 카카오맵 초기화 필요
@@ -589,22 +586,22 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
     public void registerTreeBasicInfo(){
         JSONObject treeBasicData=new JSONObject();
 
-       if(getInputText(findViewById(R.id.tr_name))==null || getInputText(findViewById(R.id.tr_name)).equals("0")){
-           Log.d(TAG, "** RegistAct - 수목명 없음 **");
-           Toast.makeText(this, "수목명을 입력해주세요", Toast.LENGTH_SHORT).show();
+        if(getInputText(findViewById(R.id.tr_name))==null || getInputText(findViewById(R.id.tr_name)).equals("0")){
+            Log.d(TAG, "** RegistAct - 수목명 없음 **");
+            Toast.makeText(this, "수목명을 입력해주세요", Toast.LENGTH_SHORT).show();
 
-       }else {
-           try {
-               // 입력 데이터 보내기
-               treeBasicData.put("nfc", idHex);
-               treeBasicData.put("species", getInputText(findViewById(R.id.tr_name)));
-               treeBasicData.put("submitter", submitter);
-               treeBasicData.put("vendor", vendor);
-           } catch (JSONException e) {
-               throw new RuntimeException(e);
-           }
-           registerTreeInfo2(treeBasicData, "/app/tree/registerBasicInfo");
-       }
+        }else {
+            try {
+                // 입력 데이터 보내기
+                treeBasicData.put("nfc", idHex);
+                treeBasicData.put("species", getInputText(findViewById(R.id.tr_name)));
+                treeBasicData.put("submitter", submitter);
+                treeBasicData.put("vendor", vendor);
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
+            registerTreeInfo2(treeBasicData, "/app/tree/registerBasicInfo");
+        }
     }
 
 
@@ -778,12 +775,12 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
 
     // 디자인 요소에 세팅하기
     public void getTreeLocation(){
-       Log.d(TAG, "** getTreeLocation 호출되었니? **");
+        Log.d(TAG, "** getTreeLocation 호출되었니? **");
         Log.d(TAG, "** 위도: " + latitude + ", 경도 : " + longitude);
 
-        //treeBasicInfoVM.latitude.set(""+latitude);
-        //treeBasicInfoVM.longitude.set(""+longitude);
-        
+        treeBasicInfoVM.latitude.set(""+latitude);
+        treeBasicInfoVM.longitude.set(""+longitude);
+
         // 이거 호출되기 전에 초기화 안됨
         kakaoMapFragment.addMarkers(latitude,longitude, idHex);
     }

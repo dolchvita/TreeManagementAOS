@@ -176,7 +176,7 @@ public class TMActivity extends AppCompatActivity {
 
 
 
-   /*
+
    // 오차 범위 설정하는 메서드 -> 마지막 위치 대신 가져오기
    public void checkLocationAccuracy() {
       Log.d(TAG,"** checkLocationAccuracy 함수 호출 **");
@@ -200,9 +200,7 @@ public class TMActivity extends AppCompatActivity {
                   longitude = location.getLongitude();
                   Log.d(TAG, "** 위도: " + latitude + ", 경도 : " + longitude);
 
-
                   // 이시점에서 불러야 함
-
 
                }
             }
@@ -210,7 +208,7 @@ public class TMActivity extends AppCompatActivity {
       }, null);
    }
 
-    */
+
 
 
 

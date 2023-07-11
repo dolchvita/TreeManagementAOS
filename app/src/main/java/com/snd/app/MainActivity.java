@@ -69,7 +69,7 @@ public class MainActivity extends TMActivity {
 
                 } else if (o.equals(2)) {
                     transaction.replace(R.id.content, mapFragment);
-                    getTreeInfoListAll();
+                    //getTreeInfoListAll();
                 }
                 transaction.commit();
             }
@@ -78,62 +78,6 @@ public class MainActivity extends TMActivity {
     }
 
 
-
-    // 등록한 모든 수목정보 가져오기
-    public void getTreeInfoListAll(){
-        String url=sndUrl+"/app/tree/getTreeInfoListAll";
-
-        OkHttpClient client=new OkHttpClient();
-        Request request=new Request.Builder()
-                .url(url)
-                .addHeader("Authorization", sharedPreferences.getString("Authorization", null))
-                .build();
-        client.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                Log.d(TAG,"** 수목 정보 가져오기 실패 **");
-            }
-            @Override
-            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                if (response.isSuccessful()){
-                    String responseData = response.body().string();
-                    Log.d(TAG,"** 조회 성공 / 응답 **"+responseData);
-
-                    ArrayList<TreeTotalDTO> treeInfoList= new ArrayList<>();
-
-                    try {
-                        JSONObject json = new JSONObject(responseData);
-                        JSONArray data=json.getJSONArray("data");
-                        Log.d(TAG,"** data 추출 **"+data.toString());
-
-                        for(int i=0; i<data.length(); i++){
-                            JSONObject treeInfo=data.getJSONObject(i);
-
-                            TreeTotalDTO dto = new TreeTotalDTO();
-                            dto.setNFC(treeInfo.getString("nfc"));
-
-                            //String lat=treeInfo.getString("latitude");
-                            //String log=treeInfo.getString("longitude");
-                            // 어차피 위도 경도 필수 입력 사항이기 때문에 null 체크 안함
-
-                            dto.setLatitude(Double.parseDouble(treeInfo.getString("latitude")));
-                            dto.setLongitude(Double.parseDouble(treeInfo.getString("longitude")));
-
-                            dto.setSpecies(treeInfo.getString("species"));
-                            treeInfoList.add(dto);
-                        }
-                        mapFragment.setLocationList(treeInfoList);
-
-                    } catch (JSONException e) {
-                        throw new RuntimeException(e);
-                    }
-                }else {
-                    String responseData = response.body().string();
-                    Log.d(TAG,"** 조회 실패 / 원인 **"+responseData);
-                }
-            }
-        });
-    }
 
 
 }
