@@ -236,17 +236,7 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
     public void initKakaoMapFr(){
         getSupportFragmentManager().beginTransaction().replace(R.id.write_content, new MapLoadingFragment()).commit();
         setKakaoMapFragment(R.id.loading_map_layout);
-
-
-        /*
-        MapLoadingFragment mapLoadingFragment=new MapLoadingFragment();
-        switchFragment(mapLoadingFragment);
-
-        if(!click){
-            // findViewById(R.id.loading_layout_box).setVisibility(View.VISIBLE);
-        }
-         */
-        // 디자인 요소 반영 - 호출 전 카카오맵 초기화 필요
+        
     }
 
 
