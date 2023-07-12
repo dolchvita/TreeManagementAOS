@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 public class TreeIntegratedVO {
    private static TreeIntegratedVO instance;
 
+   /* 싱글턴으로 만든 이유 */
     public static TreeIntegratedVO getInstance() {
         if(instance==null){
             instance=new TreeIntegratedVO();

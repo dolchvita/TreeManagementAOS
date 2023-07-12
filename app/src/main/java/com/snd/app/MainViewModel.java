@@ -37,6 +37,7 @@ public class MainViewModel extends ViewModel {
         if (_tabClick==null){
             _tabClick=new MutableLiveData<Integer>();
         }
+
         // 결과값 반환해주는 메서드
         return this._tabClick;
     }

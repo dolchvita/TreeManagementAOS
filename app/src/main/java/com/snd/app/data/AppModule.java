@@ -2,10 +2,12 @@ package com.snd.app.data;
 
 import android.content.Context;
 
+
 import com.android.volley.RequestQueue;
 import com.snd.app.ui.home.HomeViewModel;
+import com.snd.app.ui.write.RegisterRepository;
+import com.snd.app.ui.write.WriteUseCase;
 
-import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
@@ -16,15 +18,23 @@ public class AppModule {
     public static RequestQueue requestQueue;
     private Context context;
 
+
     public AppModule(Context context) {
         this.context = context;
     }
 
-    // HomeFragment 와 연결되는 뷰모델 관리
+
+    //HomeFragment 와 연결되는 뷰모델 관리
    @Provides
    HomeViewModel provideHomeViewModel(){
        return new HomeViewModel(context);
    };
+
+
+    @Provides
+    WriteUseCase provideWriteUseCase(){
+        return new WriteUseCase(new RegisterRepository());
+    };
 
 
 }

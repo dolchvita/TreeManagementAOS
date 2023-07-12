@@ -1,26 +1,42 @@
 package com.snd.app.ui.write;
 
 import android.graphics.Bitmap;
+import android.text.TextUtils;
 import android.util.Log;
-
+import androidx.appcompat.widget.AppCompatEditText;
 import androidx.databinding.ObservableField;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.snd.app.common.TMViewModel;
+import com.snd.app.data.AppComponent;
+import com.snd.app.data.AppModule;
+import com.snd.app.data.DaggerAppComponent;
 import com.snd.app.domain.tree.TreeBasicInfoDTO;
 import com.snd.app.domain.tree.TreeLocationInfoDTO;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
 public class RegistTreeBasicInfoViewModel extends TMViewModel {
-    private String TAG=this.getClass().getName();
+
+    TreeBasicInfoDTO treeBasicInfoDTO;
+
     // 기본 정보
     public ObservableField<String> NFC=new ObservableField<>();
-    public ObservableField<String> species=new ObservableField<>();
     public ObservableField<String> submitter=new ObservableField<>();
+    public ObservableField<String> species=new ObservableField<>();
+
+    /*
+    public MutableLiveData<String> _species=new MutableLiveData<>();
+    public LiveData species=getImgCount();
+     */
+
+
     public ObservableField<String> vendor=new ObservableField<>();
     // 위치 정보
     public ObservableField<String> latitude=new ObservableField<>();
@@ -32,6 +48,7 @@ public class RegistTreeBasicInfoViewModel extends TMViewModel {
     private MyCallback myCallback;
     // 액티비티와 어댑터가 가져갈 리스트
 
+
     // 실제 사진이 담기는 리스트
     private MutableLiveData<List<Bitmap>> _listData = new MutableLiveData<>();
     public LiveData listData=getImageList();
@@ -41,6 +58,13 @@ public class RegistTreeBasicInfoViewModel extends TMViewModel {
     public LiveData imgCount=getImgCount();
     public int cnt=0;
     List<Bitmap> currentList;   // 실제 사진이 담겨있는 리스트
+
+    protected static final String DEFAULT_VALUE = "0";
+
+    WriteUseCase writeUseCase;
+    public String Authorization;
+
+
     // 뒤로가기
     private MutableLiveData _back=new MutableLiveData<>();
     public LiveData back=getBack();
@@ -58,10 +82,7 @@ public class RegistTreeBasicInfoViewModel extends TMViewModel {
         return longitude;
     }
 
-    // 생성자
-    public RegistTreeBasicInfoViewModel() {
-        setImgCount();
-    }
+
     public void setImgCount(){
         _imgCount.setValue(cnt+"/2");
     }
@@ -94,18 +115,56 @@ public class RegistTreeBasicInfoViewModel extends TMViewModel {
     }
 
 
-    // 데이터바인딩시 참조할 변수 매핑
-    public void setTextViewModel(TreeBasicInfoDTO treeBasicInfoDTO){
-        Log.d(TAG, "** 뷰모델에서 확인 ** "+treeBasicInfoDTO.getNFC());
-        Log.d(TAG, "** 뷰모델에서 확인 ** "+treeBasicInfoDTO.getSpecies());
-        Log.d(TAG, "** 뷰모델에서 확인 ** "+treeBasicInfoDTO.getSubmitter());
-        Log.d(TAG, "** 뷰모델에서 확인 ** "+treeBasicInfoDTO.getVendor());
+    // 화면에 표시되는 메서드
+    public void setTextViewModel(TreeBasicInfoDTO treeBasicInfoDTO,  TreeLocationInfoDTO treeLocationInfoDTO){
+        this.treeBasicInfoDTO=treeBasicInfoDTO;
 
         NFC.set(treeBasicInfoDTO.getNFC());
-        // species.set(treeBasicInfoDTO.getSpecies());
         submitter.set(treeBasicInfoDTO.getSubmitter());
         vendor.set(treeBasicInfoDTO.getVendor());
+        latitude.set(""+treeLocationInfoDTO.getLatitude());
+        longitude.set(""+treeLocationInfoDTO.getLongitude());
     }
+
+
+
+    // 수목명을 수동으로 입력받는다.
+    public void processUserInput(String userInput) {
+        treeBasicInfoDTO.setSpecies(userInput);
+    }
+
+
+    // 1-1) 수목 기본정보
+    public JSONObject mappingTreeBasicInfo(){
+
+        JSONObject treeBasicData=new JSONObject();
+        try {
+            // 입력 데이터 보내기
+            treeBasicData.put("nfc", NFC.get());
+
+            // 어떻게 가져오지? -> 액티비티에서 보낼때,,
+            treeBasicData.put("species", treeBasicInfoDTO.getSpecies());
+            treeBasicData.put("submitter",submitter.get());
+            treeBasicData.put("vendor", vendor.get());
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+
+        return treeBasicData;
+    }
+
+
+
+    public void regist(){
+        AppComponent appComponent = DaggerAppComponent.builder().appModule(new AppModule(new RegistTreeInfoActivity())).build();
+        writeUseCase=appComponent.riteUseCase();
+
+        Log.d(TAG, "***확인** "+writeUseCase);
+        writeUseCase.registerTreeBasicInfo(mappingTreeBasicInfo(), Authorization);
+    }
+
+
+
 
     // 콜백 객체를 받아서 액티비티로부터 호출 가능하게 함
     public void setCallback(MyCallback myCallback) {

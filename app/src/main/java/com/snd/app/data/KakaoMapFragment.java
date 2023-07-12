@@ -22,6 +22,7 @@ public class KakaoMapFragment extends Fragment implements MapView.POIItemEventLi
     public MapView mapView;
 
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.d(TAG, "** onCreateView 호출 -**");
@@ -31,7 +32,6 @@ public class KakaoMapFragment extends Fragment implements MapView.POIItemEventLi
         // KakaoMap 뷰 초기화
         mapView = new MapView(requireContext());
         mapView.setPOIItemEventListener(this);
-
         // treeBasic_kakao_map 레이아웃에 있는 RelativeLayout 가져오기
         RelativeLayout treeBasicKakaoMapLayout = view.findViewById(R.id.kakao_map);
         // 기존에 있는 모든 뷰들을 제거
@@ -43,12 +43,12 @@ public class KakaoMapFragment extends Fragment implements MapView.POIItemEventLi
     }
 
 
+
+    // 이 메서드가 onCreateView보다 먼저 호출되면 안됨.
     public void addMarkers(Double latitude, Double longitude, String idHex){
         Log.d(TAG, "** addMarkers 호출 -**"+latitude+", "+longitude);
-
         // 맵뷰 연동하기
         Log.d(TAG, "** addMarkers 호출 -** 맵뷰 실체 "+ mapView);
-
         //mapView.setCurrentLocationTrackingMode(MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeading);
         if(mapView==null){
             Log.d(TAG, "** addMarkers에서 맵뷰 null **");
@@ -56,7 +56,6 @@ public class KakaoMapFragment extends Fragment implements MapView.POIItemEventLi
 
         // 중심점 변경
         mapView.setMapCenterPoint(MapPoint.mapPointWithGeoCoord(latitude, longitude), true);
-
         // 기존 마커 모두 제거
         mapView.removeAllPOIItems();
 

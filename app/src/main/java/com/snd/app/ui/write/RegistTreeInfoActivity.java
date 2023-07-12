@@ -1,15 +1,13 @@
 package com.snd.app.ui.write;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.location.Location;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.nfc.NfcAdapter;
@@ -18,13 +16,13 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
@@ -33,16 +31,10 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationCallback;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationResult;
-import com.google.android.gms.location.LocationServices;
 import com.snd.app.MainActivity;
 import com.snd.app.R;
 import com.snd.app.common.TMActivity;
 import com.snd.app.data.KakaoMapFragment;
-import com.snd.app.data.LocationRepository;
 import com.snd.app.data.NfcManager;
 import com.snd.app.data.SpinnerValueListener;
 import com.snd.app.databinding.WriteActBinding;
@@ -77,7 +69,7 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
     String submitter;
     String vendor;
 
-    private RegistTreeBasicInfoFragment registTreeBasicInfoFr;
+    RegistTreeBasicInfoFragment registTreeBasicInfoFr;
     RegistTreeSpecificLocationInfoFragment registTreeSpecificLocationInfoFr;
     RegistTreeSpecificLocationInfoViewModel registTreeSpecificLocationInfoVM;
     RegistTreeStatusInfoFragment registTreeStatusInfoFr;
@@ -178,20 +170,9 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
 
 
 
-
-
     public void initBasicInfoFr(){
-        switchFragment(registTreeBasicInfoFr);
-        // 카카오맵
+        getSupportFragmentManager().beginTransaction().replace(R.id.write_content, new RegistTreeBasicInfoFragment()).commit();
         setKakaoMapFragment(R.id.treeBasic_kakao_map);
-        registTreeSpecificLocationInfoVM=new ViewModelProvider(this).get(RegistTreeSpecificLocationInfoViewModel.class);
-
-        try {
-            setTreeBasicInfoDTO();
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-
     }
 
 
@@ -217,17 +198,29 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
                     Log.d(TAG, "** NFC 아이디 추출 ** "+id);
                     Log.d(TAG, "** NFC 아이디 가공 ** "+idHex);
 
+                    saveIdHex(idHex);
+
                     // 여기서 아무것도 수행하지 않으면 된다.
                     NfcManager nfcManager = new NfcManager(RegistTreeInfoActivity.this);
                     nfcManager.handleTag(tag);
 
-                    //initBasicInfoFr();
                     initKakaoMapFr();
-
                 }
             }, NfcAdapter.FLAG_READER_NFC_A | NfcAdapter.FLAG_READER_SKIP_NDEF_CHECK, null);
         }
     }
+
+
+
+    // nfc 태그 번호 저장
+    public void saveIdHex(String idHex){
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("idHex", idHex);
+        editor.apply();
+    }
+
+
 
 
     private String bytesToHexString(byte[] bytes) {
@@ -242,11 +235,12 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
 
     public void initKakaoMapFr(){
         getSupportFragmentManager().beginTransaction().replace(R.id.write_content, new MapLoadingFragment()).commit();
+        setKakaoMapFragment(R.id.loading_map_layout);
+
 
         /*
         MapLoadingFragment mapLoadingFragment=new MapLoadingFragment();
         switchFragment(mapLoadingFragment);
-        setKakaoMapFragment(R.id.loading_map_layout);
 
         if(!click){
             // findViewById(R.id.loading_layout_box).setVisibility(View.VISIBLE);
@@ -257,21 +251,29 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
 
 
 
-    /* ---------------------------- SERVER METHODS ---------------------------- */
-
-
-    // 이 메서드를 호출하면, 참 거짓 호출
-    public void setClick(){
-        // 초기엔 false
-        click=!click;
-        //return click;
+    // sharedPreferences 객체에 좌표값 저장해서 가져오기
+    public void test(){
+        Double latitude = Double.parseDouble(sharedPreferences.getString("latitude", null));
+        Double longitude = Double.parseDouble(sharedPreferences.getString("longitude", null));
+        String idHex = sharedPreferences.getString("idHex", null);
+        kakaoMapFragment.addMarkers(latitude,longitude, idHex);
     }
 
 
+    /* ---------------------------- SERVER METHODS ---------------------------- */
+
+    // 위성 감지 중 잠금 해제
+    public void setClick(){
+        click=!click;
+    }
+
+
+    /* 계획 - 이거 말고 Observer를 이용하는 게 어떨까? */
     // 등록 호출 1
     @SuppressLint("WrongViewCast")
     @Override
     public void onCustomCallback() {
+
         if(!click){
             // 거짓이라면..
             Toast.makeText(getApplicationContext(), "위성 감지 중입니다. 잠시만 기다려주세요.", Toast.LENGTH_LONG).show();
@@ -279,6 +281,7 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
             // 확인 자체에서 팝업을 띄울 필요가 있을까?
             mappingDTO();
         }
+
     }
 
 
@@ -286,10 +289,16 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
     // 등록 호출 2
     public void mappingDTO(){
         if(num == BASIC){
-            registerTreeBasicInfo();
+            //registerTreeBasicInfo();
+
+            //registTreeBasicInfoFr.mappingTreeBasicInfo();
+
+            /*
             if(currentList.size()>0){
                 registerTreeImage(currentList);
             }
+
+             */
 
         } else if (num == SPACIFICLOCATION) {
             registerSpecificLocationInfo();
@@ -384,51 +393,6 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
             }
         });
     }
-
-
-
-    public void registerTreeInfo2(JSONObject postData, String postUrl){
-        Log.d(TAG, "** registerTreeInfo2 호출 **");
-        OkHttpClient client = new OkHttpClient();
-
-        RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), postData.toString());
-        String url = sndUrl+postUrl;
-        // 요청 생성
-        Request request = new Request.Builder()
-                .url(url)
-                .addHeader("Authorization", sharedPreferences.getString("Authorization", null))
-                .post(requestBody)
-                .build();
-
-        client.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onResponse(@NonNull Call call, @NonNull okhttp3.Response response) throws IOException {
-                if (response.isSuccessful()){
-                    String responseData = response.body().string();
-                    Log.d(TAG,"** 성공 / 응답 **"+responseData);
-
-                    registerTreeLocationInfo();
-
-                }else{
-                    String responseData = response.body().string();
-                    Log.d(TAG,"** 실패 / 응답 **"+responseData);
-
-                    new Handler(Looper.getMainLooper()).post(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(RegistTreeInfoActivity.this, "이미 등록된 칩입니다.", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                }
-            }
-            @Override
-            public void onFailure(Call call, IOException e) {
-                Log.d(TAG,"** 오류남 **");
-            }
-        });
-
-    }
-
 
 
     // PatchMethod (수목 위치 상세 정보)
@@ -537,27 +501,7 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
 
     /* ---------------------------- Mapping METHODS ---------------------------- */
 
-    // 1-1) 수목 기본정보 등록
-    public void registerTreeBasicInfo(){
-        JSONObject treeBasicData=new JSONObject();
 
-        if(getInputText(findViewById(R.id.tr_name))==null || getInputText(findViewById(R.id.tr_name)).equals("0")){
-            Log.d(TAG, "** RegistAct - 수목명 없음 **");
-            Toast.makeText(this, "수목명을 입력해주세요", Toast.LENGTH_SHORT).show();
-
-        }else {
-            try {
-                // 입력 데이터 보내기
-                treeBasicData.put("nfc", idHex);
-                treeBasicData.put("species", getInputText(findViewById(R.id.tr_name)));
-                treeBasicData.put("submitter", submitter);
-                treeBasicData.put("vendor", vendor);
-            } catch (JSONException e) {
-                throw new RuntimeException(e);
-            }
-            registerTreeInfo2(treeBasicData, "/app/tree/registerBasicInfo");
-        }
-    }
 
 
 
@@ -741,15 +685,7 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
     }
 
 
-    public void setTreeBasicInfoDTO() throws JsonProcessingException {
-        treeBasicInfoDTO=new TreeBasicInfoDTO();
-        treeBasicInfoDTO.setNFC(idHex);
-        treeBasicInfoDTO.setSubmitter(sharedPreferences.getString("id",null));
-        treeBasicInfoDTO.setVendor(sharedPreferences.getString("company",null));
-        Log.d(TAG, "** 디티오 확인 ** "+treeBasicInfoDTO.getSubmitter());
-        // 매핑된 DTO 넘겨줌
-        treeBasicInfoVM.setTextViewModel(treeBasicInfoDTO);
-    }
+
 
 
     @Override

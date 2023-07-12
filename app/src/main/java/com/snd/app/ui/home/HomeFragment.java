@@ -28,11 +28,14 @@ public class HomeFragment extends Fragment {
         AppComponent appComponent = DaggerAppComponent.builder().appModule(new AppModule(getContext())).build();
         homeVM=appComponent.homeViewModel();
 
+
         //프레그먼트가 사용할 xml 파일
         homeFrBinding=DataBindingUtil.inflate(inflater, R.layout.main_home_fr, container, false);
         homeFrBinding.setLifecycleOwner(this);
         homeFrBinding.setHomeVM(homeVM);    //홈뷰모델 연동
         return homeFrBinding.getRoot();
     }
+
+
 
 }

@@ -1,5 +1,7 @@
 package com.snd.app.ui.write;
 
+import android.widget.Toast;
+
 import androidx.databinding.ObservableField;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -15,10 +17,16 @@ public class RegistTreeInfoViewModel extends TMViewModel {
     public  ObservableField<String> registTitle=new ObservableField<>();
 
 
+
+
     // 등록 버튼
     public void regist(){
+
+
         myCallback.onCustomCallback();
     }
+
+
 
     // 콜백 세팅
     public void setCallback(MyCallback myCallback) {
@@ -32,6 +40,9 @@ public class RegistTreeInfoViewModel extends TMViewModel {
     public LiveData getBack(){
         return _back;
     }
+
+
+
 
 
 }
