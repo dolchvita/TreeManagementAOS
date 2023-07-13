@@ -51,7 +51,7 @@ public class TMActivity extends AppCompatActivity {
 
    public static int NFC_MODE = 1;
    private boolean isNfcTagDetected = false;
-
+   boolean isCameraPermissionGranted;
 
    @Override
    protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -162,6 +162,7 @@ public class TMActivity extends AppCompatActivity {
             editor.apply();
          }
       }
+
       // 위치 허용
       if (requestCode == REQUEST_LOCATION_PERMISSION) {
          if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {

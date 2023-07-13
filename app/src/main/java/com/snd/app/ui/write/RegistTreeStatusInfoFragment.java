@@ -29,6 +29,8 @@ import com.snd.app.databinding.RegistTreeStatusInfoFrBinding;
 public class RegistTreeStatusInfoFragment extends TMFragment {
     private SpinnerValueListener spinnerValueListener;
 
+
+
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -39,6 +41,7 @@ public class RegistTreeStatusInfoFragment extends TMFragment {
             throw new RuntimeException(context.toString() + " must implement SpinnerValueListener");
         }
     }
+
 
 
     @Nullable
@@ -52,6 +55,7 @@ public class RegistTreeStatusInfoFragment extends TMFragment {
         registTreeStatusInfoFrBinding.setTreeStatusInfoVM(treeStatusInfoVM);
         return registTreeStatusInfoFrBinding.getRoot();
     }
+
 
 
     @Override
@@ -107,8 +111,8 @@ public class RegistTreeStatusInfoFragment extends TMFragment {
                 return false;
             }
         });
-
     }
+
 
 
    public void nextFocus(EditText editText1, EditText editText2){

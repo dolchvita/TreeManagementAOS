@@ -16,9 +16,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -26,9 +23,7 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.snd.app.R;
 import com.snd.app.common.TMFragment;
-import com.snd.app.data.KakaoMapFragment;
 import com.snd.app.data.LocationRepository;
-import com.snd.app.domain.tree.TreeBasicInfoDTO;
 
 public class MapLoadingFragment extends TMFragment {
     String idHex;
@@ -44,7 +39,6 @@ public class MapLoadingFragment extends TMFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         idHex=((RegistTreeInfoActivity)getActivity()).idHex;
-        //setKakaoMapFragment();
         satellitesCount();
 
         return  inflater.inflate(R.layout.map_loading_fr, container, false);
@@ -113,7 +107,7 @@ public class MapLoadingFragment extends TMFragment {
 
                             saveLocation(latitude, longitude);
 
-                            ((RegistTreeInfoActivity)getActivity()).test();
+                            ((RegistTreeInfoActivity)getActivity()).saveGpsLocation();
 
                             callMethod2=true;
                             callMethod3=true;
@@ -154,7 +148,6 @@ public class MapLoadingFragment extends TMFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        //kakaoMapFragment = null;
     }
 
 

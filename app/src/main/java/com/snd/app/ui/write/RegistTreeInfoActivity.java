@@ -34,6 +34,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.snd.app.MainActivity;
 import com.snd.app.R;
 import com.snd.app.common.TMActivity;
+import com.snd.app.data.AppComponent;
+import com.snd.app.data.AppModule;
+import com.snd.app.data.DaggerAppComponent;
 import com.snd.app.data.KakaoMapFragment;
 import com.snd.app.data.NfcManager;
 import com.snd.app.data.SpinnerValueListener;
@@ -114,8 +117,12 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
         // NFC 코드 추출
         //idHex=getIntent().getStringExtra("IDHEX");
         Log.d(TAG,"** 아이디 확인 **"+idHex);
+
         // 수목 기본 정보
+        //AppComponent appComponent = DaggerAppComponent.builder().appModule(new AppModule(null)).build();
         treeBasicInfoVM=new ViewModelProvider(this).get(RegistTreeBasicInfoViewModel.class);
+        //treeBasicInfoVM=appComponent.registTreeBasicInfoViewModel();
+
         // 콜백 연결
         treeInfoVM.setCallback(this);
 
@@ -236,13 +243,13 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
     public void initKakaoMapFr(){
         getSupportFragmentManager().beginTransaction().replace(R.id.write_content, new MapLoadingFragment()).commit();
         setKakaoMapFragment(R.id.loading_map_layout);
-        
+
     }
 
 
 
     // sharedPreferences 객체에 좌표값 저장해서 가져오기
-    public void test(){
+    public void saveGpsLocation(){
         Double latitude = Double.parseDouble(sharedPreferences.getString("latitude", null));
         Double longitude = Double.parseDouble(sharedPreferences.getString("longitude", null));
         String idHex = sharedPreferences.getString("idHex", null);
@@ -287,7 +294,6 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
             if(currentList.size()>0){
                 registerTreeImage(currentList);
             }
-
              */
 
         } else if (num == SPACIFICLOCATION) {
@@ -495,60 +501,6 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
 
 
 
-    // 1-2) 수목 위치(기본)정보 등록
-    public void registerTreeLocationInfo(){
-        JSONObject treeLocationData=new JSONObject();
-        try {
-            // 입력 데이터 보내기
-            String latitudeValue = String.format("%.7f", latitude);     // 자릿수 맞추기
-            treeLocationData.put("latitude", latitudeValue);
-            String longitudeValue = String.format("%.7f", longitude);
-            treeLocationData.put("longitude", longitudeValue);
-            treeLocationData.put("nfc", idHex);
-            treeLocationData.put("submitter",submitter);
-            treeLocationData.put("vendor", vendor);
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
-        }
-        registerTreeInfo(treeLocationData, "/app/tree/registerLocationInfo");
-    }
-
-
-    // 1-3) 사진 리스트 등록
-    public void registerTreeImage(List<File> files){
-        OkHttpClient client = new OkHttpClient();
-        MultipartBody.Builder builder = new MultipartBody.Builder()
-                .setType(MultipartBody.FORM);
-        if (files.size()>0){
-            for (int i=0; i<files.size(); i++){
-                builder.addFormDataPart("image"+(i+1), files.get(i).getName(), RequestBody.create(MediaType.parse("multipart/form-data"), files.get(i)));
-            }
-        }
-        builder.addFormDataPart("tagId", idHex );
-
-        // 업로드할 URL을 생성합니다.
-        String url = sndUrl+"/app/tree/registerTreeImage"; // 실제 업로드할 서버의 URL로 변경해야 합니다.
-
-        // 요청 생성
-        Request request = new Request.Builder()
-                .url(url)
-                .addHeader("Authorization", sharedPreferences.getString("Authorization", null))
-                .post(builder.build())
-                .build();
-        client.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onResponse(@NonNull Call call, @NonNull okhttp3.Response response) throws IOException {
-                Log.d(TAG,"** 업로드 성공? **"+response);
-            }
-            @Override
-            public void onFailure(Call call, IOException e) {
-                // 여기에 요청이 실패했을 때 실행될 코드를 작성하세요.
-                Log.d(TAG,"** 사진 오류남 **");
-            }
-        });
-    }
-
-
     // 2) 위치상세 정보 등록
     public void  registerSpecificLocationInfo(){
         JSONObject treeSpecificLocationData=new JSONObject();
@@ -662,21 +614,6 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
     }
 
 
-    // 디자인 요소에 세팅하기
-    public void getTreeLocation(){
-        Log.d(TAG, "** getTreeLocation 호출되었니? **");
-        Log.d(TAG, "** 위도: " + latitude + ", 경도 : " + longitude);
-
-        treeBasicInfoVM.latitude.set(""+latitude);
-        treeBasicInfoVM.longitude.set(""+longitude);
-
-        // 이거 호출되기 전에 초기화 안됨
-        //kakaoMapFragment.addMarkers(latitude,longitude, idHex);
-    }
-
-
-
-
 
     @Override
     protected void onResume() {
@@ -685,10 +622,12 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
     }
 
 
-
     /* ------------------------------ Camera ------------------------------ */
 
     public void onCamera (){
+
+        // 뷰모델에서 바로 불러도 될 것 같은데?
+
         treeBasicInfoVM.camera.observe(this, new Observer() {
             @Override
             public void onChanged(Object o) {
@@ -704,6 +643,7 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
     }
 
 
+
     // 1 파일 객체 가져오기 - 사진 찍기 전에 빈 파일 미리 생성하는 역할
     private File createImageFile() throws IOException {
         // 사진 이름 가공
@@ -712,6 +652,7 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
         File imageFile = new File(storageDir, imageFileName + ".jpg");
         return imageFile;
     }
+
 
 
     // 2 카메라 촬영 - 아마 문제 없음
@@ -748,6 +689,7 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
     }
 
 
+
     // 3 결과 호출
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -767,11 +709,14 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
             Bitmap bitmap = BitmapFactory.decodeFile(uri);
             // 5-2) 실제 사진을 리스트에 담기
             treeBasicInfoVM.setImageList(bitmap);
+
             // 6-1 보낼 파일 리스트
             File file=new File(uri);
             currentList.add(file);
+            treeBasicInfoVM.currentFileList.add(file);
         }
     }
+
 
 
     // 4 갤러리 저장
@@ -783,6 +728,7 @@ public class RegistTreeInfoActivity extends TMActivity implements MyCallback, Ma
         this.sendBroadcast(mediaScanIntent);
         Toast.makeText(this, "사진이 저장되었습니다.", Toast.LENGTH_SHORT).show();
     }
+
 
 
     // 갤러리 이미지 스캔
